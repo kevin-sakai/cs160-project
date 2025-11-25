@@ -21,3 +21,8 @@
   flex: 1;
   width: 100%;
 }
+
+.sidebar-button {
+  font-size: 1.25rem;
+  padding: 0.5rem;
+}
