@@ -1,35 +1,44 @@
 import { useState } from 'react'
 import reactLogo from './assets/react.svg'
 import viteLogo from '/vite.svg'
+import NotepadPage from './pages/Notepad'
+import HomePage from './pages/Home'
 import './App.css'
 
-function App() {
-  const [count, setCount] = useState(0)
+const pages = {
+  home: {
+    label: "Home",
+    elem: <HomePage />,
+  },
+  notepad: {
+    label: "Notepad",
+    elem: <NotepadPage />,
+  },
+};
 
+function App() {
+  const [page, setPage] = useState("home");
   return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
+    <div id="app">
+      <div id="sidebar">
+        <h2>MainStream</h2>
+        {Object.entries(pages).map(([pageId, page]) => (
+          <SidebarButton key={pageId} pageId={pageId} label={page.label} setPage={setPage} />
+        ))}
       </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
+      <div id="main-page">
+        {pages[page].elem}
       </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
+    </div>
+  );
+}
+
+function SidebarButton({pageId, label, setPage}) {
+  return (
+    <button className="sidebar-button" onClick={() => setPage(pageId)}>
+      {label}
+    </button>
+  );
 }
 
 export default App
