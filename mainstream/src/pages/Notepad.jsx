@@ -1,7 +1,38 @@
 import { useState, useEffect } from 'react';
 import './Notepad.css';
 
-const NUM_TEXT_ROWS = 25;
+const NUM_TEXT_ROWS = 15;
+
+const date = new Date();
+const day = date.getDate();
+const month = date.getMonth();
+const year = date.getFullYear();
+const dayOfWeek = date.getDay();
+
+const daysOfWeek = [
+  "Sunday",
+  "Monday",
+  "Tuesday",
+  "Wednesday",
+  "Thursday",
+  "Friday",
+  "Saturday",
+];
+
+const months = [
+  "January",
+  "February",
+  "March",
+  "April",
+  "May",
+  "June",
+  "July",
+  "August",
+  "September",
+  "October",
+  "November",
+  "December",
+];
 
 // localStorage key scheme: mainstream-<pagenum>
 // {date: <date last modified>, text: <note text>}
@@ -22,12 +53,13 @@ export default function Notepad() {
 
   useEffect(() => {
     const key = "mainstream-" + notePage;
+    const formattedDate = `${daysOfWeek[dayOfWeek]}, ${months[month]} ${day}, ${year}`;
     const item = JSON.stringify({
-      date: "1-1-1",
+      date: formattedDate,
       text: noteText,
     });
     localStorage.setItem(key, item);
-  })
+  }, [noteText]);
 
   return (
     <div id="notepad-page">
@@ -48,8 +80,12 @@ export default function Notepad() {
             <button
               className="notepad-page-button"
               onClick={() => setNotePage(notePage + 1)}>&#x2192;</button>
+            <button
+              className="notepad-page-button"
+              >Delete</button>
           </div>
           <h2>Page {notePage}</h2>
+          <h1>{noteDate}</h1>
         </div>
     </div>
   );
