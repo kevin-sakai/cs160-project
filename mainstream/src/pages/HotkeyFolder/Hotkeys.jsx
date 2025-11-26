@@ -1,15 +1,23 @@
 import { useState } from "react";
 import { SelectComponent } from "./SelectedComponent";
 import './Hotkeys.css';
-export const Hotkey = () => {
-    let actions = [
-        { action: "action 1", hotkey: "a" },
-        { action: "action 2", hotkey: "b" },
-        { action: "action 3", hotkey: "c" },
-        { action: "action 4", hotkey: "d" },
-    ];
 
-    const [selectedOption, setSelectedOption] = useState("")
+export const Hotkey = () => {
+
+    let actions = [
+
+        { key: "a", value: "action 1" },
+        { key: "b", value: "action 2" },
+        { key: "c", value: "action 3" },
+        { key: "d", value: "action 4" },
+    ];
+    let displayedActions = [
+        { key: "a", value: "action 1" },
+        { key: "b", value: "action 2" },
+
+    ];
+    const [selectedOption, setSelectedOption] = useState("action 1");
+    const [open, setOpen] = useState(false)
     return (<div>
 
         <h1>Hotkeys</h1>
@@ -17,17 +25,30 @@ export const Hotkey = () => {
 
 
         <button>trigger events</button>
-        <div>        <SelectComponent
+        <p>selected option: {selectedOption} </p>
+        <div>        
+            <SelectComponent
             options={actions}
-            onChange={(item) => setSelectedOption(item)}
+            onChange={(item) => {
+                console.log('ITEM IS: ', item)
+                setSelectedOption(item)}}
             selectedKey={selectedOption}
             placeholder={"type to search"}
-        /><input placeholder="key"></input>
+            open={open}
+            setOpen={setOpen}
+            selectedOption={selectedOption}
+            setSelectedOption={selectedOption}
+        />
+            <p>Type Key</p>
+
+            <input placeholder="key"></input>
+
+            <button>Save</button>
         </div>
-        <div>{actions.map(act =>
+        <div>{displayedActions.map(act =>
             <div className="hotkeylist-action">
-                <div>{act.action}</div>
-                <div>{act.hotkey}</div>
+                <div>{act.value}</div>
+                <div>{act.key}</div>
             </div>
         )}</div>
 
