@@ -6,6 +6,9 @@ import HomePage from './pages/Home'
 import './App.css'
 import { Hotkey } from './pages/HotkeyFolder/Hotkeys'
 import { Routes, Route } from 'react-router-dom'
+import { Link } from 'react-router-dom'
+import { Navbar } from './components/Navbar'
+
 const pages = {
   home: {
     label: "Home",
@@ -22,37 +25,31 @@ const pages = {
 };
 
 function App() {
-  const [page, setPage] = useState("home");
+  // const [page, setPage] = useState("home");
   return (
     <div id="app">
-      <div id="sidebar">
+      {/* <div id="sidebar">
         <h2>MainStream</h2>
         {Object.entries(pages).map(([pageId, page]) => (
           <SidebarButton key={pageId} pageId={pageId} label={page.label} setPage={setPage} />
         ))}
-      </div>
+
+      </div> */}
+         <Navbar/>
+    
         <Routes>
           <Route path="/" element={<HomePage/>}/>
           <Route path="/notepad" element={<NotepadPage/>}/>
           <Route path="/hotkeys" element={<Hotkey/>}/>
           </Routes>
       <div id="main-page">
-        {pages[page].elem}
+        {/* {pages[page].elem} */}
       </div>
     </div>
   );
 }
 
-function Navbar() {
-  return(
-    <div>
-      <ul>
-      <li>Home</li>
-      <li>Notebook</li>
-      <li>Hotkeys</li>
-    </ul>
-    </div>)
-}
+
 
 function SidebarButton({pageId, label, setPage}) {
   return (
