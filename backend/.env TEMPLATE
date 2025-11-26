@@ -1,0 +1,12 @@
+OBS_ADDRESS=ws://000.00.000.0:0000
+OBS_PASSWORD=password
+
+
+--- IGNORE ---
+ws://000.00.000.0: will be the server IP address from OBS
+:0000 will be the port number from OBS
+password will be the password you set in OBS WebSocket settings
+
+all this info can be found in obs websocket settings under "Tools" in OBS
+
+be sure to rename the file to just ".env"
