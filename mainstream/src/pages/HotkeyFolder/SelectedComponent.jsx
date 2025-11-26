@@ -1,7 +1,7 @@
 import React, { useState } from "react"
 import blacktriangle from '../../assets/Black_triangle.svg'
 
-export const SelectComponent = (options, placeholder = "", onChange, selectedKey, open, setOpen) => {
+export const SelectComponent = ({options, placeholder = "", onChange, selectedKey, open, setOpen}) => {
 
     const [inputValue, setInputValue] = useState('');
 
@@ -27,8 +27,11 @@ export const SelectComponent = (options, placeholder = "", onChange, selectedKey
                 </div>
             </div>
 
-            <div className="dropdown">
-          
+        <div>{options.map(act =>
+            <div className="hotkeylist-action">
+                <div>{act.action}</div>
+                <div>{act.hotkey}</div>
             </div>
+        )}</div>
         </div>)
 }

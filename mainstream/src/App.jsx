@@ -43,16 +43,24 @@ function App() {
   );
 }
 
+function Navbar() {
+  return(
+    <div>
+      <ul>
+      <li>Home</li>
+      <li>Notebook</li>
+      <li>Hotkeys</li>
+    </ul>
+    </div>)
+}
+
 function SidebarButton({pageId, label, setPage}) {
   return (
     <div>
     <button className="sidebar-button" onClick={() => setPage(pageId)}>
       {label}
     </button>
-    <ul>
-      <li>Notebook</li>
-      <li>Hotkeys</li>
-    </ul>
+
     </div>
   );
 }
