@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { SelectComponent } from "./SelectedComponent";
 import './Hotkeys.css';
+import { Link } from "react-router-dom";
 
 export const Hotkey = () => {
 
@@ -24,7 +25,7 @@ export const Hotkey = () => {
 
 
 
-        <button>trigger events</button>
+        <Link to="../obspage"><button>Obs Page</button></Link>
         <p>selected option: {selectedOption} </p>
         <div>        
             <SelectComponent
