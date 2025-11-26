@@ -4,25 +4,33 @@ import viteLogo from '/vite.svg'
 import NotepadPage from './pages/Notepad'
 import HomePage from './pages/Home'
 import './App.css'
+import { Hotkey } from './pages/HotkeyFolder/Hotkeys'
+import { Routes, Route } from 'react-router-dom'
+import { Link } from 'react-router-dom'
+import { Navbar } from './components/Navbar'
 import ObsPage from "./components/obs-page";
 
-const pages = {
-  home: {
-    label: "Home",
-    elem: <HomePage />,
-  },
-  notepad: {
-    label: "Notepad",
-    elem: <NotepadPage />,
-  },
-  obs: {
-    label: "OBS Control",
-    elem: <ObsPage />,
-  },
-};
+// const pages = {
+//   home: {
+//     label: "Home",
+//     elem: <HomePage />,
+//   },
+//   notepad: {
+//     label: "Notepad",
+//     elem: <NotepadPage />,
+//   },
+//     hotkey: {
+//     label: "Hotkeys",
+//     elem: <Hotkey />,
+//   obs: {
+//     label: "OBS Control",
+//     elem: <ObsPage />,
+//   },
+// };
 
 function App() {
-  const [page, setPage] = useState("home");
+  // const [page, setPage] = useState("home");
+
   const [health, setHealth] = useState(null);
   const [scenes, setScenes] = useState([]);
   const [currentScene, setCurrentScene] = useState('');
@@ -32,7 +40,7 @@ function App() {
 
   return (
     <div id="app">
-      <div id="sidebar">
+      {/* <div id="sidebar">
         <h2>MainStream</h2>
         {Object.entries(pages).map(([pageId, pageConfig]) => (
           <SidebarButton
@@ -42,20 +50,34 @@ function App() {
             setPage={setPage}
           />
         ))}
-      </div>
+
+      </div> */}
+         <Navbar/>
+    
+        <Routes>
+          <Route path="/" element={<HomePage/>}/>
+          <Route path="/notepad" element={<NotepadPage/>}/>
+          <Route path="/hotkeys" element={<Hotkey/>}/>
+           <Route path="/obspage" element={<ObsPage/>}/>
+          </Routes>
       <div id="main-page">
-        {pages[page] ? pages[page].elem : <div>Page not found</div>}
+        {/* {pages[page].elem} */}
+        {/* {pages[page] ? pages[page].elem : <div>Page not found</div>} */}
       </div>
     </div>
   );
 }
 
 
+
 function SidebarButton({pageId, label, setPage}) {
   return (
+    <div>
     <button className="sidebar-button" onClick={() => setPage(pageId)}>
       {label}
     </button>
+
+    </div>
   );
 }
 
