@@ -1,0 +1,14 @@
+import React from "react"
+import { Link } from "react-router-dom"
+
+export const Navbar = () => {
+    return (
+        <div id="navbar">
+            <ul>
+                <Link to='/'><li>Home</li></Link>
+                <Link to='Notepad'><li>Notepad</li></Link>
+                <Link to='Hotkeys'><li>Hotkeys</li></Link>
+                <Link to='obspage'><li>Obs Page</li></Link>
+            </ul>
+        </div>)
+}
