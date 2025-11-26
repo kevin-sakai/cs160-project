@@ -2,6 +2,7 @@ import { useState } from "react";
 import { SelectComponent } from "./SelectedComponent";
 import './Hotkeys.css';
 import { Link } from "react-router-dom";
+import help from '../../assets/help.png'
 
 export const Hotkey = () => {
 
@@ -18,8 +19,17 @@ export const Hotkey = () => {
 
     ];
     const [selectedOption, setSelectedOption] = useState("action 1");
-    const [open, setOpen] = useState(false)
-    return (<div>
+    const [open, setOpen] = useState(false);
+    const [needHelp, setNeedHelp] = useState(false);
+
+
+    const clickHelp = () => {
+        setNeedHelp((prevValue) => !prevValue);
+
+    };
+
+
+    return (<div id="hotkey-page">
 
         <h1>Hotkeys</h1>
 
@@ -27,19 +37,20 @@ export const Hotkey = () => {
 
         <Link to="../obspage"><button>Obs Page</button></Link>
         <p>selected option: {selectedOption} </p>
-        <div>        
+        <div>
             <SelectComponent
-            options={actions}
-            onChange={(item) => {
-                console.log('ITEM IS: ', item)
-                setSelectedOption(item)}}
-            selectedKey={selectedOption}
-            placeholder={"type to search"}
-            open={open}
-            setOpen={setOpen}
-            selectedOption={selectedOption}
-            setSelectedOption={selectedOption}
-        />
+                options={actions}
+                onChange={(item) => {
+                    console.log('ITEM IS: ', item)
+                    setSelectedOption(item)
+                }}
+                selectedKey={selectedOption}
+                placeholder={"type to search"}
+                open={open}
+                setOpen={setOpen}
+                selectedOption={selectedOption}
+                setSelectedOption={selectedOption}
+            />
             <p>Type Key</p>
 
             <input placeholder="key"></input>
@@ -53,6 +64,10 @@ export const Hotkey = () => {
             </div>
         )}</div>
 
+        <img className="helpicon" src={help} onClick={clickHelp} />
+        {
+            needHelp ? (<div><p>Use this page to change or set up hotkeys for actions you created on the obs page</p></div>) : null
+        }
 
     </div>)
 }

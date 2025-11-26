@@ -5,6 +5,21 @@
     width:250px;
     position: relative;
 }
+#hotkey-page {
+  flex: 1;
+  padding-left: 2rem;
+  padding-right: 2rem;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  width: 100%;
+}
+
+.helpicon {
+    width: 20px;
+    padding-top: 20px;
+
+}
 
 .input-container {
     position: relative;
