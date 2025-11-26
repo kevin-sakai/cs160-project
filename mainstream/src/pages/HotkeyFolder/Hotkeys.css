@@ -17,6 +17,7 @@
     transform: translateY(-50%);
     margin-top: -2px;
     cursor: pointer;
+    background-color: white;
 }
 .input-arrow {
     width: 20px;
