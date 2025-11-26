@@ -5,7 +5,7 @@ import NotepadPage from './pages/Notepad'
 import HomePage from './pages/Home'
 import './App.css'
 import { Hotkey } from './pages/HotkeyFolder/Hotkeys'
-import { Routes, Route } from 'react-router-dom'
+import { Routes, Route, useLocation } from 'react-router-dom'
 import { Link } from 'react-router-dom'
 import { Navbar } from './components/Navbar'
 import ObsPage from "./components/obs-page";
@@ -43,7 +43,10 @@ function App() {
   const [notes, setNotes] = useState(getNotesState);
   const [noteText, setNoteText] = useState("");
   const [notePage, setNotePage] = useState(0);
+
+  const location = useLocation();
   
+  const hideNavbar = location.pathname === "/notepad-overlay";
 
   return (
     <div id="app">
@@ -59,7 +62,7 @@ function App() {
         ))}
 
       </div> */}
-         <Navbar/>
+         {hideNavbar ? null : <Navbar/>}
     
         <Routes>
           <Route path="/" element={<HomePage/>}/>
@@ -76,10 +79,6 @@ function App() {
           <Route path="/obspage" element={<ObsPage/>}/>
           <Route path="/notepad-overlay" element={<NotepadOverlay />}/>
         </Routes>
-      <div id="main-page">
-        {/* {pages[page].elem} */}
-        {/* {pages[page] ? pages[page].elem : <div>Page not found</div>} */}
-      </div>
     </div>
   );
 }
