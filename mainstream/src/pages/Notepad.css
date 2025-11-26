@@ -1,10 +1,9 @@
 #notepad-page {
-  flex: 1;
   padding-left: 2rem;
   padding-right: 2rem;
   display: flex;
   flex-direction: column;
-  align-items: stretch;
+  align-items: flex-start;
   width: 100%;
 }
 
@@ -34,6 +33,6 @@
 }
 
 .notepad-page-button {
-  font-size: 2rem;
-
+  font-size: 1.25rem;
+  padding: 0.25rem 0.5rem 0.25rem 0.5rem;
 }
