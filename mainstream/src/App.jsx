@@ -11,106 +11,68 @@ import { Navbar } from './components/Navbar'
 import ObsPage from "./components/obs-page";
 import { getNotesState, addPage, blankNote } from './util/NoteOperations';
 import { HotKeys } from 'react-keyboard'
-// const pages = {
-//   home: {
-//     label: "Home",
-//     elem: <HomePage />,
-//   },
-//   notepad: {
-//     label: "Notepad",
-//     elem: <NotepadPage />,
-//   },
-//     hotkey: {
-//     label: "Hotkeys",
-//     elem: <Hotkey />,
-//   obs: {
-//     label: "OBS Control",
-//     elem: <ObsPage />,
-//   },
-// };
+import TriggerEventsPage from './pages/TriggerEvents';
 
 
 function App() {
-  // const [page, setPage] = useState("home");
-
-
-
-  const [health, setHealth] = useState(null);
-  const [scenes, setScenes] = useState([]);
-  const [currentScene, setCurrentScene] = useState('');
-  const [newSceneName, setNewSceneName] = useState('');
-  const [sources, setSources] = useState([]);
-
-  // Notes states
+  // Notes state
   const [notes, setNotes] = useState(getNotesState);
-  const [noteText, setNoteText] = useState("");
+  const [noteText, setNoteText] = useState('');
   const [notePage, setNotePage] = useState(0);
-  //hotkey mapping, title of trigger events should go here
+
+  // Hotkey mapping – new trigger actions can go here
   const [keyMap, setKeyMap] = useState({
     addNotePage: 'alt+p',
     action1: '',
-  })
-  //hotkey functions, new trigger actions should go here
+  });
+
+  // Hotkey handlers – new trigger actions can go here too
   const handlers = {
     addNotePage: () => {
       setNotePage((prevItem) => prevItem + 1);
-      setNotes((prevItem) => [...prevItem, blankNote()])
-      console.log(`Added: ${newPage}`)
+      setNotes((prevItem) => [...prevItem, blankNote()]);
+      console.log('Added new note page');
     },
+  };
 
-  }
   return (
     <HotKeys keyMap={keyMap} handlers={handlers}>
       <div id="app">
-
-        {/* <div id="sidebar">
-        <h2>MainStream</h2>
-        {Object.entries(pages).map(([pageId, pageConfig]) => (
-          <SidebarButton
-            key={pageId}
-            pageId={pageId}
-            label={pageConfig.label}
-            setPage={setPage}
-          />
-        ))}
-
-      </div> */}
         <Navbar />
 
         <Routes>
           <Route path="/" element={<HomePage />} />
-          <Route path="/notepad"
-            element={<NotepadPage
-              notes={notes}
-              setNotes={setNotes}
-              noteText={noteText}
-              setNoteText={setNoteText}
-              notePage={notePage}
-              setNotePage={setNotePage}
-            />} />
-          <Route path="/hotkeys" element={<HotkeyPage keyMap={keyMap} setKeyMap={setKeyMap} />} />
+
+          <Route
+            path="/notepad"
+            element={
+              <NotepadPage
+                notes={notes}
+                setNotes={setNotes}
+                noteText={noteText}
+                setNoteText={setNoteText}
+                notePage={notePage}
+                setNotePage={setNotePage}
+              />
+            }
+          />
+
+          <Route
+            path="/hotkeys"
+            element={<HotkeyPage keyMap={keyMap} setKeyMap={setKeyMap} />}
+          />
+
           <Route path="/obspage" element={<ObsPage />} />
+
+          {/* new Trigger Events page */}
+          <Route path="/TriggerEventsPage" element={<TriggerEventsPage />} />
         </Routes>
-        <div id="main-page">
-          {/* {pages[page].elem} */}
-          {/* {pages[page] ? pages[page].elem : <div>Page not found</div>} */}
-        </div>
+
+        {/* main-page div is still here if you’re styling around it */}
+        <div id="main-page" />
       </div>
     </HotKeys>
   );
 }
 
-
-
-function SidebarButton({ pageId, label, setPage }) {
-  return (
-    <div>
-      <button className="sidebar-button" onClick={() => setPage(pageId)}>
-        {label}
-      </button>
-
-    </div>
-  );
-}
-
-export default App
+export default App;
