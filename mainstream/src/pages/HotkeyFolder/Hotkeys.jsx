@@ -5,6 +5,8 @@ import { Link } from "react-router-dom";
 import help from '../../assets/help.png'
 
 export const Hotkey = () => {
+    let nextId = 0;
+
 
     let actions = [
 
@@ -13,12 +15,12 @@ export const Hotkey = () => {
         { key: "c", value: "action 3" },
         { key: "d", value: "action 4" },
     ];
-    let displayedActions = [
+    const [displayedActions, setDisplayedActions] = useState([
         { key: "a", value: "action 1" },
         { key: "b", value: "action 2" },
-
-    ];
+    ]);
     const [selectedOption, setSelectedOption] = useState("action 1");
+    const [selectedKey, setSelectedKey] = useState("a");
     const [open, setOpen] = useState(false);
     const [needHelp, setNeedHelp] = useState(false);
 
@@ -27,42 +29,70 @@ export const Hotkey = () => {
         setNeedHelp((prevValue) => !prevValue);
 
     };
+    const saveClick = () => {
+        setDisplayedActions(...displayedActions, { key: selectedKey, value: selectedOption })
+        console.log(displayedActions)
+    };
 
 
     return (<div id="hotkey-page">
+        <div id="title">
+            <h1>Hotkeys</h1>
+            <Link to="../obspage"><button>Obs Page</button></Link>
+        </div>
 
-        <h1>Hotkeys</h1>
 
 
-
-        <Link to="../obspage"><button>Obs Page</button></Link>
         <p>selected option: {selectedOption} </p>
+        <p>selected key: {selectedKey} </p>
         <div>
-            <SelectComponent
+            {/* <SelectComponent
                 options={actions}
                 onChange={(item) => {
                     console.log('ITEM IS: ', item)
+                    console.log('selected item IS: ', selectedOption)
                     setSelectedOption(item)
+                    console.log('selected option after item IS: ', selectedOption)
                 }}
-                selectedKey={selectedOption}
+                selectedOption={selectedOption}
                 placeholder={"type to search"}
                 open={open}
                 setOpen={setOpen}
-                selectedOption={selectedOption}
-                setSelectedOption={selectedOption}
-            />
+
+                setSelectedOption={setSelectedOption}
+            /> */}
+            <select name="actions" onChange={(e)=>{setSelectedOption(e.target.value)}}>{
+                actions.map(act =>
+                    <div>
+                        <option>{act.value}</option>
+                    </div>
+                )
+            }
+            </select>
             <p>Type Key</p>
 
-            <input placeholder="key"></input>
+            <input placeholder="key"
+                onChange={(e) => { setSelectedKey(e.target.value) }}
+            ></input>
 
-            <button>Save</button>
+            <button onClick={() => {
+                setDisplayedActions([
+                    ...displayedActions,
+                    { key: selectedKey, value: selectedOption }
+                ]);
+            }}>Save</button>
+
         </div>
-        <div>{displayedActions.map(act =>
-            <div className="hotkeylist-action">
+
+        <div id="hotkey-display-list"> {displayedActions.map(act =>
+            <div className="hotkeylist-action" key={act.key}>
                 <div>{act.value}</div>
                 <div>{act.key}</div>
             </div>
         )}</div>
+
+
+
 
         <img className="helpicon" src={help} onClick={clickHelp} />
         {
@@ -70,4 +100,6 @@ export const Hotkey = () => {
         }
 
     </div>)
+
+
 }

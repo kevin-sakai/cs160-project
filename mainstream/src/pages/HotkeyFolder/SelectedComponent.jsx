@@ -1,17 +1,19 @@
 import React, { useEffect, useState } from "react"
 import blacktriangle from '../../assets/Black_triangle.svg'
 
-export const SelectComponent = ({ options, placeholder = "", onChange, selectedKey, open, setOpen, selectedOption, setSelectedOption }) => {
+export const SelectComponent = ({ options, placeholder = "", onChange, selectedOption, open, setOpen , setSelectedOption}) => {
 
     const [inputValue, setInputValue] = useState('');
 
     useEffect(
         () => {
-            if (selectedKey) {
-                setInputValue(options.find((o) => o.value === selectedKey).value);
-                // setSelectedOption(options.find((o) => o.value === selectedKey).value);
+            if (selectedOption) {
+                setInputValue(options.find((o) => o.value === selectedOption).value);
+                setSelectedOption(inputValue)
+                console.log(selectedOption)
+
             }
-        }, [selectedKey, options]
+        }, [selectedOption, options]
     );
 
     const onInputChange = (e) => {
@@ -21,6 +23,7 @@ export const SelectComponent = ({ options, placeholder = "", onChange, selectedK
         onChange !== undefined && onChange(option.hotkey);
         onChange !== undefined && setInputValue(option.value);
         setOpen(false);
+        // setSelectedOption(option);
     }
 
     const clearDropDown = () => {
@@ -42,25 +45,25 @@ export const SelectComponent = ({ options, placeholder = "", onChange, selectedK
                 <div className="input-arrow-container">
                     <img className="input-arrow" src={blacktriangle}></img>
                 </div>
-                {selectedKey || inputValue ? (<div onClick={clearDropDown} className="input-clear-container ">
+                {selectedOption || inputValue ? (<div onClick={clearDropDown} className="input-clear-container ">
                     x
                 </div>) : null}
             </div>
 
-            <div className={`dropdown ${open ? 'visible' : ""}`}> 
+            <div className={`dropdown ${open ? 'visible' : ""}`}>
                 {options.map(act => {
-                return (
-                    <div
-                        key={act.key}
-                        onClick={() => onItemSelected(act)}
-                        className="option">
+                    return (
+                        <div
+                            key={act.key}
+                            onClick={() => onItemSelected(act)}
+                            className="option">
 
-                        <div>{act.value}</div>
-               
-                    </div>
-                );
-            }
+                            <div>{act.value}</div>
 
-            )}</div>
+                        </div>
+                    );
+                }
+
+                )}</div>
         </div>)
 }
