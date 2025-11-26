@@ -1,0 +1,32 @@
+
+/* start of hotkeystyling */
+
+.dropdown-container {
+    width:250px;
+}
+
+.input-container {
+    position: relative;
+    width:100%;
+}
+
+.input-arrow-container {
+    position: absolute;
+    right:10px;
+    top: 50%;
+    transform: translateY(-50%);
+    margin-top: -2px;
+    cursor: pointer;
+}
+.input-arrow {
+    width: 20px;
+}
+.hotkeylist-action {
+  background-color: rgb(86, 86, 86);
+  display: flex;
+  justify-content: space-between;
+  padding: 10px;
+  width: 100%;
+}
+
+/* end of hotkeystyling */

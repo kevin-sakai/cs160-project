@@ -4,7 +4,8 @@ import viteLogo from '/vite.svg'
 import NotepadPage from './pages/Notepad'
 import HomePage from './pages/Home'
 import './App.css'
-
+import { Hotkey } from './pages/HotkeyFolder/Hotkeys'
+import { Routes, Route } from 'react-router-dom'
 const pages = {
   home: {
     label: "Home",
@@ -13,6 +14,10 @@ const pages = {
   notepad: {
     label: "Notepad",
     elem: <NotepadPage />,
+  },
+    hotkey: {
+    label: "Hotkeys",
+    elem: <Hotkey />,
   },
 };
 
@@ -26,6 +31,11 @@ function App() {
           <SidebarButton key={pageId} pageId={pageId} label={page.label} setPage={setPage} />
         ))}
       </div>
+        <Routes>
+          <Route path="/" element={<HomePage/>}/>
+          <Route path="/notepad" element={<NotepadPage/>}/>
+          <Route path="/hotkeys" element={<Hotkey/>}/>
+          </Routes>
       <div id="main-page">
         {pages[page].elem}
       </div>
@@ -35,9 +45,15 @@ function App() {
 
 function SidebarButton({pageId, label, setPage}) {
   return (
+    <div>
     <button className="sidebar-button" onClick={() => setPage(pageId)}>
       {label}
     </button>
+    <ul>
+      <li>Notebook</li>
+      <li>Hotkeys</li>
+    </ul>
+    </div>
   );
 }
 
