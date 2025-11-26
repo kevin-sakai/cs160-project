@@ -9,6 +9,7 @@ import { Routes, Route } from 'react-router-dom'
 import { Link } from 'react-router-dom'
 import { Navbar } from './components/Navbar'
 import ObsPage from "./components/obs-page";
+import NotepadOverlay from './pages/NotepadOverlay';
 import { getNotesState, addPage } from './util/NoteOperations';
 
 // const pages = {
@@ -72,8 +73,9 @@ function App() {
                       setNotePage={setNotePage}
                       />}/>
           <Route path="/hotkeys" element={<Hotkey/>}/>
-           <Route path="/obspage" element={<ObsPage/>}/>
-          </Routes>
+          <Route path="/obspage" element={<ObsPage/>}/>
+          <Route path="/notepad-overlay" element={<NotepadOverlay />}/>
+        </Routes>
       <div id="main-page">
         {/* {pages[page].elem} */}
         {/* {pages[page] ? pages[page].elem : <div>Page not found</div>} */}
