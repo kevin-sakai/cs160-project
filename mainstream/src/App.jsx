@@ -9,6 +9,7 @@ import { Routes, Route } from 'react-router-dom'
 import { Link } from 'react-router-dom'
 import { Navbar } from './components/Navbar'
 import ObsPage from "./components/obs-page";
+import { getNotesState, addPage } from './util/NoteOperations';
 
 // const pages = {
 //   home: {
@@ -36,6 +37,11 @@ function App() {
   const [currentScene, setCurrentScene] = useState('');
   const [newSceneName, setNewSceneName] = useState('');
   const [sources, setSources] = useState([]);
+
+  // Notes states
+  const [notes, setNotes] = useState(getNotesState);
+  const [noteText, setNoteText] = useState("");
+  const [notePage, setNotePage] = useState(0);
   
 
   return (
@@ -56,7 +62,15 @@ function App() {
     
         <Routes>
           <Route path="/" element={<HomePage/>}/>
-          <Route path="/notepad" element={<NotepadPage/>}/>
+          <Route path="/notepad"
+            element={<NotepadPage 
+                      notes={notes}
+                      setNotes={setNotes}
+                      noteText={noteText}
+                      setNoteText={setNoteText}
+                      notePage={notePage}
+                      setNotePage={setNotePage}
+                      />}/>
           <Route path="/hotkeys" element={<Hotkey/>}/>
            <Route path="/obspage" element={<ObsPage/>}/>
           </Routes>
