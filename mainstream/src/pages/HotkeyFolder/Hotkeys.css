@@ -1,18 +1,24 @@
-
 /* start of hotkeystyling */
 
 .dropdown-container {
-    width:250px;
+    width: 250px;
     position: relative;
 }
+
+#title {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+}
+
 #hotkey-page {
-  flex: 1;
-  padding-left: 2rem;
-  padding-right: 2rem;
-  display: flex;
-  flex-direction: column;
-  align-items: stretch;
-  width: 100%;
+    flex: 1;
+    padding-left: 2rem;
+    padding-right: 2rem;
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    width: 100%;
 }
 
 .helpicon {
@@ -23,7 +29,7 @@
 
 .input-container {
     position: relative;
-    width:100%;
+    width: 100%;
 }
 
 .input-arrow-container {
@@ -35,15 +41,13 @@
     margin-top: -2px;
     cursor: pointer;
 }
+
 .input-arrow {
     width: 20px;
 }
-.hotkeylist-action {
-  background-color: rgb(86, 86, 86);
-  display: flex;
-  justify-content: space-between;
-  padding: 10px;
-  width: 100%;
+select {
+    width: 180px;
+    padding: 10px;
 }
 .dropdown {
     border: 1px solid black;
@@ -53,27 +57,59 @@
     width: 100%;
     display: none;
 }
+
 .dropdown.visible {
-    display:block;
+    display: block;
 }
+
 .option {
-background-color: rgb(86, 86, 86);
-  display: flex;
-  justify-content: space-between;
-  padding: 10px;
-  width: 100%;
+    border: 1px solid black;
+    background-color: rgb(193, 193, 193);
+    display: flex;
+    justify-content: space-between;
+    padding: 10px;
+    color:black;
+    width: 100%;
 }
-.option:hover{
-    background-color: rgb(178, 178, 178);
+
+.option:hover {
+    background-color: rgb(147, 147, 147);
     color: black;
 }
+
 .input-clear-container {
     position: absolute;
     right: 110px;
-    top:50%;
+    top: 50%;
     transform: translateY(-50%);
     cursor: pointer;
     color: black;
+}
+
+#hotkey-display-list {
+    margin-top: 70px;
+    border-radius: 10px;
+    background-color: rgb(86, 86, 86);
+    width: 100%;
+    padding: 20px 10px 20px 10px;
+}
+
+.hotkeylist-action {
+    background-color: rgb(86, 86, 86);
+    display: flex;
+    justify-content: space-between;
+    padding: 10px;
+    border-radius: 10px;
+
+}
+
+button {
+    background-color: white;
+    border-radius: 20px;
+    padding: 5px 15px 5px 15px;
+
+    margin: 10px;
+    border: 0px;
 }
 
 /* end of hotkeystyling */
