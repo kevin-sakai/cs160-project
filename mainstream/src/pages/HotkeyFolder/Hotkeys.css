@@ -1,0 +1,64 @@
+
+/* start of hotkeystyling */
+
+.dropdown-container {
+    width:250px;
+    position: relative;
+}
+
+.input-container {
+    position: relative;
+    width:100%;
+}
+
+.input-arrow-container {
+    position: absolute;
+    width: 5px;
+    right: 100px;
+    top: 75%;
+    transform: translateY(-50%);
+    margin-top: -2px;
+    cursor: pointer;
+}
+.input-arrow {
+    width: 20px;
+}
+.hotkeylist-action {
+  background-color: rgb(86, 86, 86);
+  display: flex;
+  justify-content: space-between;
+  padding: 10px;
+  width: 100%;
+}
+.dropdown {
+    border: 1px solid black;
+    border-bottom: none;
+    box-sizing: border-box;
+    position: absolute;
+    width: 100%;
+    display: none;
+}
+.dropdown.visible {
+    display:block;
+}
+.option {
+background-color: rgb(86, 86, 86);
+  display: flex;
+  justify-content: space-between;
+  padding: 10px;
+  width: 100%;
+}
+.option:hover{
+    background-color: rgb(178, 178, 178);
+    color: black;
+}
+.input-clear-container {
+    position: absolute;
+    right: 110px;
+    top:50%;
+    transform: translateY(-50%);
+    cursor: pointer;
+    color: black;
+}
+
+/* end of hotkeystyling */
