@@ -9,7 +9,7 @@ export const SelectComponent = ({ options, placeholder = "", onChange, selectedK
         () => {
             if (selectedKey) {
                 setInputValue(options.find((o) => o.value === selectedKey).value);
-                setSelectedOption(options.find((o) => o.value === selectedKey).value);
+                // setSelectedOption(options.find((o) => o.value === selectedKey).value);
             }
         }, [selectedKey, options]
     );
