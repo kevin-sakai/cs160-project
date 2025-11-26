@@ -7,7 +7,7 @@ import {
   getSceneSources,
   createSource,
   switchScene,
-} from "../api/obs"; // adjust path if your api folder is somewhere else
+} from "../api/obs"; 
 
 function ObsPage() {
   const [health, setHealth] = useState(null);
@@ -86,7 +86,7 @@ function ObsPage() {
     try {
       setErrorMsg("");
       await switchScene(currentScene);
-      // optional: reload scenes or update UI
+      
     } catch (err) {
       console.error(err);
       setErrorMsg(err.message || "Failed to switch scene.");
@@ -162,5 +162,5 @@ function ObsPage() {
   );
 }
 
-// 👈 This is what App.jsx is complaining about
+
 export default ObsPage;

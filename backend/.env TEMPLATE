@@ -1,5 +1,6 @@
 OBS_ADDRESS=ws://000.00.000.0:0000
 OBS_PASSWORD=password
+PORT=3000
 
 
 --- IGNORE ---
