@@ -1,5 +1,4 @@
 import { useState } from "react";
-import { SelectComponent } from "./SelectedComponent";
 import './Hotkeys.css';
 import { Link } from "react-router-dom";
 import help from '../../assets/help.png'
