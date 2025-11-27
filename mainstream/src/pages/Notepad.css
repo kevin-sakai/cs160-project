@@ -35,5 +35,7 @@
 
 .notepad-page-button {
   font-size: 1.25rem;
+  background-color: gray;
+  border-radius: 0.5rem;
   padding: 0.25rem 0.5rem 0.25rem 0.5rem;
 }

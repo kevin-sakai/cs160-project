@@ -30,16 +30,17 @@ function App() {
   // Hotkey handlers – new trigger actions can go here too
   const handlers = {
     addNotePage: () => {
-      setNotePage((prevItem) => prevItem + 1);
-      setNotes((prevItem) => [...prevItem, blankNote()]);
+      addPage(notes, setNotes, notePage, setNotePage, noteText);
       console.log('Added new note page');
     },
   };
 
+  const location = useLocation();
+
   return (
     <HotKeys keyMap={keyMap} handlers={handlers}>
       <div id="app">
-        <Navbar />
+        {location.pathname === "/notepad-overlay" ? null : <Navbar />}
 
         <Routes>
           <Route path="/" element={<HomePage />} />
@@ -67,6 +68,8 @@ function App() {
 
           {/* new Trigger Events page */}
           <Route path="/TriggerEventsPage" element={<TriggerEventsPage />} />
+
+          <Route path="/notepad-overlay" element={<NotepadOverlay />} />
         </Routes>
 
         {/* main-page div is still here if you’re styling around it */}
