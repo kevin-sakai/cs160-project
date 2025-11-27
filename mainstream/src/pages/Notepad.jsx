@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import './Notepad.css';
-import { updateNotes, addPage, changePage, deletePage } from '../util/NoteOperations';
+import { updateCurrentNote, updateNotes, addPage, changePage, deletePage } from '../util/NoteOperations';
+import { Link } from "react-router-dom"
 
 const NUM_TEXT_ROWS = 15;
 
@@ -44,7 +45,7 @@ export default function Notepad({ notes, setNotes, noteText, setNoteText, notePa
   }, [noteText]);
 
   useEffect(() => {
-    setNoteText(notes[notePage].text);
+    updateCurrentNote(setNoteText, notes[notePage].text)
   }, [notePage, notes]);
 
   return (
@@ -55,7 +56,7 @@ export default function Notepad({ notes, setNotes, noteText, setNoteText, notePa
       <div id="notepad-text-entry">
           <textarea
             value={noteText}
-            onChange={(e) => setNoteText(e.target.value)}
+            onChange={(e) => updateCurrentNote(setNoteText, e.target.value)}
             placeholder="Start Writing A Note!"
             rows={NUM_TEXT_ROWS}>
           </textarea>
@@ -76,6 +77,7 @@ export default function Notepad({ notes, setNotes, noteText, setNoteText, notePa
           <h2>Page {notePage}</h2>
           <h1>{noteDate}</h1>
         </div>
+        <Link to='/notepad-overlay'><li>Open Overlay</li></Link>
     </div>
   );
 }

@@ -1,4 +1,5 @@
-const LOCALSTORAGE_KEY = "mainstream-notes";
+const LOCALSTORAGE_NOTES_KEY = "mainstream-notes";
+const LOCALSTORAGE_CURR_KEY = "mainstream-curr-note";
 const date = new Date();
 const day = date.getDate();
 const month = date.getMonth();
@@ -12,8 +13,23 @@ export function blankNote() {
 };
 
 export function getNotesState() {
-  const localNotes = localStorage.getItem(LOCALSTORAGE_KEY);
+  const localNotes = localStorage.getItem(LOCALSTORAGE_NOTES_KEY);
   return localNotes ? JSON.parse(localNotes) : [blankNote()];
+}
+
+export function getCurrentNote() {
+  return localStorage.getItem(LOCALSTORAGE_CURR_KEY);
+}
+
+export function retrieveCurrentNoteUpdate(e, setText) {
+  if (e.key === LOCALSTORAGE_CURR_KEY) {
+    setText(e.newValue);
+  }
+}
+
+export function updateCurrentNote(setNote, newValue) {
+  setNote(newValue);
+  localStorage.setItem(LOCALSTORAGE_CURR_KEY, newValue);
 }
 
 export function updateNotes(notes, setNotes, currPage, noteText) {
@@ -22,7 +38,7 @@ export function updateNotes(notes, setNotes, currPage, noteText) {
       index === currPage ? {date: note.date, text: noteText} : note
     )
   );
-  localStorage.setItem(LOCALSTORAGE_KEY, JSON.stringify(notes));
+  localStorage.setItem(LOCALSTORAGE_NOTES_KEY, JSON.stringify(notes));
 }
 
 export function changePage(notes, setNotes, currPage, targetPage, setNotePage, numPages, noteText) {
@@ -52,5 +68,5 @@ export function deletePage(notes, setNotes, currPage, setNotePage) {
     )
   }
   setNotePage(newPageNum);
-  localStorage.setItem(LOCALSTORAGE_KEY, JSON.stringify(notes));
+  localStorage.setItem(LOCALSTORAGE_NOTES_KEY, JSON.stringify(notes));
 }
