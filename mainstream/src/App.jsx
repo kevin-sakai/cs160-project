@@ -45,7 +45,6 @@ function App() {
   const [notePage, setNotePage] = useState(0);
 
   const location = useLocation();
-  
   const hideNavbar = location.pathname === "/notepad-overlay";
 
   return (
