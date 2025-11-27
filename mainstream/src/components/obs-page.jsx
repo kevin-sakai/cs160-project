@@ -7,7 +7,8 @@ import {
   getSceneSources,
   createSource,
   switchScene,
-} from "../api/obs"; // adjust path if your api folder is somewhere else
+} from "../api/obs"; 
+import "./obs-page.css";
 
 function ObsPage() {
   const [health, setHealth] = useState(null);
@@ -86,7 +87,7 @@ function ObsPage() {
     try {
       setErrorMsg("");
       await switchScene(currentScene);
-      // optional: reload scenes or update UI
+      
     } catch (err) {
       console.error(err);
       setErrorMsg(err.message || "Failed to switch scene.");
@@ -94,73 +95,75 @@ function ObsPage() {
   }
 
   return (
-    <div style={{ padding: "1rem" }}>
-      <h1>OBS Control</h1>
+    <div className="obs-container">
+        <div style={{ padding: "1rem" }}>
+        <h1>OBS Control</h1>
 
-      {loading && <p>Loading OBS status...</p>}
-      {errorMsg && <p style={{ color: "red" }}>{errorMsg}</p>}
+        {loading && <p>Loading OBS status...</p>}
+        {errorMsg && <p style={{ color: "red" }}>{errorMsg}</p>}
 
-      <section>
-        <h2>Backend / OBS Status</h2>
-        <pre style={{ background: "#f5f5f5", padding: "0.5rem" }}>
-          {health ? JSON.stringify(health, null, 2) : "No data yet."}
-        </pre>
-      </section>
+        <section>
+            <h2>Backend / OBS Status</h2>
+            <pre style={{ background: "#ffffffff", padding: "0.5rem" }}>
+            {health ? JSON.stringify(health, null, 2) : "No data yet."}
+            </pre>
+        </section>
 
-      <section>
-        <h2>Scenes</h2>
-        <form onSubmit={handleCreateScene} style={{ marginBottom: "1rem" }}>
-          <input
-            value={newSceneName}
-            onChange={(e) => setNewSceneName(e.target.value)}
-            placeholder="New scene name"
-          />
-          <button type="submit">Create Scene</button>
-        </form>
+        <section>
+            <h2>Scenes</h2>
+            <form onSubmit={handleCreateScene} style={{ marginBottom: "1rem" }}>
+            <input
+                value={newSceneName}
+                onChange={(e) => setNewSceneName(e.target.value)}
+                placeholder="New scene name"
+            />
+            <button type="submit">Create Scene</button>
+            </form>
 
-        <ul>
-          {scenes.map((scene) => (
-            <li key={scene.sceneName}>
-              <button
-                type="button"
-                onClick={() => handleSelectScene(scene.sceneName)}
-              >
-                {scene.sceneName}
-              </button>
-            </li>
-          ))}
-        </ul>
+            <ul>
+            {scenes.map((scene) => (
+                <li key={scene.sceneName}>
+                <button
+                    type="button"
+                    onClick={() => handleSelectScene(scene.sceneName)}
+                >
+                    {scene.sceneName}
+                </button>
+                </li>
+            ))}
+            </ul>
 
-        <button
-          type="button"
-          onClick={handleSwitchScene}
-          disabled={!currentScene}
-        >
-          Switch to selected scene
-        </button>
-      </section>
+            <button
+            type="button"
+            onClick={handleSwitchScene}
+            disabled={!currentScene}
+            >
+            Switch to selected scene
+            </button>
+        </section>
 
-      <section>
-        <h2>Sources in Scene: {currentScene || "(none selected)"}</h2>
-        <button
-          type="button"
-          onClick={handleAddSource}
-          disabled={!currentScene}
-        >
-          Add color source
-        </button>
-        <ul>
-          {sources.map((item) => (
-            <li key={item.sceneItemId}>
-              [{item.sceneItemId}] {item.sourceName}{" "}
-              {item.inputKind ? `(${item.inputKind})` : ""}
-            </li>
-          ))}
-        </ul>
-      </section>
+        <section>
+            <h2>Sources in Scene: {currentScene || "(none selected)"}</h2>
+            <button
+            type="button"
+            onClick={handleAddSource}
+            disabled={!currentScene}
+            >
+            Add color source
+            </button>
+            <ul>
+            {sources.map((item) => (
+                <li key={item.sceneItemId}>
+                [{item.sceneItemId}] {item.sourceName}{" "}
+                {item.inputKind ? `(${item.inputKind})` : ""}
+                </li>
+            ))}
+            </ul>
+        </section>
+        </div>
     </div>
   );
 }
 
-// 👈 This is what App.jsx is complaining about
+
 export default ObsPage;

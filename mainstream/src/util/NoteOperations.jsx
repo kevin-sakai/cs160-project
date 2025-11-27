@@ -5,7 +5,7 @@ const day = date.getDate();
 const month = date.getMonth();
 const year = date.getFullYear();
 const formattedDate = `${month}-${day}-${year}`;
-function blankNote() {
+export function blankNote() {
   return {
     date: formattedDate,
     text: "",
