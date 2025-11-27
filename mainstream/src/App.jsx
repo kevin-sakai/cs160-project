@@ -36,11 +36,14 @@ function App() {
   };
 
   const location = useLocation();
+  const hiddenNavbarPages = [
+    "/notepad-overlay",
+  ];
 
   return (
     <HotKeys keyMap={keyMap} handlers={handlers}>
       <div id="app">
-        {location.pathname === "/notepad-overlay" ? null : <Navbar />}
+        {hiddenNavbarPages.includes(location.pathname) ? null : <Navbar />}
 
         <Routes>
           <Route path="/" element={<HomePage />} />
@@ -73,7 +76,6 @@ function App() {
         </Routes>
 
         {/* main-page div is still here if you’re styling around it */}
-        <div id="main-page" />
       </div>
     </HotKeys>
   );
