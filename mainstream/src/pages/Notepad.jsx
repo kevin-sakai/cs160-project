@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import './Notepad.css';
 import { updateCurrentNote, updateNotes, addPage, changePage, deletePage } from '../util/NoteOperations';
+import { Link } from "react-router-dom"
 
 const NUM_TEXT_ROWS = 15;
 
@@ -76,6 +77,7 @@ export default function Notepad({ notes, setNotes, noteText, setNoteText, notePa
           <h2>Page {notePage}</h2>
           <h1>{noteDate}</h1>
         </div>
+        <Link to='/notepad-overlay'><li>Open Overlay</li></Link>
     </div>
   );
 }
