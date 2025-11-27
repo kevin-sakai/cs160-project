@@ -27,6 +27,10 @@ export function retrieveCurrentNoteUpdate(e, setText) {
   }
 }
 
+export function storeCurrentNote(noteText) {
+  localStorage.setItem(LOCALSTORAGE_CURR_KEY, noteText);
+}
+
 export function updateCurrentNote(setNote, newValue) {
   setNote(newValue);
   localStorage.setItem(LOCALSTORAGE_CURR_KEY, newValue);

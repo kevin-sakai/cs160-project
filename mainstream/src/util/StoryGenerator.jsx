@@ -1,0 +1,20 @@
+const REAGENT_KEY = import.meta.env.VITE_REAGENT_KEY;
+
+export async function getNextPart(theme, history, msg) {
+  const response = await fetch(
+    'https://noggin.rea.gent/heavy-clam-4742',
+    {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${REAGENT_KEY}`,
+      },
+      body: JSON.stringify({
+        "theme": theme,
+        "history": history,
+        "msg": msg,
+      }),
+    }
+  ).then(response => response.text());
+  return response;
+}
