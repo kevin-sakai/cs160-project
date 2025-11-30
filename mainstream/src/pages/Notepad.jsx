@@ -36,25 +36,46 @@ const months = [
 // {date: <date last modified>, text: <note text>}
 
 export default function Notepad({ notes, setNotes, noteText, setNoteText, notePage, setNotePage }) {
-  const [noteDate, setNoteDate] = useState("");
+  const [currentTab, setCurrentTab] = useState("edit");
+
+  const tabs = {
+    "edit": {
+      label: "Create Notes",
+      elem: <NoteEditor
+          notes={notes}
+          setNotes={setNotes}
+          noteText={noteText}
+          setNoteText={setNoteText}
+          notePage={notePage}
+          setNotePage={setNotePage} />,
+    },
+    "story": {
+      label: "Generate A Story",
+      elem: <NoteStory
+          noteText={noteText}
+          setNoteText={setNoteText} />,
+    },
+    "suggest": {
+      label: "Get Suggestions",
+      elem: null,
+    },
+  };
 
   return (
     <div id="notepad-page">
       <div id="title">
         <h1>Notepad</h1>
       </div>
-      {null && <NoteEditor
-        notes={notes}
-        setNotes={setNotes}
-        noteText={noteText}
-        setNoteText={setNoteText}
-        notePage={notePage}
-        setNotePage={setNotePage}
-      />}
-      <NoteStory
-        noteText={noteText}
-        setNoteText={setNoteText}
-      />
+      <div id="notepad-tabs">
+        {Object.entries(tabs).map(([tabId, {label, elem}]) => (
+          <NotepadTab
+            key={tabId}
+            tabId={tabId}
+            tabLabel={label}
+            setCurrentTab={setCurrentTab} />
+        ))}
+      </div>
+      {tabs[currentTab].elem}
       <Link to='/notepad-overlay'><li>Open Overlay</li></Link>
     </div>
   );
@@ -101,12 +122,22 @@ function NoteEditor({ notes, setNotes, noteText, setNoteText, notePage, setNoteP
   );
 }
 
+function NotepadTab({ tabId, tabLabel, setCurrentTab }) {
+  console.log(tabLabel);
+  return (
+    <button className="notepad-tab" onClick={() => setCurrentTab(tabId)}>
+      {tabLabel}
+    </button>
+  );
+}
+
 function NoteStory({ noteText, setNoteText }) {
   const typingSpeed = 25;
 
   const [textBuffer, setTextBuffer] = useState("");
   const [storyHistory, setStoryHistory] = useState([]);
   const [theme, setTheme] = useState("");
+  const [msgBuffer, setMsgBuffer] = useState([]);
 
   useEffect(() => {
     setNoteText("");
@@ -129,19 +160,19 @@ function NoteStory({ noteText, setNoteText }) {
     storeCurrentNote(noteText);
   }, [noteText]);
 
-  getNextPart();
-
   useEffect(() => {
-    const msgHandler = async (msg) => {
-      if (!theme || !msg) {
+    const sendStoryRequest = async () => {
+      if (!theme || !msgBuffer) {
         return;
       }
       const mergedHistory = storyHistory.join(" ");
       const history = mergedHistory ? mergedHistory : "None, the story begins here.";
+      const messages = formatMessages(msgBuffer);
       try {
-        const response = await getNextPart(theme, history, msg);
+        const response = await getNextPart(theme, history, messages);
         setTextBuffer(response);
-        updateHistory(setHistory, response);
+        updateHistory(setStoryHistory, response);
+        setMsgBuffer([]);
       } catch (e) {
         console.log(e);
       }
@@ -155,8 +186,14 @@ function NoteStory({ noteText, setNoteText }) {
         rows={NUM_TEXT_ROWS}
         readOnly>
       </textarea>
+      <label htmlFor="theme-input">Theme:</label>
+      <input type="text" name="theme-input" placeholder="Enter theme..." onChange={(e) => setTheme(e.target.value)} />
     </div>
   );
+}
+
+function formatMessages(msgBuffer) {
+  return msgBuffer.map((msg, index) => `Message ${index + 1}: ${msg}`).join("\n");
 }
 
 function updateHistory(setHistory, nextChunk) {
