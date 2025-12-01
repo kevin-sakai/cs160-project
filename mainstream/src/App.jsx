@@ -32,7 +32,7 @@ function App() {
 
   const [handlers, setHandlers] = useState({
     addNotePage: () => {
-      addPage(notes, setNotes, notePage, setNotePage, noteText);
+      addPage(notesRef.current, setNotes, notePageRef.current, setNotePage, noteTextRef.current);
       console.log("Added new note page");
     },
     action2: () => {
