@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import reactLogo from "./assets/react.svg";
 import viteLogo from "/vite.svg";
 import NotepadPage from "./pages/Notepad";
@@ -15,6 +15,7 @@ import { HotKeys } from "react-keyboard";
 import TriggerEventsPage from "./pages/TriggerEvents";
 import { HotkeyItem } from "./pages/HotkeyFolder/HotkeyItem";
 import { useHotkeys } from "react-hotkeys-hook";
+import { getItem, setItem } from "./util/HotkeyLocalStorage";
 
 function App() {
   // Notes state
@@ -22,19 +23,43 @@ function App() {
   const [noteText, setNoteText] = useState("");
   const [notePage, setNotePage] = useState(0);
 
-  // Hotkey mapping – new trigger actions can go here
-  const [keyMap, setKeyMap] = useState([
-    {
-      name: "addNotePage",
-      hotkey: "alt+p",
-      func: () => {
-        addPage(notes, setNotes, notePage, setNotePage, noteText);
-        console.log("Added new note page");
-      },
-    },
-  ]);
+  // Hotkey mapping start block – new trigger actions can go here
 
-  // Hotkey handlers – new trigger actions can go here too
+  const [handlers, setHandlers] = useState({
+    addNotePage: () => {
+      addPage(notes, setNotes, notePage, setNotePage, noteText);
+      console.log("Added new note page");
+    },
+    action2: () => {
+      console.log("pressed b");
+    },
+  });
+  const [keyMap, setKeyMap] = useState(() => {
+    const item = getItem("keyMap");
+    console.log(item)
+    // const item = null;
+    return (
+      item || [
+        {
+          name: "addNotePage",
+          hotkey: "alt+p",
+          funcname: "addNotePage",
+        },
+        {
+          name: "action 2",
+          hotkey: "b",
+          funcname: "action2",
+        },
+      ]
+    );
+  });
+
+  useEffect(() => {
+    console.log("effect applied saving new state");
+    setItem("keyMap", keyMap);
+  }, [keyMap]);
+
+  // Hotkey mappings end block
 
   const location = useLocation();
 
@@ -44,12 +69,12 @@ function App() {
   return (
     <div id="app">
       {keyMap.map((a) => {
-        console.log(a.function, a.hotkey);
-        return <HotkeyItem hotkey={a.hotkey} func={a.func}></HotkeyItem>;
+        console.log(a.funcname, a.hotkey);
+        return <HotkeyItem hotkey={a.hotkey} func={handlers[a.funcname]}></HotkeyItem>;
       })}
 
       {location.pathname === "/notepad-overlay" ? null : <Navbar />}
-      <div>{notes.length}</div>
+ 
       <Routes>
         <Route path="/" element={<HomePage />} />
 

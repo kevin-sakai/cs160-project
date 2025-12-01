@@ -6,37 +6,28 @@ import { useHotkeys } from "react-hotkeys-hook";
 import { func } from "prop-types";
 
 export const HotkeyPage = ({ keyMap, setKeyMap }) => {
-  const [displayedActions, setDisplayedActions] = useState([
-    { key: "alt+p", value: "addNotePage" },
-    { key: "a", value: "action 1" },
-    { key: "b", value: "action 2" },
-  ]);
-  const [selectedOption, setSelectedOption] = useState(Object.keys(keyMap)[0]);
+
+  const [selectedOption, setSelectedOption] = useState(keyMap[0].name);
   const [selectedKey, setSelectedKey] = useState("");
   const [needHelp, setNeedHelp] = useState(false);
 
   const clickHelp = () => {
     setNeedHelp((prevValue) => !prevValue);
   };
-  const saveClick = () => {
-    setDisplayedActions(...displayedActions, {
-      key: selectedKey,
-      value: selectedOption,
-    });
-    console.log(displayedActions);
-  };
+
 
   return (
     <div id="hotkey-page">
       <div id="title">
         <h1>Hotkeys</h1>
-        <Link to="../obspage">
-          <button>Obs Page</button>
+        <Link to="../TriggerEventsPage">
+          <button>Trigger Events</button>
         </Link>
       </div>
 
-      <p>selected option: {selectedOption} </p>
-      <p>selected key: {selectedKey} </p>
+      {/* <p>selected option: {selectedOption} </p>
+      <p>selected key: {selectedKey} </p> */}
+      <p>Selected action:</p>
       <div>
         <select
           name="actions"
@@ -52,7 +43,7 @@ export const HotkeyPage = ({ keyMap, setKeyMap }) => {
             );
           })}
         </select>
-        <p>Type Key</p>
+        <p>Type the key combination you'd like to set for {selectedOption}</p>
 
         <input
           placeholder="key"
@@ -63,14 +54,15 @@ export const HotkeyPage = ({ keyMap, setKeyMap }) => {
 
         <button
           onClick={() => {
-            console.log(a, selectedOption);
+            
             setKeyMap(
               keyMap.map((a) => {
+                console.log(a.name, selectedOption);
                 if (a.name == selectedOption) {
                   return {
                     name: selectedOption,
                     hotkey: selectedKey,
-                    func: a.func,
+                    funcname: a.funcname,
                   };
                 } else {
                   return a;
@@ -95,13 +87,12 @@ export const HotkeyPage = ({ keyMap, setKeyMap }) => {
                   onClick={() => {
                     setKeyMap(
                       keyMap.map((act) => {
-                        console.log("delete key", a);
-                        console.log(keyMap);
+                  
                         if (a.name == act.name) {
                           return {
                             name: act.name,
                             hotkey: "",
-                            func: act.func,
+                            funcname: act.funcname,
                           };
                         } else {
                           return act;
