@@ -113,8 +113,7 @@ export const HotkeyPage = ({ keyMap, setKeyMap }) => {
       {needHelp ? (
         <div>
           <p>
-            Use this page to change or set up hotkeys for actions you created on
-            the obs page
+            Use this page to change or set up hotkeys for actions you created on the Trigger Events page.
           </p>
         </div>
       ) : null}
