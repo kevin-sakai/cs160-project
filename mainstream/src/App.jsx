@@ -49,7 +49,7 @@ function App() {
       })}
 
       {location.pathname === "/notepad-overlay" ? null : <Navbar />}
-      <div>{notePage}</div>
+      <div>{notes.length}</div>
       <Routes>
         <Route path="/" element={<HomePage />} />
 

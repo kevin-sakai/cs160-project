@@ -63,6 +63,7 @@ export const HotkeyPage = ({ keyMap, setKeyMap }) => {
 
         <button
           onClick={() => {
+            console.log(a, selectedOption);
             setKeyMap(
               keyMap.map((a) => {
                 if (a.name == selectedOption) {
@@ -94,7 +95,7 @@ export const HotkeyPage = ({ keyMap, setKeyMap }) => {
                   onClick={() => {
                     setKeyMap(
                       keyMap.map((act) => {
-                        console.log("delete key", a)
+                        console.log("delete key", a);
                         console.log(keyMap);
                         if (a.name == act.name) {
                           return {
@@ -105,7 +106,6 @@ export const HotkeyPage = ({ keyMap, setKeyMap }) => {
                         } else {
                           return act;
                         }
-                        
                       })
                     );
                   }}
