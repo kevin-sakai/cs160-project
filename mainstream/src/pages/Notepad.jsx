@@ -1,36 +1,11 @@
 import { useState, useEffect } from 'react';
 import './Notepad.css';
 import { updateCurrentNote, updateNotes, addPage, changePage, deletePage, storeCurrentNote } from '../util/NoteOperations';
-import { getNextPart } from '../util/StoryGenerator';
+import { getNextPart, getSuggestion } from '../util/StoryGenerator';
 import { Link } from "react-router-dom"
 
 const NUM_TEXT_ROWS = 15;
 const HISTORY_MAX = 5;
-
-const daysOfWeek = [
-  "Sunday",
-  "Monday",
-  "Tuesday",
-  "Wednesday",
-  "Thursday",
-  "Friday",
-  "Saturday",
-];
-
-const months = [
-  "January",
-  "February",
-  "March",
-  "April",
-  "May",
-  "June",
-  "July",
-  "August",
-  "September",
-  "October",
-  "November",
-  "December",
-];
 
 // key: pagenum
 // {date: <date last modified>, text: <note text>}
@@ -42,22 +17,24 @@ export default function Notepad({ notes, setNotes, noteText, setNoteText, notePa
     "edit": {
       label: "Create Notes",
       elem: <NoteEditor
-          notes={notes}
-          setNotes={setNotes}
-          noteText={noteText}
-          setNoteText={setNoteText}
-          notePage={notePage}
-          setNotePage={setNotePage} />,
+              notes={notes}
+              setNotes={setNotes}
+              noteText={noteText}
+              setNoteText={setNoteText}
+              notePage={notePage}
+              setNotePage={setNotePage} />,
     },
     "story": {
       label: "Generate A Story",
       elem: <NoteStory
-          noteText={noteText}
-          setNoteText={setNoteText} />,
+              noteText={noteText}
+              setNoteText={setNoteText} />,
     },
     "suggest": {
       label: "Get Suggestions",
-      elem: null,
+      elem: <NoteSuggestions
+              noteText={noteText}
+              setNoteText={setNoteText} />,
     },
   };
 
@@ -72,11 +49,12 @@ export default function Notepad({ notes, setNotes, noteText, setNoteText, notePa
             key={tabId}
             tabId={tabId}
             tabLabel={label}
+            currentTab={currentTab}
             setCurrentTab={setCurrentTab} />
         ))}
       </div>
       {tabs[currentTab].elem}
-      <Link to='/notepad-overlay'><li>Open Overlay</li></Link>
+      <Link id="overlay-link" to='/notepad-overlay'>Open Overlay</Link>
     </div>
   );
 }
@@ -95,7 +73,7 @@ function NoteEditor({ notes, setNotes, noteText, setNoteText, notePage, setNoteP
   }, [notePage, notes]);
 
   return (
-    <div id="notepad-text-entry">
+    <div id="notepad-tab-area">
       <textarea
         value={noteText}
         onChange={(e) => updateCurrentNote(setNoteText, e.target.value)}
@@ -116,16 +94,15 @@ function NoteEditor({ notes, setNotes, noteText, setNoteText, notePage, setNoteP
           className="notepad-page-button"
           onClick={() => deletePage(notes, setNotes, notePage, setNotePage)}>Delete</button>
       </div>
-      <h2>Page {notePage}</h2>
-      <h1>{notes[notePage].date}</h1>
+      <h2>Page {notePage + 1}/{notes.length}</h2>
+      <h2>{notes[notePage].date}</h2>
     </div>
   );
 }
 
-function NotepadTab({ tabId, tabLabel, setCurrentTab }) {
-  console.log(tabLabel);
+function NotepadTab({ tabId, tabLabel, currentTab, setCurrentTab }) {
   return (
-    <button className="notepad-tab" onClick={() => setCurrentTab(tabId)}>
+    <button className={tabId === currentTab ? "notepad-tab active" : "notepad-tab"} onClick={() => setCurrentTab(tabId)}>
       {tabLabel}
     </button>
   );
@@ -180,8 +157,68 @@ function NoteStory({ noteText, setNoteText }) {
   }, []);
 
   return (
-    <div id="notepad-text-entry">
+    <div id="notepad-tab-area">
       <textarea
+        className="no-input"
+        tabIndex={-1}
+        value={noteText}
+        rows={NUM_TEXT_ROWS}
+        readOnly>
+      </textarea>
+      <label htmlFor="theme-input">Theme:</label>
+      <input type="text" name="theme-input" placeholder="Enter theme..." onChange={(e) => setTheme(e.target.value)} />
+    </div>
+  );
+}
+
+function NoteSuggestions({ noteText, setNoteText }) {
+  const typingSpeed = 25;
+
+  const [textBuffer, setTextBuffer] = useState("");
+  const [msgBuffer, setMsgBuffer] = useState([]);
+  const [suggestions, setSuggestions] = useState(null);
+
+  useEffect(() => {
+    setNoteText("");
+
+    let i = 0;
+    const typingInterval = setInterval(() => {
+      if (i < textBuffer.length) {
+        const nextChar = textBuffer[i];
+        setNoteText((prev) => prev + nextChar);
+        i++;
+      } else {
+        clearInterval(typingInterval);
+      }
+    }, typingSpeed);
+
+    return () => clearInterval(typingInterval);
+  }, [textBuffer]);
+
+  useEffect(() => {
+    storeCurrentNote(noteText);
+  }, [noteText]);
+
+  async function sendSuggestionRequest(msgBuf, setSuggest) {
+    const messages = formatMessages(msgBuf);
+    try {
+      const response = await getSuggestion(messages);
+      const parsedResponse = JSON.parse(response);
+      setSuggest(parsedResponse);
+      console.log(parsedResponse);
+      setMsgBuffer([]);
+    } catch (e) {
+      console.log(e);
+    }
+  }
+
+  return (
+    <div id="notepad-tab-area">
+      <button
+        onClick={() => {sendSuggestionRequest(msgBuffer, setSuggestions)}}>Generate!</button>
+      <textarea
+        className="no-input"
+        tabIndex={-1}
         value={noteText}
         rows={NUM_TEXT_ROWS}
         readOnly>
@@ -193,7 +230,7 @@ function NoteStory({ noteText, setNoteText }) {
 }
 
 function formatMessages(msgBuffer) {
-  return msgBuffer.map((msg, index) => `Message ${index + 1}: ${msg}`).join("\n");
+  return msgBuffer ? msgBuffer.map((msg, index) => `Message ${index + 1}: ${msg}`).join("\n") : "";
 }
 
 function updateHistory(setHistory, nextChunk) {
