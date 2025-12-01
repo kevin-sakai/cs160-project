@@ -91,7 +91,7 @@ function App() {
       })}
 
       {location.pathname === "/notepad-overlay" ? null : <Navbar />}
- <div>total notepad pages:{notes.length}</div>
+
       <Routes>
         <Route path="/" element={<HomePage />} />
 

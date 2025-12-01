@@ -74,7 +74,7 @@ export default function Notepad({ notes, setNotes, noteText, setNoteText, notePa
               className="notepad-page-button"
               onClick={() => deletePage(notes, setNotes, notePage, setNotePage)}>Delete</button>
           </div>
-          <h2>Page {notePage}</h2>
+          <h2>Page {notePage}/{notes.length}</h2>
           <h1>{noteDate}</h1>
         </div>
         <Link to='/notepad-overlay'><li>Open Overlay</li></Link>
