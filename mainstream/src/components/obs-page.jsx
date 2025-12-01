@@ -133,13 +133,7 @@ function ObsPage() {
             ))}
             </ul>
 
-            <button
-            type="button"
-            onClick={handleSwitchScene}
-            disabled={!currentScene}
-            >
-            Switch to selected scene
-            </button>
+
         </section>
 
         <section>
