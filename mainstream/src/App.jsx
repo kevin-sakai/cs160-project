@@ -1,4 +1,5 @@
-import { useEffect, useState } from "react";
+
+import { useState, useEffect, useRef } from "react";
 import reactLogo from "./assets/react.svg";
 import viteLogo from "/vite.svg";
 import NotepadPage from "./pages/Notepad";
@@ -22,6 +23,10 @@ function App() {
   const [notes, setNotes] = useState(getNotesState);
   const [noteText, setNoteText] = useState("");
   const [notePage, setNotePage] = useState(0);
+  const notesRef = useRef(notes);
+  const noteTextRef = useRef(noteText);
+  const notePageRef = useRef(notePage);
+
 
   // Hotkey mapping start block – new trigger actions can go here
 
@@ -59,7 +64,19 @@ function App() {
     setItem("keyMap", keyMap);
   }, [keyMap]);
 
+    // Ref updates for hotkey functions
+  useEffect(() => {
+    notesRef.current = notes;
+  }, [notes]);
+  useEffect(() => {
+    noteTextRef.current = noteText;
+  }, [noteText]);
+  useEffect(() => {
+    notePageRef.current = notePage;
+  }, [notePage]);
+
   // Hotkey mappings end block
+
 
   const location = useLocation();
 
@@ -74,7 +91,7 @@ function App() {
       })}
 
       {location.pathname === "/notepad-overlay" ? null : <Navbar />}
- 
+ <div>total notepad pages:{notes.length}</div>
       <Routes>
         <Route path="/" element={<HomePage />} />
 
