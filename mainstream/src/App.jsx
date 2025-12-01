@@ -29,7 +29,7 @@ function App() {
       hotkey: "alt+p",
       func: () => {
         addPage(notes, setNotes, notePage, setNotePage, noteText);
-        // console.log("Added new note page");
+        console.log("Added new note page");
       },
     },
   ]);
@@ -38,10 +38,8 @@ function App() {
 
   const location = useLocation();
 
-  // useHotkeys("alt+p", () => {
-  //   addPage(notes, setNotes, notePage, setNotePage, noteText);
-  //   console.log("Added new note page");
-  // });
+  // useHotkeys(keyMap[0].hotkey, keyMap[0].func);
+  // console.log("banana", keyMap[0].hotkey, keyMap[0].func)
 
   return (
     <div id="app">
