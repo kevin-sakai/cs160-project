@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import "./Hotkeys.css";
 import { Link } from "react-router-dom";
 import help from "../../assets/help.png";
@@ -15,6 +15,16 @@ export const HotkeyPage = ({ keyMap, setKeyMap }) => {
     setNeedHelp((prevValue) => !prevValue);
   };
 
+  useEffect(()=> {
+    document.addEventListener('keydown', detectKeyDown, true)
+  },[])
+
+  const detectKeyDown = (e) => {
+    console.log("clicked key: ", e.key)
+    if (e.key === " "){
+         console.log("clicked key: Spacebar",)
+    }
+  }
 
   return (
     <div id="hotkey-page">
@@ -41,15 +51,16 @@ export const HotkeyPage = ({ keyMap, setKeyMap }) => {
                 <option>{a.name}</option>
               </div>
             );
-          })}
+          })} 
         </select>
         <p>Type the key combination you'd like to set for {selectedOption}</p>
 
         <input
-          placeholder="key"
+          placeholder="type key combination"
           onChange={(e) => {
             setSelectedKey(e.target.value);
           }}
+          
         ></input>
 
         <button
