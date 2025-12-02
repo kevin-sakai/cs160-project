@@ -2,30 +2,21 @@ import { useEffect, useState } from "react";
 import "./Hotkeys.css";
 import { Link } from "react-router-dom";
 import help from "../../assets/help.png";
-import { useHotkeys } from "react-hotkeys-hook";
+import { useHotkeys, useRecordHotkeys } from "react-hotkeys-hook";
 import { func } from "prop-types";
 
 export const HotkeyPage = ({ keyMap, setKeyMap }) => {
-
   const [selectedOption, setSelectedOption] = useState(keyMap[0].name);
   const [selectedKey, setSelectedKey] = useState("");
   const [needHelp, setNeedHelp] = useState(false);
+  const [recordedKeys, setRecordedKeys] = useState("");
+  const [isDone, setIsDone] = useState(false);
 
   const clickHelp = () => {
     setNeedHelp((prevValue) => !prevValue);
   };
 
-  useEffect(()=> {
-    document.addEventListener('keydown', detectKeyDown, true)
-  },[])
-
-  const detectKeyDown = (e) => {
-    console.log("clicked key: ", e.key)
-    if (e.key === " "){
-         console.log("clicked key: Spacebar",)
-    }
-  }
-
+  const [keys, { start, stop, isRecording }] = useRecordHotkeys();
   return (
     <div id="hotkey-page">
       <div id="title">
@@ -44,6 +35,7 @@ export const HotkeyPage = ({ keyMap, setKeyMap }) => {
           onChange={(e) => {
             setSelectedOption(e.target.value);
           }}
+          value = {selectedOption}
         >
           {keyMap.map((a) => {
             return (
@@ -51,28 +43,39 @@ export const HotkeyPage = ({ keyMap, setKeyMap }) => {
                 <option>{a.name}</option>
               </div>
             );
-          })} 
+          })}
         </select>
         <p>Type the key combination you'd like to set for {selectedOption}</p>
 
         <input
           placeholder="type key combination"
           onChange={(e) => {
-            setSelectedKey(e.target.value);
+            // setSelectedKey(e.target.value);
+            setRecordedKeys(Array.from(keys).join(" + "));
+            console.log("input changing: ", recordedKeys, e.target.value);
           }}
-          
+          onClick={start}
+          value={Array.from(keys).join(" + ")}
         ></input>
-
         <button
           onClick={() => {
-            
+            stop();
+            setRecordedKeys(Array.from(keys).join(" + "));
+            setIsDone(true)
+          }}
+        >
+          done
+        </button>
+        {isDone ? <button
+          onClick={() => {
+            // setRecordedKeys(Array.from(keys).join(" + "));
             setKeyMap(
               keyMap.map((a) => {
                 console.log(a.name, selectedOption);
                 if (a.name == selectedOption) {
                   return {
                     name: selectedOption,
-                    hotkey: selectedKey,
+                    hotkey: recordedKeys,
                     funcname: a.funcname,
                   };
                 } else {
@@ -80,11 +83,21 @@ export const HotkeyPage = ({ keyMap, setKeyMap }) => {
                 }
               })
             );
+
+            console.log("clicked save: ", recordedKeys);
+            setIsDone(!isDone);
           }}
         >
           Save
-        </button>
+        </button> : null}
       </div>
+      {/* <div>
+        <p>Is recording: {isRecording ? "yes" : "no"}</p>
+        <p>Recorded keys: {Array.from(keys).join(" + ")}</p>
+        <br />
+        <button onClick={start}>Record</button>
+        <button onClick={stop}>Stop</button>
+      </div> */}
 
       <div id="hotkey-display-list">
         {" "}
@@ -98,7 +111,6 @@ export const HotkeyPage = ({ keyMap, setKeyMap }) => {
                   onClick={() => {
                     setKeyMap(
                       keyMap.map((act) => {
-                  
                         if (a.name == act.name) {
                           return {
                             name: act.name,
@@ -124,7 +136,8 @@ export const HotkeyPage = ({ keyMap, setKeyMap }) => {
       {needHelp ? (
         <div>
           <p>
-            Use this page to change or set up hotkeys for actions you created on the Trigger Events page.
+            Use this page to change or set up hotkeys for actions you created on
+            the Trigger Events page.
           </p>
         </div>
       ) : null}
