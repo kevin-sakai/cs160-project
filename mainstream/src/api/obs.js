@@ -73,3 +73,13 @@ export async function switchScene(sceneName) {
   }
   return await res.json();
 }
+
+export async function getInsights() {
+  const res = await fetch(`${BASE_URL}/insights`);
+  if (!res.ok) {
+    const error = await res.json().catch(() => ({}));
+    throw new Error(error.error || 'Failed to get insights');
+  }
+  return await res.json();
+}
+
