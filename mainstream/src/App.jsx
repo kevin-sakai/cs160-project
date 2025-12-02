@@ -1,4 +1,3 @@
-
 import { useState, useEffect, useRef } from "react";
 import reactLogo from "./assets/react.svg";
 import viteLogo from "/vite.svg";
@@ -27,7 +26,6 @@ function App() {
   const noteTextRef = useRef(noteText);
   const notePageRef = useRef(notePage);
 
-
   // Hotkey mapping start block – new trigger actions can go here
 
   const [handlers, setHandlers] = useState({
@@ -41,17 +39,18 @@ function App() {
   });
   const [keyMap, setKeyMap] = useState(() => {
     const item = getItem("keyMap");
-    console.log(item)
+    console.log(item);
     // const item = null;
     return (
       item || [
         {
-          name: "addNotePage",
+          name: "Add Notepad page",
           hotkey: "alt+p",
           funcname: "addNotePage",
         },
+
         {
-          name: "action 2",
+          name: "Action 2",
           hotkey: "b",
           funcname: "action2",
         },
@@ -64,7 +63,7 @@ function App() {
     setItem("keyMap", keyMap);
   }, [keyMap]);
 
-    // Ref updates for hotkey functions
+  // Ref updates for hotkey functions
   useEffect(() => {
     notesRef.current = notes;
   }, [notes]);
@@ -77,7 +76,6 @@ function App() {
 
   // Hotkey mappings end block
 
-
   const location = useLocation();
 
   // useHotkeys(keyMap[0].hotkey, keyMap[0].func);
@@ -87,7 +85,12 @@ function App() {
     <div id="app">
       {keyMap.map((a) => {
         console.log(a.funcname, a.hotkey);
-        return <HotkeyItem hotkey={a.hotkey} func={handlers[a.funcname]}></HotkeyItem>;
+        return (
+          <HotkeyItem
+            hotkey={a.hotkey}
+            func={handlers[a.funcname]}
+          ></HotkeyItem>
+        );
       })}
 
       {location.pathname === "/notepad-overlay" ? null : <Navbar />}
