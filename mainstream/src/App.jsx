@@ -39,8 +39,8 @@ function App() {
   });
   const [keyMap, setKeyMap] = useState(() => {
     const item = getItem("keyMap");
-    console.log(item);
-    // const item = null;
+  
+    //const item = null;
     return (
       item || [
         {
@@ -59,7 +59,7 @@ function App() {
   });
 
   useEffect(() => {
-    console.log("effect applied saving new state");
+
     setItem("keyMap", keyMap);
   }, [keyMap]);
 
@@ -78,13 +78,12 @@ function App() {
 
   const location = useLocation();
 
-  // useHotkeys(keyMap[0].hotkey, keyMap[0].func);
-  // console.log("banana", keyMap[0].hotkey, keyMap[0].func)
+
 
   return (
     <div id="app">
       {keyMap.map((a) => {
-        console.log(a.funcname, a.hotkey);
+ 
         return (
           <HotkeyItem
             hotkey={a.hotkey}
