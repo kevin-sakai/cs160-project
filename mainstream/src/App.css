@@ -6,6 +6,7 @@
   height: 100vh;
   background-color: var(--elem-color);
   font-family: lexend;
+  color:var(--text-color-dark)
 }
 
 
@@ -61,4 +62,7 @@ button {
 button:hover {
   background-color: var(--highlight-color);
   color: var(--text-color-dark)
+}
+input {
+  border: none;
 }
