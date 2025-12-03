@@ -11,8 +11,11 @@ input {
   border: none;
   padding: 10px;
   font-family: inherit;
-  background-color: var(--highlight-color);
-  color: var(--text-color-dark);
+  background-color: var(--mid-color);
+  color: var(--text-color-light);
+}
+input::placeholder {
+  color: var(--highlight--text-color);
 }
 #select-box {
   border-radius: 10px;
@@ -21,8 +24,14 @@ input {
   width: 220px;
   height: 45px;
   font-family: inherit;
-  background-color: var(--highlight-color);
-  color: var(--text-color-dark);
+  background-color: var(--mid-color);
+  color: var(--text-color-light);
+}
+option:hover{
+  background-color: aliceblue;
+}
+option {
+    border: none;
 }
 .opt {
   border-radius: 20px;
@@ -31,6 +40,7 @@ input {
 }
 .optdiv {
   border-radius: 20px;
+  border: none;
 }
 .butt {
   font-family: comfortaa, 400;
@@ -94,7 +104,9 @@ select {
     background-color: var(--elem-color);
   }
 }
-
+#hotkey-dispay-list button:hover {
+  background-color: inherit;
+}
 .hotkeylist-action {
   background-color: var(--mid-color);
   font-family: comfortaa, 400;
