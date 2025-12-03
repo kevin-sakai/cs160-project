@@ -11,8 +11,8 @@ input {
   border: none;
   padding: 10px;
   font-family: inherit;
-  background-color: var(--mid-color);
-  color: var(--text-color-light);
+  background-color: var(--highlight-color);
+  color: var(--text-color-dark);
 }
 input::placeholder {
   color: var(--highlight-color);
@@ -24,8 +24,8 @@ input::placeholder {
   width: 220px;
   height: 45px;
   font-family: inherit;
-  background-color: var(--mid-color);
-  color: var(--highlight-color);
+  background-color: var(--highlight-color);
+  color: var(--text-color-dark);
 }
 option:hover {
   background-color: aliceblue;
