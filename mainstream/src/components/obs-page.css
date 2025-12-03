@@ -36,7 +36,7 @@
 
   padding: 0.6rem 1.2rem;
   border-radius: 8px;
-
+  color:var(--text-color-dark);
   cursor: pointer;
   transition: background 0.15s;
   margin-bottom: 0.5rem;
