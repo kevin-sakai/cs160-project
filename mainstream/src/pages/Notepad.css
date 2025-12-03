@@ -4,7 +4,7 @@
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-
+  height: 100vh;
   flex: 1;
 
 }
@@ -37,7 +37,7 @@
 
   }
   textarea::placeholder{
-    color:var(--text-color-light)
+    color:var(--highlight-color)
   }
   textarea.no-input {
     caret-color: transparent;
@@ -89,7 +89,7 @@
 
 .generate-button {
   font-family: inherit;
-  background-color: var(--elem-color);
+  background-color: var(--mid-color);
   border-radius: 0.5rem;
   padding: 0.25rem 0.5rem 0.25rem 0.5rem;
   cursor: pointer;
