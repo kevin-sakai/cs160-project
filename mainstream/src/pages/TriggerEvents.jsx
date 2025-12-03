@@ -1,5 +1,6 @@
 // src/pages/TriggerEvents.jsx
 import React, { useState, useEffect } from "react";
+import { useLocation } from "react-router-dom";
 import "./TriggerEvents.css";
 
 import TimedEventsConfig, {
@@ -36,8 +37,14 @@ const TRIGGER_TYPES = [
   { id: "sentiment", label: "Chat Sentiment" },
 ];
 
-function TriggerEventsPage() {
-  const [selectedTrigger, setSelectedTrigger] = useState("timed");
+function TriggerEventsPage({ registerDoneHandler }) {
+  const location = useLocation();
+  // If a hotkey opened this page, App may send { state: { initialTrigger: "timed" | ... } }
+  const initialTriggerFromNav = location.state?.initialTrigger || null;
+
+  const [selectedTrigger, setSelectedTrigger] = useState(
+    initialTriggerFromNav || "timed"
+  );
   const [step, setStep] = useState("config"); // "config" | "overlays"
   const [errorMsg, setErrorMsg] = useState("");
 
@@ -142,7 +149,7 @@ function TriggerEventsPage() {
     setErrorMsg("");
   };
 
-  // Called when the user clicks "Done" to actually create the overlay + trigger
+  // Called when the user clicks "Done" (or when hotkey requests it)
   const handleCreateTriggerWithOverlay = async () => {
     setErrorMsg("");
 
@@ -187,7 +194,7 @@ function TriggerEventsPage() {
 
       // Optionally reset overlay selection
       setSelectedOverlayColor(null);
-      // You could also move back to config here if you want:
+      // You could also move back to config here if desired:
       // setStep("config");
     } catch (err) {
       console.error("Failed to create OBS overlay:", err);
@@ -196,6 +203,46 @@ function TriggerEventsPage() {
       );
     }
   };
+
+  // --- Register with App: let hotkeys "click" Done ---
+  useEffect(() => {
+    if (!registerDoneHandler) return;
+
+    // App will call this with a triggerType string (or null)
+    const handlerFromApp = (triggerTypeFromHotkey) => {
+      // Only press Done if we're on the overlay step
+      if (step !== "overlays") {
+        console.log(
+          "Hotkey requested Done, but TriggerEvents is not on overlays step."
+        );
+        return;
+      }
+
+      // If hotkey specified a trigger type, it must match the currently selected trigger
+      if (
+        triggerTypeFromHotkey &&
+        triggerTypeFromHotkey !== selectedTrigger
+      ) {
+        console.log(
+          "Hotkey requested Done for trigger type",
+          triggerTypeFromHotkey,
+          "but current selectedTrigger is",
+          selectedTrigger,
+          "- ignoring."
+        );
+        return;
+      }
+
+      // Otherwise, pretend the user clicked Done
+      console.log(
+        "Hotkey matched current trigger type; invoking Done for",
+        selectedTrigger
+      );
+      handleCreateTriggerWithOverlay();
+    };
+
+    registerDoneHandler(handlerFromApp);
+  }, [registerDoneHandler, step, selectedTrigger, selectedOverlayColor, selectedSceneName, status]);
 
   // --- OBS scene handlers ---
 
