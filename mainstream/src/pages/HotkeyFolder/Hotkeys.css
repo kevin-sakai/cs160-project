@@ -10,6 +10,9 @@ input {
   height: 20px;
   border: none;
   padding: 10px;
+  font-family: inherit;
+  background-color: var(--highlight-color);
+  color: var(--text-color-dark);
 }
 #select-box {
   border-radius: 10px;
@@ -17,7 +20,9 @@ input {
   border: none;
   width: 220px;
   height: 45px;
-  font-family: comfortaa, 400;
+  font-family: inherit;
+  background-color: var(--highlight-color);
+  color: var(--text-color-dark);
 }
 .opt {
   border-radius: 20px;
@@ -28,8 +33,9 @@ input {
   border-radius: 20px;
 }
 .butt {
-    font-family: comfortaa, 400;
-    background-color: var(--mid-color);
+  font-family: comfortaa, 400;
+  background-color: var(--mid-color);
+  padding: 10px 20px 10px 20px;
 }
 #title {
   display: flex;

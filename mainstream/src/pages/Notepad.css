@@ -27,6 +27,14 @@
     font-family: inherit;
     font-size: 1.25rem;
     box-sizing: border-box;
+    background-color: var(--mid-color);
+    color: var(--text-color-light);
+    border-radius: 10px;
+    padding: 20px;
+
+  }
+  textarea::placeholder{
+    color:var(--text-color-light)
   }
   textarea.no-input {
     caret-color: transparent;
@@ -50,6 +58,9 @@
   border-radius: 0.5rem;
   padding: 0.25rem 0.5rem 0.25rem 0.5rem;
   cursor: pointer;
+  background-color: var(--mid-color);
+  padding: 10px 20px 10px 20px;
+   border-radius: 20px;
 }
 
 .notepad-page-button:hover {
@@ -61,8 +72,11 @@
   font-family: inherit;
   border-radius: 0.5rem;
   color: black;
-  background-color: var(--elem-color);
+  background-color: var(--mid-color);
   cursor: pointer;
+  color: var(--text-color-light);
+  padding: 10px 20px 10px 20px;
+  border-radius: 20px;
 }
 
 .notepad-tab.active {
@@ -72,8 +86,9 @@
 
 #overlay-link {
   font-size: 1.25rem;
-  background-color: var(--elem-color);
-  color: black;
-  border-radius: 0.25rem;
-  padding: 0.25rem;
+  background-color: var(--mid-color);
+  color: var(--text-color-light);
+  border-radius: 0.8rem;
+  padding: 10px 20px 10px 20px;
+   border-radius: 30px;
 }
