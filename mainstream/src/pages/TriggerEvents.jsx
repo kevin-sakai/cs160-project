@@ -51,11 +51,11 @@ function TriggerEventsPage({ registerDoneHandler }) {
 
   // use the shared OBS connection
   const {
-    status,
-    error: obsError,
-    getScenes: obsGetScenes,
-    createScene,
-    createColorSource,
+    status, // data type: 'disconnected' | 'connecting' | 'connected'
+    error: obsError, // data type: Error | null
+    getScenes: obsGetScenes, // function
+    createScene, // function
+    createColorSource, // function
   } = useObsConnection();
 
   // OBS scenes and selection
