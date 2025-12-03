@@ -15,9 +15,13 @@
 
 #root {
   width: 100%;
+   background-image: url(./assets/waves.svg);
+background-repeat: no-repeat;
+background-position: bottom;
 }
 
 body {
   margin: 0;
   display: flex;
+  
 }
