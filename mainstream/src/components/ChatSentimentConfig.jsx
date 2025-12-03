@@ -1,4 +1,4 @@
-// components/trigger-events/ChatSentimentConfig.jsx
+// components/ChatSentimentConfig.jsx
 import React from "react";
 import { BaseTriggerSettings } from "./BaseTriggerSettings";
 
@@ -7,13 +7,31 @@ export function ChatSentimentConfig({
   onBaseSettingsChange,
   specificSettings,
   onSpecificChange,
+  onContinue,     // <-- ADDED
+  setError,       // <-- ADDED
 }) {
   const updateSpecific = (field, value) => {
+    setError?.(""); // clear errors when user interacts
     onSpecificChange({ ...specificSettings, [field]: value });
   };
 
+  const handleNext = () => {
+    // Basic required validation
+    if (!specificSettings.target || specificSettings.target.trim().length === 0) {
+      setError?.("Please enter a target sentiment / word / phrase / theme before continuing.");
+      return;
+    }
+
+    if (!specificSettings.minUsers || Number(specificSettings.minUsers) <= 0) {
+      setError?.("Minimum number of chatters must be at least 1.");
+      return;
+    }
+
+    if (onContinue) onContinue();
+  };
+
   return (
-    <>
+    <div className="trigger-card">
       <h2>Chat Sentiment & Themes</h2>
       <p>
         Use an LLM to analyze chat sentiment or themes, and trigger overlays
@@ -76,18 +94,28 @@ export function ChatSentimentConfig({
             onChange={(e) => updateSpecific("requireApproval", e.target.value)}
           >
             <option value="no">No, trigger automatically</option>
-            <option value="yes">
-              Yes, show me a notification to approve first
-            </option>
+            <option value="yes">Yes, show me a notification to approve first</option>
           </select>
         </div>
       </div>
 
+      {/* Common shared settings */}
       <h3 style={{ marginTop: "1.5rem" }}>Common settings</h3>
       <BaseTriggerSettings
         settings={baseSettings}
         onChange={onBaseSettingsChange}
       />
-    </>
+
+      {/* NEXT BUTTON */}
+      <div className="trigger-actions" style={{ marginTop: "1.5rem" }}>
+        <button
+          onClick={handleNext}
+          type="button"
+          className="trigger-next-button"
+        >
+          Next: Choose Overlay
+        </button>
+      </div>
+    </div>
   );
 }
