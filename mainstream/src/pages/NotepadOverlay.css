@@ -1,0 +1,25 @@
+.notepad-overlay-bg {
+  background-color: var(--transparent);
+}
+
+.notepad-overlay-svg {
+  background-image: url("../assets/notepad_lined.svg");
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center;
+  padding-top: 390px;
+  padding-left: 180px;
+  background-size: 500px;
+  width: 500px;
+  aspect-ratio: 1522/1974;
+}
+
+.notepad-overlay-text {
+  color: var(--elem-color);
+  font-size: 1.5rem;
+  line-height: 2.05;
+  width: 360px;
+  font-family: "Patrick Hand", cursive;
+  font-weight: 400;
+  font-style: normal;
+}

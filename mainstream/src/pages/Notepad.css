@@ -14,16 +14,27 @@
   width: 100%;
 }
 
-#notepad-text-entry {
+#notepad-tab-area {
   display: flex;
   width: 100%;
   flex-direction: column;
   gap: 0.5rem;
+  padding: 1rem;
+  border-radius: 0.5rem;
 
   textarea {
     width: 100%;
     font-family: inherit;
     font-size: 1.25rem;
+    box-sizing: border-box;
+  }
+  textarea.no-input {
+    caret-color: transparent;
+    pointer-events: none;
+  }
+  h2 {
+    margin-top: 0;
+    margin-bottom: 0;
   }
 }
 
@@ -34,8 +45,35 @@
 }
 
 .notepad-page-button {
-  font-size: 1.25rem;
-  background-color: gray;
+  font-family: inherit;
+  background-color: var(--elem-color);
   border-radius: 0.5rem;
   padding: 0.25rem 0.5rem 0.25rem 0.5rem;
+  cursor: pointer;
+}
+
+.notepad-page-button:hover {
+  background-color: var(--highlight-color);
+  color: var(--text-color-dark);
+}
+
+.notepad-tab {
+  font-family: inherit;
+  border-radius: 0.5rem;
+  color: black;
+  background-color: var(--elem-color);
+  cursor: pointer;
+}
+
+.notepad-tab.active {
+  background-color: var(--highlight-color);
+  color: var(--text-color-dark);
+}
+
+#overlay-link {
+  font-size: 1.25rem;
+  background-color: var(--elem-color);
+  color: black;
+  border-radius: 0.25rem;
+  padding: 0.25rem;
 }
