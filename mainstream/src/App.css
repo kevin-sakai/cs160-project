@@ -6,6 +6,7 @@
   height: 100vh;
   background-color: var(--elem-color);
   font-family: lexend;
+  color:var(--text-color-dark)
 }
 
 
