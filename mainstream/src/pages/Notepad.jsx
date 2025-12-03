@@ -109,12 +109,21 @@ function NotepadTab({ tabId, tabLabel, currentTab, setCurrentTab }) {
 }
 
 function NoteStory({ noteText, setNoteText }) {
-  const typingSpeed = 25;
+  const typingSpeed = 50;
 
   const [textBuffer, setTextBuffer] = useState("");
   const [storyHistory, setStoryHistory] = useState([]);
   const [theme, setTheme] = useState("");
   const [msgBuffer, setMsgBuffer] = useState([]);
+
+  const tmpMsgBuffer = [
+    "What's up?",
+    "I just beat this game yesterday, how far are you?",
+    "I can't believe you survived that attack...",
+    "Huh what game is this??",
+    "Actually you're not using that weapon correctly",
+    "You're hilarious lol",
+  ];
 
   useEffect(() => {
     setNoteText("");
@@ -138,23 +147,27 @@ function NoteStory({ noteText, setNoteText }) {
   }, [noteText]);
 
   useEffect(() => {
-    const sendStoryRequest = async () => {
-      if (!theme || !msgBuffer) {
-        return;
-      }
-      const mergedHistory = storyHistory.join(" ");
-      const history = mergedHistory ? mergedHistory : "None, the story begins here.";
-      const messages = formatMessages(msgBuffer);
-      try {
-        const response = await getNextPart(theme, history, messages);
-        setTextBuffer(response);
-        updateHistory(setStoryHistory, response);
-        setMsgBuffer([]);
-      } catch (e) {
-        console.log(e);
-      }
+    if (noteText.length > 300) {
+      setNoteText(prev => "..." + prev.slice(43));
     }
-  }, []);
+  }, [noteText]);
+
+  const sendStoryRequest = async () => {
+    if (!theme || !msgBuffer) {
+      return;
+    }
+    const mergedHistory = storyHistory.join(" ");
+    const history = mergedHistory ? mergedHistory : "None, the story begins here.";
+    const messages = formatMessages(msgBuffer);
+    try {
+      const response = await getNextPart(theme, history, messages);
+      setTextBuffer(response);
+      updateHistory(setStoryHistory, response);
+      setMsgBuffer([]);
+    } catch (e) {
+      console.log(e);
+    }
+  }
 
   return (
     <div id="notepad-tab-area">
@@ -167,6 +180,10 @@ function NoteStory({ noteText, setNoteText }) {
       </textarea>
       <label htmlFor="theme-input">Theme:</label>
       <input type="text" name="theme-input" placeholder="Enter theme..." onChange={(e) => setTheme(e.target.value)} />
+      <button className="generate-button" onClick={() => {
+        setMsgBuffer(tmpMsgBuffer);
+        sendStoryRequest();
+      }}>Generate</button>
     </div>
   );
 }

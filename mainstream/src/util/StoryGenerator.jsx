@@ -1,4 +1,4 @@
-const REAGENT_STORY_KEY = import.meta.env.VITE_REAGENT_KEY;
+const REAGENT_STORY_KEY = import.meta.env.VITE_REAGENT_STORY_KEY;
 const REAGENT_SUGGEST_KEY = import.meta.env.VITE_REAGENT_SUGGEST_KEY;
 
 export async function getNextPart(theme, history, msg) {
