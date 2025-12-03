@@ -2,30 +2,22 @@ import { useEffect, useState } from "react";
 import "./Hotkeys.css";
 import { Link } from "react-router-dom";
 import help from "../../assets/help.png";
-import { useHotkeys } from "react-hotkeys-hook";
+import { useHotkeys, useRecordHotkeys } from "react-hotkeys-hook";
 import { func } from "prop-types";
 
 export const HotkeyPage = ({ keyMap, setKeyMap }) => {
-
   const [selectedOption, setSelectedOption] = useState(keyMap[0].name);
   const [selectedKey, setSelectedKey] = useState("");
   const [needHelp, setNeedHelp] = useState(false);
+  const [recordedKeys, setRecordedKeys] = useState("");
+  const [isDone, setIsDone] = useState(false);
+  const [isCancel, setIsCancel] = useState(false);
 
   const clickHelp = () => {
     setNeedHelp((prevValue) => !prevValue);
   };
 
-  useEffect(()=> {
-    document.addEventListener('keydown', detectKeyDown, true)
-  },[])
-
-  const detectKeyDown = (e) => {
-    console.log("clicked key: ", e.key)
-    if (e.key === " "){
-         console.log("clicked key: Spacebar",)
-    }
-  }
-
+  const [keys, { start, stop, isRecording }] = useRecordHotkeys();
   return (
     <div id="hotkey-page">
       <div id="title">
@@ -40,91 +32,132 @@ export const HotkeyPage = ({ keyMap, setKeyMap }) => {
       <p>Selected action:</p>
       <div>
         <select
+          id="select-box"
           name="actions"
           onChange={(e) => {
             setSelectedOption(e.target.value);
           }}
+          value={selectedOption}
         >
           {keyMap.map((a) => {
             return (
-              <div key={a.hotkey}>
-                <option>{a.name}</option>
+              <div className="optdiv" key={a.hotkey}>
+                <option className="opt">{a.name}</option>
               </div>
             );
-          })} 
+          })}
         </select>
         <p>Type the key combination you'd like to set for {selectedOption}</p>
 
         <input
-          placeholder="type key combination"
+          placeholder="Begin typing"
           onChange={(e) => {
-            setSelectedKey(e.target.value);
+            // setSelectedKey(e.target.value);
+            setRecordedKeys(Array.from(keys).join(" + "));
           }}
-          
+          onClick={() => {
+            start();
+            setIsCancel(false);
+          }}
+          value={!isCancel ? Array.from(keys).join(" + "): ""}
         ></input>
-
         <button
           onClick={() => {
-            
-            setKeyMap(
-              keyMap.map((a) => {
-                console.log(a.name, selectedOption);
-                if (a.name == selectedOption) {
-                  return {
-                    name: selectedOption,
-                    hotkey: selectedKey,
-                    funcname: a.funcname,
-                  };
-                } else {
-                  return a;
-                }
-              })
-            );
+            stop();
+            setRecordedKeys(Array.from(keys).join(" + "));
+            setIsDone(true);
           }}
         >
-          Save
+          done
         </button>
-      </div>
+        <button
+          onClick={() => {
+            setRecordedKeys("");
+            stop();
+            setIsCancel(true);
+            setIsDone(false);
+          }}
+        >
+          Cancel
+        </button>
+        {isDone && !isCancel ? (
+          <div>
+            <button
+              onClick={() => {
+                // setRecordedKeys(Array.from(keys).join(" + "));
+                setKeyMap(
+                  keyMap.map((a) => {
+                    if (a.name == selectedOption) {
+                      return {
+                        name: selectedOption,
+                        hotkey: recordedKeys,
+                        funcname: a.funcname,
+                      };
+                    } else {
+                      return a;
+                    }
+                  })
+                );
 
-      <div id="hotkey-display-list">
-        {" "}
-        {keyMap.map((a) => {
-          if (a.hotkey != "") {
-            return (
-              <div className="hotkeylist-action" key={a.hotkey}>
-                <div>{a.name}</div>
-                <div>{a.hotkey}</div>
-                <button
-                  onClick={() => {
-                    setKeyMap(
-                      keyMap.map((act) => {
-                  
-                        if (a.name == act.name) {
-                          return {
-                            name: act.name,
-                            hotkey: "",
-                            funcname: act.funcname,
-                          };
-                        } else {
-                          return act;
-                        }
-                      })
-                    );
-                  }}
-                >
-                  X
-                </button>
-              </div>
-            );
-          }
-        })}
+                setRecordedKeys("");
+                setIsDone(!isDone);
+              }}
+            >
+              Save
+            </button>
+          </div>
+        ) : null}
       </div>
+      {/* <div>
+        <p>Is recording: {isRecording ? "yes" : "no"}</p>
+        <p>Recorded keys: {Array.from(keys).join(" + ")}</p>
+        <br />
+        <button onClick={start}>Record</button>
+        <button onClick={stop}>Stop</button>
+      </div> */}
+      {keyMap.length > 0 ? (
+        <div id="hotkey-display-list">
+          {" "}
+          {keyMap.map((a) => {
+            if (a.hotkey != "") {
+              return (
+                <div className="hotkeylist-action" key={a.hotkey}>
+                  <div>{a.name}</div>
+                  <div>{a.hotkey}</div>
+                  <button
+                    onClick={() => {
+                      setKeyMap(
+                        keyMap.map((act) => {
+                          if (a.name == act.name) {
+                            return {
+                              name: act.name,
+                              hotkey: "",
+                              funcname: act.funcname,
+                            };
+                          } else {
+                            return act;
+                          }
+                        })
+                      );
+                    }}
+                  >
+                    X
+                  </button>
+                </div>
+              );
+            }
+          })}
+        </div>
+      ) : (
+        <div id="hotkey-display-list">You have no Hotkeys</div>
+      )}
 
       <img className="helpicon" src={help} onClick={clickHelp} />
       {needHelp ? (
         <div>
           <p>
-            Use this page to change or set up hotkeys for actions you created on the Trigger Events page.
+            Use this page to change or set up hotkeys for actions you created on
+            the Trigger Events page.
           </p>
         </div>
       ) : null}
