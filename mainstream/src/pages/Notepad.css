@@ -70,6 +70,19 @@
   color: var(--text-color-dark);
 }
 
+.generate-button {
+  font-family: inherit;
+  background-color: var(--elem-color);
+  border-radius: 0.5rem;
+  padding: 0.25rem 0.5rem 0.25rem 0.5rem;
+  cursor: pointer;
+}
+
+.generate-button:hover {
+  background-color: var(--highlight-color);
+  color: var(--text-color-dark);
+}
+
 #overlay-link {
   font-size: 1.25rem;
   background-color: var(--elem-color);
