@@ -1,3 +1,4 @@
+// src/App.jsx
 import { useState, useEffect, useRef } from "react";
 import reactLogo from "./assets/react.svg";
 import viteLogo from "/vite.svg";
@@ -26,42 +27,86 @@ function App() {
   const notesRef = useRef(notes);
   const noteTextRef = useRef(noteText);
   const notePageRef = useRef(notePage);
-  const navigate = useNavigate(); 
+  const navigate = useNavigate();
+
+  // --- Signal for TriggerEvents to "click Done" ---
+  // TriggerEventsPage will register a handler here.
+  // App will call requestTriggerEventsDoneClick(triggerType)
+  // when one of the hotkeys fires.
+  const doneClickRequestRef = useRef(null);
+
+  const requestTriggerEventsDoneClick = (triggerType) => {
+    if (typeof doneClickRequestRef.current === "function") {
+      doneClickRequestRef.current(triggerType);
+    } else {
+      console.log(
+        "Done-click handler not registered yet; ignoring request for triggerType:",
+        triggerType
+      );
+    }
+  };
 
   // Hotkey mapping start block – new trigger actions can go here
-
   const [handlers, setHandlers] = useState({
     addNotePage: () => {
-      addPage(notesRef.current, setNotes, notePageRef.current, setNotePage, noteTextRef.current);
+      addPage(
+        notesRef.current,
+        setNotes,
+        notePageRef.current,
+        setNotePage,
+        noteTextRef.current
+      );
       console.log("Added new note page");
     },
     action2: () => {
       console.log("pressed b");
     },
+
+    // Generic open Trigger Events page
     openTriggerEventsPage: () => {
-      //navigate("/TriggerEventsPage");
-      console.log("Navigating to Trigger Events Page");
+      navigate("/TriggerEventsPage");
+      // Hotkey should "click Done" if appropriate
+      requestTriggerEventsDoneClick(null);
     },
+
+    // Timed Events Trigger hotkey
     activateTimedEventsTrigger: () => {
       navigate("/TriggerEventsPage", { state: { initialTrigger: "timed" } });
+      requestTriggerEventsDoneClick("timed");
     },
+
+    // Click Trigger hotkey
     activateClickTrigger: () => {
       navigate("/TriggerEventsPage", { state: { initialTrigger: "click" } });
+      requestTriggerEventsDoneClick("click");
     },
+
+    // Follower Trigger hotkey
     activateFollowerTrigger: () => {
-      navigate("/TriggerEventsPage", { state: { initialTrigger: "followers" } });
+      navigate("/TriggerEventsPage", {
+        state: { initialTrigger: "followers" },
+      });
+      requestTriggerEventsDoneClick("followers");
     },
+
+    // Banning Trigger hotkey
     activateBanningTrigger: () => {
       navigate("/TriggerEventsPage", { state: { initialTrigger: "banning" } });
+      requestTriggerEventsDoneClick("banning");
     },
+
+    // Sentiment Trigger hotkey
     activateSentimentTrigger: () => {
-      navigate("/TriggerEventsPage", { state: { initialTrigger: "sentiment" } });
+      navigate("/TriggerEventsPage", {
+        state: { initialTrigger: "sentiment" },
+      });
+      requestTriggerEventsDoneClick("sentiment");
     },
   });
+
   const [keyMap, setKeyMap] = useState(() => {
     const item = getItem("keyMap");
-  
-    //const item = null;
+
     return (
       item || [
         {
@@ -76,9 +121,9 @@ function App() {
           funcname: "action2",
         },
         // Adding the Trigger Events page hotkey by default
-        { 
+        {
           name: "Open Trigger Events Page",
-          hotkey: "", 
+          hotkey: "",
           funcname: "openTriggerEventsPage",
         },
         // Add the Timed Events Trigger hotkey by default
@@ -114,10 +159,8 @@ function App() {
       ]
     );
   });
-  // just do "" for the tri
-  
-  useEffect(() => {
 
+  useEffect(() => {
     setItem("keyMap", keyMap);
   }, [keyMap]);
 
@@ -132,29 +175,23 @@ function App() {
     notePageRef.current = notePage;
   }, [notePage]);
 
-  // Hotkey mappings end block
-
   const location = useLocation();
-  const hiddenNavbarPages = [
-    "/notepad-overlay",
-  ];
-
-
+  const hiddenNavbarPages = ["/notepad-overlay"];
 
   return (
     <div id="app">
       <ObsProvider>
-        {keyMap.map((a) => {
-  
+        {keyMap.map((a, index) => {
           return (
             <HotkeyItem
+              key={a.funcname || a.name || index}
               hotkey={a.hotkey}
               func={handlers[a.funcname]}
-            ></HotkeyItem>
+            />
           );
         })}
 
-        {location.pathname === "/notepad-overlay" ? null : <Navbar />}
+        {hiddenNavbarPages.includes(location.pathname) ? null : <Navbar />}
 
         <Routes>
           <Route path="/" element={<HomePage />} />
@@ -181,7 +218,17 @@ function App() {
           <Route path="/obspage" element={<ObsPage />} />
 
           {/* new Trigger Events page */}
-          <Route path="/TriggerEventsPage" element={<TriggerEventsPage />} />
+          <Route
+            path="/TriggerEventsPage"
+            element={
+              <TriggerEventsPage
+                registerDoneHandler={(fn) => {
+                  // fn should be something like (triggerType) => { ... }
+                  doneClickRequestRef.current = fn;
+                }}
+              />
+            }
+          />
 
           <Route path="/notepad-overlay" element={<NotepadOverlay />} />
         </Routes>
