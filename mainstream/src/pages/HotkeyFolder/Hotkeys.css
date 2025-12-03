@@ -11,11 +11,11 @@ input {
   border: none;
   padding: 10px;
   font-family: inherit;
-  background-color: var(--mid-color);
-  color: var(--text-color-light);
+  background-color: var(--highlight-color);
+  color: var(--text-color-dark);
 }
 input::placeholder {
-  color: var(--highlight--text-color);
+  color: var(--highlight-color);
 }
 #select-box {
   border-radius: 10px;
@@ -24,23 +24,31 @@ input::placeholder {
   width: 220px;
   height: 45px;
   font-family: inherit;
-  background-color: var(--mid-color);
-  color: var(--text-color-light);
+  background-color: var(--highlight-color);
+  color: var(--text-color-dark);
 }
-option:hover{
+option:hover {
   background-color: aliceblue;
 }
 option {
-    border: none;
+  border: none;
 }
 .opt {
   border-radius: 20px;
   border: none;
   font-family: comfortaa, 400;
+  padding:50px;
+}
+.opt:hover{
+  color:inherit;
+  background-color: inherit;
 }
 .optdiv {
   border-radius: 20px;
   border: none;
+}
+.displayname{
+  width: 350px;
 }
 .butt {
   font-family: comfortaa, 400;
@@ -63,6 +71,7 @@ option {
   align-items: stretch;
   width: 100%;
   font-family: comfortaa, 400;
+  height: 100vh;
 }
 
 .helpicon {
