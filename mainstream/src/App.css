@@ -63,3 +63,6 @@ button:hover {
   background-color: var(--highlight-color);
   color: var(--text-color-dark)
 }
+input {
+  border: none;
+}
