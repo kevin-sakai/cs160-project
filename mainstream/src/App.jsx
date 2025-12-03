@@ -16,6 +16,7 @@ import TriggerEventsPage from "./pages/TriggerEvents";
 import { HotkeyItem } from "./pages/HotkeyFolder/HotkeyItem";
 import { useHotkeys } from "react-hotkeys-hook";
 import { getItem, setItem } from "./util/HotkeyLocalStorage";
+import { ObsProvider } from "./api/obs";
 
 function App() {
   // Notes state
@@ -114,7 +115,7 @@ function App() {
     );
   });
   // just do "" for the tri
-
+  
   useEffect(() => {
 
     setItem("keyMap", keyMap);
@@ -142,47 +143,49 @@ function App() {
 
   return (
     <div id="app">
-      {keyMap.map((a) => {
- 
-        return (
-          <HotkeyItem
-            hotkey={a.hotkey}
-            func={handlers[a.funcname]}
-          ></HotkeyItem>
-        );
-      })}
+      <ObsProvider>
+        {keyMap.map((a) => {
+  
+          return (
+            <HotkeyItem
+              hotkey={a.hotkey}
+              func={handlers[a.funcname]}
+            ></HotkeyItem>
+          );
+        })}
 
-      {location.pathname === "/notepad-overlay" ? null : <Navbar />}
+        {location.pathname === "/notepad-overlay" ? null : <Navbar />}
 
-      <Routes>
-        <Route path="/" element={<HomePage />} />
+        <Routes>
+          <Route path="/" element={<HomePage />} />
 
-        <Route
-          path="/notepad"
-          element={
-            <NotepadPage
-              notes={notes}
-              setNotes={setNotes}
-              noteText={noteText}
-              setNoteText={setNoteText}
-              notePage={notePage}
-              setNotePage={setNotePage}
-            />
-          }
-        />
+          <Route
+            path="/notepad"
+            element={
+              <NotepadPage
+                notes={notes}
+                setNotes={setNotes}
+                noteText={noteText}
+                setNoteText={setNoteText}
+                notePage={notePage}
+                setNotePage={setNotePage}
+              />
+            }
+          />
 
-        <Route
-          path="/hotkeys"
-          element={<HotkeyPage keyMap={keyMap} setKeyMap={setKeyMap} />}
-        />
+          <Route
+            path="/hotkeys"
+            element={<HotkeyPage keyMap={keyMap} setKeyMap={setKeyMap} />}
+          />
 
-        <Route path="/obspage" element={<ObsPage />} />
+          <Route path="/obspage" element={<ObsPage />} />
 
-        {/* new Trigger Events page */}
-        <Route path="/TriggerEventsPage" element={<TriggerEventsPage />} />
+          {/* new Trigger Events page */}
+          <Route path="/TriggerEventsPage" element={<TriggerEventsPage />} />
 
-        <Route path="/notepad-overlay" element={<NotepadOverlay />} />
-      </Routes>
+          <Route path="/notepad-overlay" element={<NotepadOverlay />} />
+        </Routes>
+      </ObsProvider>
     </div>
   );
 }
