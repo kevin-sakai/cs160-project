@@ -33,3 +33,83 @@
   color: white;
 }
 
+.twitch-sentiment-section {
+  background-color: rgb(42, 42, 42);
+  padding: 1rem;
+  padding-left: 1rem;
+  padding-right: 1rem;
+  margin-top: 2rem;
+}
+
+.twitch-sentiment-section h2 {
+  color: white;
+  margin-top: 0;
+  margin-bottom: 1rem;
+}
+
+.twitch-controls {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 1.5rem;
+  flex-wrap: wrap;
+}
+
+.twitch-controls button {
+  padding: 0.6rem 1.2rem;
+  font-size: 14px;
+  background-color: rgb(58, 58, 58);
+  color: white;
+  border: 1px solid rgb(85, 85, 85);
+  cursor: pointer;
+  margin-bottom: 0.5rem;
+}
+
+.twitch-controls button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.twitch-controls button:hover:not(:disabled) {
+  background-color: rgb(74, 74, 74);
+}
+
+.sentiment-stats {
+  background-color: rgb(30, 30, 30);
+  padding: 1rem;
+  margin-top: 1rem;
+}
+
+.sentiment-stats p {
+  color: white;
+  margin: 0.5rem 0;
+}
+
+.emotion-breakdown {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  margin-top: 1rem;
+}
+
+.emotion-item {
+  background-color: rgb(60, 60, 60);
+  padding: 0.75rem;
+  display: flex;
+  gap: 1rem;
+  color: white;
+}
+
+.emotion-item span:first-child {
+  font-weight: 600;
+  color: white;
+}
+
+.emotion-item span:last-child {
+  color: white;
+}
+
+.error-message {
+  background-color: rgb(80, 30, 30);
+  padding: 1rem;
+  color: white;
+}

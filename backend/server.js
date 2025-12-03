@@ -4,6 +4,12 @@ const express = require('express');
 const cors = require('cors');
 const { OBSWebSocket } = require('obs-websocket-js');
 const axios = require('axios');
+const {
+  initializeChatClient,
+  disconnectChatClient,
+  getEmotionData,
+  getSentimentStats,
+} = require('./sentiment');
 
 const app = express();
 const port = process.env.PORT || 3000;
@@ -439,6 +445,83 @@ If no chat data is provided, set chatSentiment to null.`;
       error: 'Failed to generate insights',
       details: err.message || String(err),
       stack: process.env.NODE_ENV === 'development' ? err.stack : undefined,
+    });
+  }
+});
+
+// Connect to Twitch chat and start collecting messages
+// POST /api/twitch/connect
+app.post('/api/twitch/connect', async (req, res) => {
+  try {
+    const botUsername = process.env.TWITCH_BOT_USERNAME;
+    const oauthToken = process.env.TWITCH_OAUTH_TOKEN;
+    const channel = process.env.TWITCH_CHANNEL;
+
+    if (!botUsername || !oauthToken || !channel) {
+      return res.status(400).json({
+        error: 'Missing Twitch environment variables',
+        details: 'TWITCH_BOT_USERNAME, TWITCH_OAUTH_TOKEN, and TWITCH_CHANNEL are required',
+      });
+    }
+
+    await initializeChatClient(botUsername, oauthToken, channel);
+    res.json({
+      ok: true,
+      message: `Connected to ${channel}'s Twitch chat`,
+    });
+  } catch (err) {
+    console.error('Error connecting to Twitch chat:', err);
+    res.status(500).json({
+      error: 'Failed to connect to Twitch chat',
+      details: err.message || String(err),
+    });
+  }
+});
+
+// Disconnect from Twitch chat
+// POST /api/twitch/disconnect
+app.post('/api/twitch/disconnect', (req, res) => {
+  try {
+    disconnectChatClient();
+    res.json({
+      ok: true,
+      message: 'Disconnected from Twitch chat',
+    });
+  } catch (err) {
+    console.error('Error disconnecting from Twitch chat:', err);
+    res.status(500).json({
+      error: 'Failed to disconnect from Twitch chat',
+      details: err.message || String(err),
+    });
+  }
+});
+
+// Get sentiment analysis from collected Twitch chat messages
+// GET /api/twitch/sentiment
+app.get('/api/twitch/sentiment', async (req, res) => {
+  try {
+    const emotionData = await getEmotionData();
+    const stats = await getSentimentStats();
+
+    res.json({
+      ok: true,
+      emotionData: {
+        labels: emotionData.labels,
+        data: emotionData.data,
+        percentages: emotionData.percentages,
+      },
+      stats: {
+        totalMessages: stats.totalMessages,
+        emotionCounts: stats.emotionCounts,
+        emotionPercentages: stats.emotionPercentages,
+      },
+      recentMessages: stats.recentMessages,
+    });
+  } catch (err) {
+    console.error('Error getting sentiment analysis:', err);
+    res.status(500).json({
+      error: 'Failed to get sentiment analysis',
+      details: err.message || String(err),
     });
   }
 });
