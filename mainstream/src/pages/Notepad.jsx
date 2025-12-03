@@ -1,13 +1,9 @@
 import { useState, useEffect } from 'react';
 import './Notepad.css';
+import { updateCurrentNote, updateNotes, addPage, changePage, deletePage } from '../util/NoteOperations';
+import { Link } from "react-router-dom"
 
 const NUM_TEXT_ROWS = 15;
-
-const date = new Date();
-const day = date.getDate();
-const month = date.getMonth();
-const year = date.getFullYear();
-const dayOfWeek = date.getDay();
 
 const daysOfWeek = [
   "Sunday",
@@ -34,32 +30,23 @@ const months = [
   "December",
 ];
 
-// localStorage key scheme: mainstream-<pagenum>
+// key: pagenum
 // {date: <date last modified>, text: <note text>}
 
-export default function Notepad() {
-  const [noteText, setNoteText] = useState("");
-  const [notePage, setNotePage] = useState(0);
+export default function Notepad({ notes, setNotes, noteText, setNoteText, notePage, setNotePage }) {
   const [noteDate, setNoteDate] = useState("");
 
   useEffect(() => {
-    const key = "mainstream-" + notePage;
-    const entry = JSON.parse(localStorage.getItem(key));
-    if (entry) {
-      setNoteText(entry.text);
-      setNoteDate(entry.date);
-    }
-  }, [notePage]);
+    const keystrokeTimer = setTimeout(() => {
+      updateNotes(notes, setNotes, notePage, noteText);
+    }, 500);
+
+    return () => clearTimeout(keystrokeTimer);
+  }, [noteText]);
 
   useEffect(() => {
-    const key = "mainstream-" + notePage;
-    const formattedDate = `${daysOfWeek[dayOfWeek]}, ${months[month]} ${day}, ${year}`;
-    const item = JSON.stringify({
-      date: formattedDate,
-      text: noteText,
-    });
-    localStorage.setItem(key, item);
-  }, [noteText]);
+    updateCurrentNote(setNoteText, notes[notePage].text)
+  }, [notePage, notes]);
 
   return (
     <div id="notepad-page">
@@ -69,24 +56,28 @@ export default function Notepad() {
       <div id="notepad-text-entry">
           <textarea
             value={noteText}
-            onChange={(e) => setNoteText(e.target.value)}
+            onChange={(e) => updateCurrentNote(setNoteText, e.target.value)}
             placeholder="Start Writing A Note!"
             rows={NUM_TEXT_ROWS}>
           </textarea>
           <div id="notepad-page-buttons">
             <button
               className="notepad-page-button"
-              onClick={() => setNotePage(notePage - 1)}>&#x2190;</button>
+              onClick={() => changePage(notes, setNotes, notePage, notePage - 1, setNotePage, notes.length, noteText)}>&#x2190;</button>
             <button
               className="notepad-page-button"
-              onClick={() => setNotePage(notePage + 1)}>&#x2192;</button>
+              onClick={() => changePage(notes, setNotes, notePage, notePage + 1, setNotePage, notes.length, noteText)}>&#x2192;</button>
             <button
               className="notepad-page-button"
-              >Delete</button>
+              onClick={() => addPage(notes, setNotes, notePage, setNotePage, noteText)}>New Note</button>
+            <button
+              className="notepad-page-button"
+              onClick={() => deletePage(notes, setNotes, notePage, setNotePage)}>Delete</button>
           </div>
-          <h2>Page {notePage}</h2>
+          <h2>Page {notePage}/{notes.length}</h2>
           <h1>{noteDate}</h1>
         </div>
+        <Link to='/notepad-overlay'><li>Open Overlay</li></Link>
     </div>
   );
 }

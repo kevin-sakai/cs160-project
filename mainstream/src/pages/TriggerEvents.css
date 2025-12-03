@@ -1,0 +1,56 @@
+/* Dark background for the whole page */
+.trigger-events-container {
+  background-color: #565656;
+  min-height: 100vh;
+  padding: 2rem;
+  color: #e0e0e0;
+  font-family: Inter, system-ui, sans-serif;
+}
+
+/* Section headings */
+.trigger-events-container h1,
+.trigger-events-container h2 {
+  color: #ffffff;
+  margin-bottom: 1rem;
+}
+
+
+.trigger-events-container label {
+  font-weight: 500;
+}
+
+
+.trigger-events-container input,
+.trigger-events-container select {
+  background-color: #2c2c2c;
+  border: 1px solid #444;
+  padding: 0.5rem;
+  color: #fff;
+  border-radius: 6px;
+}
+
+/* Regular buttons */
+.trigger-events-container button {
+  background-color: #3a3a3a;
+  border: 1px solid #555;
+  padding: 0.6rem 1.2rem;
+  border-radius: 8px;
+  color: #fff;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.trigger-events-container button:hover {
+  background-color: #4a4a4a;
+}
+
+
+.overlay-box {
+  border-radius: 10px;
+  transition: transform 0.15s, opacity 0.15s;
+}
+
+.overlay-box:hover {
+  transform: scale(1.05);
+  opacity: 0.85;
+}

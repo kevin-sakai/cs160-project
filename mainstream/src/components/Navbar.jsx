@@ -10,6 +10,7 @@ export const Navbar = () => {
                 <Link to='Hotkeys'><li>Hotkeys</li></Link>
                 <Link to='obspage'><li>Obs Page</li></Link>
                 <Link to='graphs'><li>Graphs</li></Link>
+                <Link to='TriggerEventsPage'><li>Trigger Events</li></Link>
             </ul>
         </div>)
 }

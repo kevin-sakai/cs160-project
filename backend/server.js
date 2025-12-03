@@ -11,10 +11,23 @@ const port = process.env.PORT || 3000;
 // Allow JSON request bodies
 app.use(express.json());
 
-// Configure CORS (adjust origin for your actual frontend dev server)
+// allowed origins for local dev
+const allowedOrigins = [
+  'http://localhost:5173',
+  'http://172.20.202.66:5173',
+];
+
+// configure CORS (adjust origin for actual frontend dev server)
 app.use(
   cors({
-    origin: 'http://localhost:5173', // Vite default
+    origin: (origin, callback) => {
+      // Allow requests with no origin or from origins 
+      if (!origin || allowedOrigins.includes(origin)) {
+        callback(null, true);
+      } else {
+        callback(new Error(`Origin ${origin} not specified by CORS. Adjust backend server CORS settings.`));
+      }
+    },
     methods: ['GET', 'POST', 'DELETE', 'OPTIONS'],
   })
 );
