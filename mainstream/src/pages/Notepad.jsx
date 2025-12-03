@@ -153,7 +153,7 @@ function NoteStory({ noteText, setNoteText }) {
     }
   }, [noteText]);
 
-  const sendStoryRequest = async () => {
+  async function sendStoryRequest(msgBuffer) {
     if (!theme || !msgBuffer) {
       return;
     }
@@ -182,8 +182,7 @@ function NoteStory({ noteText, setNoteText }) {
       <label htmlFor="theme-input">Theme:</label>
       <input type="text" name="theme-input" placeholder="Enter theme..." onChange={(e) => setTheme(e.target.value)} />
       <button className="generate-button" onClick={() => {
-        setMsgBuffer(tmpMsgBuffer);
-        sendStoryRequest();
+        sendStoryRequest(tmpMsgBuffer);
       }}>Generate</button>
     </div>
   );
