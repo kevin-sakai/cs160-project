@@ -37,10 +37,18 @@ option {
   border-radius: 20px;
   border: none;
   font-family: comfortaa, 400;
+  padding:50px;
+}
+.opt:hover{
+  color:inherit;
+  background-color: inherit;
 }
 .optdiv {
   border-radius: 20px;
   border: none;
+}
+.displayname{
+  width: 350px;
 }
 .butt {
   font-family: comfortaa, 400;
