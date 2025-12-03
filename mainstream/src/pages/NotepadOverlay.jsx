@@ -1,5 +1,6 @@
 import { getCurrentNote, retrieveCurrentNoteUpdate } from '../util/NoteOperations';
 import { useState, useEffect } from 'react';
+import "./NotepadOverlay.css";
 
 
 export default function NotepadOverlay() {
@@ -19,9 +20,12 @@ export default function NotepadOverlay() {
   });
 
   return (
-    <div>
-      <h2>Notes</h2>
-      <div>{text}</div>
+    <div className="notepad-overlay-bg">
+      <div className="notepad-overlay-svg">
+        <div className="notepad-overlay-text">
+          {text}
+        </div>
+      </div>
     </div>
   );
 }

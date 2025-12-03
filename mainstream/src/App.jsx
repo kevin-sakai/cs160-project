@@ -134,6 +134,9 @@ function App() {
   // Hotkey mappings end block
 
   const location = useLocation();
+  const hiddenNavbarPages = [
+    "/notepad-overlay",
+  ];
 
 
 
@@ -180,9 +183,6 @@ function App() {
 
         <Route path="/notepad-overlay" element={<NotepadOverlay />} />
       </Routes>
-
-      {/* main-page div is still here if you’re styling around it */}
-      <div id="main-page" />
     </div>
   );
 }
