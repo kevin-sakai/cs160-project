@@ -11,6 +11,7 @@ export const HotkeyPage = ({ keyMap, setKeyMap }) => {
   const [needHelp, setNeedHelp] = useState(false);
   const [recordedKeys, setRecordedKeys] = useState("");
   const [isDone, setIsDone] = useState(false);
+  const [isCancel, setIsCancel] = useState(false);
 
   const clickHelp = () => {
     setNeedHelp((prevValue) => !prevValue);
@@ -35,7 +36,7 @@ export const HotkeyPage = ({ keyMap, setKeyMap }) => {
           onChange={(e) => {
             setSelectedOption(e.target.value);
           }}
-          value = {selectedOption}
+          value={selectedOption}
         >
           {keyMap.map((a) => {
             return (
@@ -48,48 +49,63 @@ export const HotkeyPage = ({ keyMap, setKeyMap }) => {
         <p>Type the key combination you'd like to set for {selectedOption}</p>
 
         <input
-          placeholder="type key combination"
+          placeholder="Begin typing"
           onChange={(e) => {
             // setSelectedKey(e.target.value);
             setRecordedKeys(Array.from(keys).join(" + "));
-            console.log("input changing: ", recordedKeys, e.target.value);
           }}
-          onClick={start}
-          value={Array.from(keys).join(" + ")}
+          onClick={() => {
+            start();
+            setIsCancel(false);
+          }}
+          value={!isCancel ? Array.from(keys).join(" + "): ""}
         ></input>
         <button
           onClick={() => {
             stop();
             setRecordedKeys(Array.from(keys).join(" + "));
-            setIsDone(true)
+            setIsDone(true);
           }}
         >
           done
         </button>
-        {isDone ? <button
+        <button
           onClick={() => {
-            // setRecordedKeys(Array.from(keys).join(" + "));
-            setKeyMap(
-              keyMap.map((a) => {
-                console.log(a.name, selectedOption);
-                if (a.name == selectedOption) {
-                  return {
-                    name: selectedOption,
-                    hotkey: recordedKeys,
-                    funcname: a.funcname,
-                  };
-                } else {
-                  return a;
-                }
-              })
-            );
-
-            console.log("clicked save: ", recordedKeys);
-            setIsDone(!isDone);
+            setRecordedKeys("");
+            stop();
+            setIsCancel(true);
+            setIsDone(false);
           }}
         >
-          Save
-        </button> : null}
+          Cancel
+        </button>
+        {isDone && !isCancel ? (
+          <div>
+            <button
+              onClick={() => {
+                // setRecordedKeys(Array.from(keys).join(" + "));
+                setKeyMap(
+                  keyMap.map((a) => {
+                    if (a.name == selectedOption) {
+                      return {
+                        name: selectedOption,
+                        hotkey: recordedKeys,
+                        funcname: a.funcname,
+                      };
+                    } else {
+                      return a;
+                    }
+                  })
+                );
+
+                setRecordedKeys("");
+                setIsDone(!isDone);
+              }}
+            >
+              Save
+            </button>
+          </div>
+        ) : null}
       </div>
       {/* <div>
         <p>Is recording: {isRecording ? "yes" : "no"}</p>
@@ -98,39 +114,42 @@ export const HotkeyPage = ({ keyMap, setKeyMap }) => {
         <button onClick={start}>Record</button>
         <button onClick={stop}>Stop</button>
       </div> */}
-
-      <div id="hotkey-display-list">
-        {" "}
-        {keyMap.map((a) => {
-          if (a.hotkey != "") {
-            return (
-              <div className="hotkeylist-action" key={a.hotkey}>
-                <div>{a.name}</div>
-                <div>{a.hotkey}</div>
-                <button
-                  onClick={() => {
-                    setKeyMap(
-                      keyMap.map((act) => {
-                        if (a.name == act.name) {
-                          return {
-                            name: act.name,
-                            hotkey: "",
-                            funcname: act.funcname,
-                          };
-                        } else {
-                          return act;
-                        }
-                      })
-                    );
-                  }}
-                >
-                  X
-                </button>
-              </div>
-            );
-          }
-        })}
-      </div>
+      {keyMap.length > 0 ? (
+        <div id="hotkey-display-list">
+          {" "}
+          {keyMap.map((a) => {
+            if (a.hotkey != "") {
+              return (
+                <div className="hotkeylist-action" key={a.hotkey}>
+                  <div>{a.name}</div>
+                  <div>{a.hotkey}</div>
+                  <button
+                    onClick={() => {
+                      setKeyMap(
+                        keyMap.map((act) => {
+                          if (a.name == act.name) {
+                            return {
+                              name: act.name,
+                              hotkey: "",
+                              funcname: act.funcname,
+                            };
+                          } else {
+                            return act;
+                          }
+                        })
+                      );
+                    }}
+                  >
+                    X
+                  </button>
+                </div>
+              );
+            }
+          })}
+        </div>
+      ) : (
+        <div id="hotkey-display-list">You have no Hotkeys</div>
+      )}
 
       <img className="helpicon" src={help} onClick={clickHelp} />
       {needHelp ? (
