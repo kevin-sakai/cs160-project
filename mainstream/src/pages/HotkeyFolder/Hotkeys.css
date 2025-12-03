@@ -15,7 +15,7 @@ input {
   color: var(--text-color-light);
 }
 input::placeholder {
-  color: var(--highlight--text-color);
+  color: var(--highlight-color);
 }
 #select-box {
   border-radius: 10px;
@@ -25,13 +25,13 @@ input::placeholder {
   height: 45px;
   font-family: inherit;
   background-color: var(--mid-color);
-  color: var(--text-color-light);
+  color: var(--highlight-color);
 }
-option:hover{
+option:hover {
   background-color: aliceblue;
 }
 option {
-    border: none;
+  border: none;
 }
 .opt {
   border-radius: 20px;
