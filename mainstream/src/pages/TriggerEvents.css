@@ -38,7 +38,7 @@
 
   padding: 0.6rem 1.2rem;
   border-radius: 8px;
-  color: #000000;
+  color: #fff;
   cursor: pointer;
   transition: background 0.15s;
 }
@@ -55,5 +55,24 @@
 
 .overlay-box:hover {
   transform: scale(1.05);
+  opacity: 0.85;
+}
+
+/* Change done / next button color */
+button {
+  background-color: var(--mid-color);
+  color: black;
+
+
+  
+}
+
+button:hover {
+  background-color: var(--highlight-color);
+  color: var(--text-color-dark);
+}
+
+/* on hover for overlay tiles */
+.overlay-tile:hover {
   opacity: 0.85;
 }

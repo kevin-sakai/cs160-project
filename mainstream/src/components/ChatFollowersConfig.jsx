@@ -1,4 +1,4 @@
-// components/trigger-events/ChatFollowersConfig.jsx
+// components/ChatFollowersConfig.jsx
 import React from "react";
 import { BaseTriggerSettings } from "./BaseTriggerSettings";
 
@@ -7,13 +7,26 @@ export function ChatFollowersConfig({
   onBaseSettingsChange,
   specificSettings,
   onSpecificChange,
+  onContinue,      // <-- ADDED
+  setError,        // <-- ADDED
 }) {
   const updateSpecific = (field, value) => {
+    setError?.(""); // clear errors when user changes something
     onSpecificChange({ ...specificSettings, [field]: value });
   };
 
+  const handleNext = () => {
+    // Optional basic validation
+    if (!specificSettings.threshold || specificSettings.threshold <= 0) {
+      setError?.("Please enter a valid follower threshold before continuing.");
+      return;
+    }
+
+    if (onContinue) onContinue();
+  };
+
   return (
-    <>
+    <div className="trigger-card">
       <h2>Chat Followers</h2>
       <p>
         Trigger an overlay when you reach a follower milestone or receive new
@@ -64,7 +77,7 @@ export function ChatFollowersConfig({
           </select>
         </div>
 
-        {/* Only followers who donated */}
+        {/* Only donors */}
         <div>
           <label style={{ display: "block", marginBottom: "0.25rem" }}>
             Only followers who have donated?
@@ -78,7 +91,7 @@ export function ChatFollowersConfig({
           </select>
         </div>
 
-        {/* Only followers who chatted */}
+        {/* Only chatters */}
         <div>
           <label style={{ display: "block", marginBottom: "0.25rem" }}>
             Only followers who have chatted this stream?
@@ -93,11 +106,23 @@ export function ChatFollowersConfig({
         </div>
       </div>
 
+      {/* Common shared settings */}
       <h3 style={{ marginTop: "1.5rem" }}>Common settings</h3>
       <BaseTriggerSettings
         settings={baseSettings}
         onChange={onBaseSettingsChange}
       />
-    </>
+
+      {/* NEXT BUTTON (required to go to overlays) */}
+      <div className="trigger-actions" style={{ marginTop: "1.5rem" }}>
+        <button
+          onClick={handleNext}
+          className="trigger-next-button"
+          type="button"
+        >
+          Next: Choose Overlay
+        </button>
+      </div>
+    </div>
   );
 }
