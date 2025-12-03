@@ -1,0 +1,20 @@
+.notepad-overlay-bg {
+  background-color: var(--transparent);
+}
+
+.notepad-overlay-svg {
+  background-image: url("../assets/notepad_lined.svg");
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center;
+  font-size: 1.25rem;
+  padding-top: 400px;
+  padding-left: 175px;
+  background-size: 500px;
+  width: 500px;
+  aspect-ratio: 1522/1974;
+}
+
+.notepad-overlay-text {
+  color: var(--elem-color);
+}
