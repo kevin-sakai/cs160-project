@@ -39,6 +39,7 @@ const TRIGGER_TYPES = [
 
 function TriggerEventsPage({ registerDoneHandler }) {
   const location = useLocation();
+
   // If a hotkey opened this page, App may send { state: { initialTrigger: "timed" | ... } }
   const initialTriggerFromNav = location.state?.initialTrigger || null;
 
@@ -194,7 +195,7 @@ function TriggerEventsPage({ registerDoneHandler }) {
 
       // Optionally reset overlay selection
       setSelectedOverlayColor(null);
-      // You could also move back to config here if desired:
+      // Optionally go back to config
       // setStep("config");
     } catch (err) {
       console.error("Failed to create OBS overlay:", err);
@@ -242,7 +243,14 @@ function TriggerEventsPage({ registerDoneHandler }) {
     };
 
     registerDoneHandler(handlerFromApp);
-  }, [registerDoneHandler, step, selectedTrigger, selectedOverlayColor, selectedSceneName, status]);
+  }, [
+    registerDoneHandler,
+    step,
+    selectedTrigger,
+    selectedOverlayColor,
+    selectedSceneName,
+    status,
+  ]);
 
   // --- OBS scene handlers ---
 
