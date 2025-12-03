@@ -71,6 +71,7 @@ option {
   align-items: stretch;
   width: 100%;
   font-family: comfortaa, 400;
+  height: 100vh;
 }
 
 .helpicon {
