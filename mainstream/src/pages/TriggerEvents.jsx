@@ -55,6 +55,9 @@ function TriggerEventsPage() {
   const [selectedSceneName, setSelectedSceneName] = useState("");
   const [isLoadingScenes, setIsLoadingScenes] = useState(false);
 
+  // Overlay selection (color tile)
+  const [selectedOverlayColor, setSelectedOverlayColor] = useState(null);
+
   // Shared base settings per trigger
   const [baseConfigs, setBaseConfigs] = useState({
     timed: {},
@@ -131,10 +134,22 @@ function TriggerEventsPage() {
     }
   }, [savedTriggers]);
 
-  // --- helpers for overlay creation ---
+  // --- overlay selection & creation ---
 
-  const handleChooseOverlay = async (color) => {
+  // Just select an overlay color (no OBS calls yet)
+  const handleOverlaySelect = (color) => {
+    setSelectedOverlayColor(color);
     setErrorMsg("");
+  };
+
+  // Called when the user clicks "Done" to actually create the overlay + trigger
+  const handleCreateTriggerWithOverlay = async () => {
+    setErrorMsg("");
+
+    if (!selectedOverlayColor) {
+      setErrorMsg("Please select an overlay style first.");
+      return;
+    }
 
     if (status !== "connected") {
       setErrorMsg("Connect to OBS first on the OBS page.");
@@ -143,12 +158,13 @@ function TriggerEventsPage() {
 
     if (!selectedSceneName) {
       setErrorMsg(
-        "Please select a scene (or create a new one) before choosing an overlay."
+        "Please select a scene (or create a new one) before adding an overlay."
       );
       return;
     }
 
     const sceneName = selectedSceneName;
+    const color = selectedOverlayColor;
     const sourceName = `Trigger-${selectedTrigger}-${Date.now()}`;
 
     try {
@@ -168,6 +184,11 @@ function TriggerEventsPage() {
 
       setSavedTriggers((prev) => [...prev, newTrigger]);
       alert("Overlay created in OBS and trigger configuration saved!");
+
+      // Optionally reset overlay selection
+      setSelectedOverlayColor(null);
+      // You could also move back to config here if you want:
+      // setStep("config");
     } catch (err) {
       console.error("Failed to create OBS overlay:", err);
       setErrorMsg(
@@ -217,15 +238,18 @@ function TriggerEventsPage() {
     setSelectedTrigger(value);
     setStep("config");
     setErrorMsg("");
+    setSelectedOverlayColor(null);
   };
 
   const handleBackToConfig = () => {
     setStep("config");
     setErrorMsg("");
+    setSelectedOverlayColor(null);
   };
 
   const goToOverlays = () => {
     setStep("overlays");
+    setErrorMsg("");
   };
 
   // --- render active trigger config ---
@@ -369,7 +393,9 @@ function TriggerEventsPage() {
             ) : (
               <OverlayGrid
                 onBack={handleBackToConfig}
-                onChooseOverlay={handleChooseOverlay}
+                onOverlaySelect={handleOverlaySelect}
+                selectedOverlayColor={selectedOverlayColor}
+                onDone={handleCreateTriggerWithOverlay}
                 scenes={scenes}
                 selectedSceneName={selectedSceneName}
                 onSceneChange={handleSceneChange}
@@ -389,7 +415,9 @@ function TriggerEventsPage() {
  */
 function OverlayGrid({
   onBack,
-  onChooseOverlay,
+  onOverlaySelect,
+  selectedOverlayColor,
+  onDone,
   scenes,
   selectedSceneName,
   onSceneChange,
@@ -447,22 +475,35 @@ function OverlayGrid({
 
       {/* Overlay grid */}
       <div className="overlay-grid">
-        {dummyOverlays.map((color, index) => (
-          <button
-            key={index}
-            type="button"
-            className="overlay-tile"
-            style={{ backgroundColor: color }}
-            onClick={() => onChooseOverlay?.(color)}
-          >
-            Overlay {index + 1}
-          </button>
-        ))}
+        {dummyOverlays.map((color, index) => {
+          const isSelected = color === selectedOverlayColor;
+          return (
+            <button
+              key={index}
+              type="button"
+              className={`overlay-tile ${
+                isSelected ? "overlay-tile-selected" : ""
+              }`}
+              style={{ backgroundColor: color }}
+              onClick={() => onOverlaySelect?.(color)}
+            >
+              Overlay {index + 1}
+            </button>
+          );
+        })}
       </div>
 
       <div className="trigger-actions">
         <button type="button" onClick={onBack}>
           Back to configuration
+        </button>
+        <button
+          type="button"
+          className="trigger-done-button"
+          onClick={onDone}
+          disabled={!selectedOverlayColor}
+        >
+          Done
         </button>
       </div>
     </div>
