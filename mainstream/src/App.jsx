@@ -1,81 +1,132 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import NotepadPage from './pages/Notepad'
-import HomePage from './pages/Home'
-import './App.css'
-import { HotkeyPage } from './pages/HotkeyFolder/Hotkeys'
-import { Routes, Route, useLocation } from 'react-router-dom'
-import { Link } from 'react-router-dom'
-import { Navbar } from './components/Navbar'
+import { useState, useEffect, useRef } from "react";
+import reactLogo from "./assets/react.svg";
+import viteLogo from "/vite.svg";
+import NotepadPage from "./pages/Notepad";
+import HomePage from "./pages/Home";
+import "./App.css";
+import { HotkeyPage } from "./pages/HotkeyFolder/Hotkeys";
+import { Routes, Route, useLocation } from "react-router-dom";
+import { Link } from "react-router-dom";
+import { Navbar } from "./components/Navbar";
 import ObsPage from "./components/obs-page";
-import NotepadOverlay from './pages/NotepadOverlay';
-import { getNotesState, addPage, blankNote } from './util/NoteOperations';
-import { HotKeys } from 'react-keyboard'
-import TriggerEventsPage from './pages/TriggerEvents';
-
+import NotepadOverlay from "./pages/NotepadOverlay";
+import { getNotesState, addPage, blankNote } from "./util/NoteOperations";
+import { HotKeys } from "react-keyboard";
+import TriggerEventsPage from "./pages/TriggerEvents";
+import { HotkeyItem } from "./pages/HotkeyFolder/HotkeyItem";
+import { useHotkeys } from "react-hotkeys-hook";
+import { getItem, setItem } from "./util/HotkeyLocalStorage";
 
 function App() {
   // Notes state
   const [notes, setNotes] = useState(getNotesState);
-  const [noteText, setNoteText] = useState('');
+  const [noteText, setNoteText] = useState("");
   const [notePage, setNotePage] = useState(0);
+  const notesRef = useRef(notes);
+  const noteTextRef = useRef(noteText);
+  const notePageRef = useRef(notePage);
 
-  // Hotkey mapping – new trigger actions can go here
-  const [keyMap, setKeyMap] = useState({
-    addNotePage: 'alt+p',
-    action1: '',
+  // Hotkey mapping start block – new trigger actions can go here
+
+  const [handlers, setHandlers] = useState({
+    addNotePage: () => {
+      addPage(notesRef.current, setNotes, notePageRef.current, setNotePage, noteTextRef.current);
+      console.log("Added new note page");
+    },
+    action2: () => {
+      console.log("pressed b");
+    },
+  });
+  const [keyMap, setKeyMap] = useState(() => {
+    const item = getItem("keyMap");
+  
+    //const item = null;
+    return (
+      item || [
+        {
+          name: "Add Notepad page",
+          hotkey: "alt+p",
+          funcname: "addNotePage",
+        },
+
+        {
+          name: "Action 2",
+          hotkey: "b",
+          funcname: "action2",
+        },
+      ]
+    );
   });
 
-  // Hotkey handlers – new trigger actions can go here too
-  const handlers = {
-    addNotePage: () => {
-      addPage(notes, setNotes, notePage, setNotePage, noteText);
-      console.log('Added new note page');
-    },
-  };
+  useEffect(() => {
+
+    setItem("keyMap", keyMap);
+  }, [keyMap]);
+
+  // Ref updates for hotkey functions
+  useEffect(() => {
+    notesRef.current = notes;
+  }, [notes]);
+  useEffect(() => {
+    noteTextRef.current = noteText;
+  }, [noteText]);
+  useEffect(() => {
+    notePageRef.current = notePage;
+  }, [notePage]);
+
+  // Hotkey mappings end block
 
   const location = useLocation();
 
+
+
   return (
-    <HotKeys keyMap={keyMap} handlers={handlers}>
-      <div id="app">
-        {location.pathname === "/notepad-overlay" ? null : <Navbar />}
+    <div id="app">
+      {keyMap.map((a) => {
+ 
+        return (
+          <HotkeyItem
+            hotkey={a.hotkey}
+            func={handlers[a.funcname]}
+          ></HotkeyItem>
+        );
+      })}
 
-        <Routes>
-          <Route path="/" element={<HomePage />} />
+      {location.pathname === "/notepad-overlay" ? null : <Navbar />}
 
-          <Route
-            path="/notepad"
-            element={
-              <NotepadPage
-                notes={notes}
-                setNotes={setNotes}
-                noteText={noteText}
-                setNoteText={setNoteText}
-                notePage={notePage}
-                setNotePage={setNotePage}
-              />
-            }
-          />
+      <Routes>
+        <Route path="/" element={<HomePage />} />
 
-          <Route
-            path="/hotkeys"
-            element={<HotkeyPage keyMap={keyMap} setKeyMap={setKeyMap} />}
-          />
+        <Route
+          path="/notepad"
+          element={
+            <NotepadPage
+              notes={notes}
+              setNotes={setNotes}
+              noteText={noteText}
+              setNoteText={setNoteText}
+              notePage={notePage}
+              setNotePage={setNotePage}
+            />
+          }
+        />
 
-          <Route path="/obspage" element={<ObsPage />} />
+        <Route
+          path="/hotkeys"
+          element={<HotkeyPage keyMap={keyMap} setKeyMap={setKeyMap} />}
+        />
 
-          {/* new Trigger Events page */}
-          <Route path="/TriggerEventsPage" element={<TriggerEventsPage />} />
+        <Route path="/obspage" element={<ObsPage />} />
 
-          <Route path="/notepad-overlay" element={<NotepadOverlay />} />
-        </Routes>
+        {/* new Trigger Events page */}
+        <Route path="/TriggerEventsPage" element={<TriggerEventsPage />} />
 
-        {/* main-page div is still here if you’re styling around it */}
-        <div id="main-page" />
-      </div>
-    </HotKeys>
+        <Route path="/notepad-overlay" element={<NotepadOverlay />} />
+      </Routes>
+
+      {/* main-page div is still here if you’re styling around it */}
+      <div id="main-page" />
+    </div>
   );
 }
 
