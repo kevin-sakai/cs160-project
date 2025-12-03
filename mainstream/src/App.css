@@ -3,6 +3,7 @@
   flex-direction: row;
   align-items: flex-start;
   justify-content: flex-start;
+  height: 100vh;
 }
 
 #sidebar {
@@ -19,8 +20,6 @@
 
   height: 100vh;
   background: var(--bg-color);
-  border-right: solid gray 5px;
- 
   color: var(--text-color);
   display: flex;
   flex-direction: column;
