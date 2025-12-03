@@ -22,4 +22,5 @@
   font-family: "Patrick Hand", cursive;
   font-weight: 400;
   font-style: normal;
+   overflow-wrap: break-word;
 }
