@@ -4,27 +4,21 @@
   align-items: flex-start;
   justify-content: flex-start;
   height: 100vh;
+
+width: 70%;
+ font-family: lexend;
+  color: var(--text-color-dark);
 }
 
-#sidebar {
-  height: 100vh;
-  background: var(--bg-color);
-  border-right: solid gray 5px;
-  padding: 1rem;
-  color: var(--text-color);
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-}
 #navbar {
-
   height: 100vh;
-  background: var(--bg-color);
-  color: var(--text-color);
+  background: var(--mid-color);
+  color: var(--text-color-dark);
   display: flex;
   flex-direction: column;
   gap: 1rem;
   text-decoration: none;
+
   ul {
     padding: 0;
     list-style-type: none;
@@ -32,14 +26,14 @@
   }
   li {
     list-style: none;
-    color: black;
+    color: var(--text-color-light);
+    font-weight: 600;
     text-decoration: none;
     padding: 10px 10px 10px 50px;
-
-
   }
-  li:hover{
-    background-color: rgb(219, 219, 219);
+  li:hover {
+    background-color: var(--elem-color);
+    color: var(--text-color-light);
   }
 }
 Link {
@@ -61,5 +55,14 @@ a {
 }
 
 button {
-  background-color: gray;
+  font-family: var(--mid-color);
+  color: var(--text-color-light);
+  padding: 10px 20px 10px 20px;
+}
+button:hover {
+  background-color: var(--highlight-color);
+  color: var(--text-color-dark);
+}
+input {
+  border: none;
 }

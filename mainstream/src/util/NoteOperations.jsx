@@ -2,7 +2,7 @@ const LOCALSTORAGE_NOTES_KEY = "mainstream-notes";
 const LOCALSTORAGE_CURR_KEY = "mainstream-curr-note";
 const date = new Date();
 const day = date.getDate();
-const month = date.getMonth();
+const month = date.getMonth() + 1;
 const year = date.getFullYear();
 const formattedDate = `${month}-${day}-${year}`;
 export function blankNote() {
@@ -25,6 +25,10 @@ export function retrieveCurrentNoteUpdate(e, setText) {
   if (e.key === LOCALSTORAGE_CURR_KEY) {
     setText(e.newValue);
   }
+}
+
+export function storeCurrentNote(noteText) {
+  localStorage.setItem(LOCALSTORAGE_CURR_KEY, noteText);
 }
 
 export function updateCurrentNote(setNote, newValue) {

@@ -10,6 +10,12 @@ input {
   height: 20px;
   border: none;
   padding: 10px;
+  font-family: inherit;
+  background-color: var(--mid-color);
+  color: var(--text-color-light);
+}
+input::placeholder {
+  color: var(--highlight--text-color);
 }
 #select-box {
   border-radius: 10px;
@@ -17,19 +23,35 @@ input {
   border: none;
   width: 220px;
   height: 45px;
- 
+  font-family: inherit;
+  background-color: var(--mid-color);
+  color: var(--text-color-light);
+}
+option:hover{
+  background-color: aliceblue;
+}
+option {
+    border: none;
 }
 .opt {
   border-radius: 20px;
-    border: none;
+  border: none;
+  font-family: comfortaa, 400;
 }
 .optdiv {
-    border-radius: 20px;
+  border-radius: 20px;
+  border: none;
+}
+.butt {
+  font-family: comfortaa, 400;
+  background-color: var(--mid-color);
+  padding: 10px 20px 10px 20px;
 }
 #title {
   display: flex;
   align-items: baseline;
   justify-content: space-between;
+  font-family: lexend;
 }
 
 #hotkey-page {
@@ -40,6 +62,7 @@ input {
   flex-direction: column;
   align-items: stretch;
   width: 100%;
+  font-family: comfortaa, 400;
 }
 
 .helpicon {
@@ -69,53 +92,24 @@ select {
   width: 180px;
   padding: 10px;
 }
-.dropdown {
-  border: 1px solid black;
-  border-bottom: none;
-  box-sizing: border-box;
-  position: absolute;
-  width: 100%;
-  display: none;
-}
-
-.dropdown.visible {
-  display: block;
-}
-
-.option {
-  border: 1px solid black;
-  background-color: rgb(193, 193, 193);
-  display: flex;
-  justify-content: space-between;
-  padding: 10px;
-  color: black;
-  width: 100%;
-}
-
-.option:hover {
-  background-color: rgb(147, 147, 147);
-  color: black;
-}
-
-.input-clear-container {
-  position: absolute;
-  right: 110px;
-  top: 50%;
-  transform: translateY(-50%);
-  cursor: pointer;
-  color: black;
-}
 
 #hotkey-display-list {
   margin-top: 70px;
   border-radius: 10px;
-  background-color: rgb(86, 86, 86);
+  background-color: var(--mid-color);
+  color: var(--text-color-light);
   width: 100%;
   padding: 20px 10px 20px 10px;
+  button {
+    background-color: var(--elem-color);
+  }
 }
-
+#hotkey-dispay-list button:hover {
+  background-color: inherit;
+}
 .hotkeylist-action {
-  background-color: rgb(86, 86, 86);
+  background-color: var(--mid-color);
+  font-family: comfortaa, 400;
   display: flex;
   justify-content: space-between;
   padding: 10px;

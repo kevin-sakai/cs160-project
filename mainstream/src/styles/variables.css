@@ -1,8 +1,9 @@
 :root {
-  --text-color-dark: #000000;
-  --text-color-light: #ffffff;
-  --elem-color: #497bd4ff;
-  --highlight-color: #dbcaffff;
-  --hightlight-text-color: #497bd4ff;
+  --text-color-dark: rgb(38, 65, 139);
+  --text-color-light: rgb(38, 65, 139);
+  --elem-color: rgb(208, 220, 255);
+  --highlight-color: rgb(251, 251, 251);
+  --hightlight-text-color: rgb(107, 133, 211);
   --transparent: rgba(0, 0, 0, 0);
+  --mid-color: rgb(176, 194, 243);
 }

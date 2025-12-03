@@ -4,9 +4,11 @@
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  width: 100%;
+
   flex: 1;
+
 }
+
 
 #title {
   align-self: flex-start;
@@ -14,16 +16,36 @@
   width: 100%;
 }
 
-#notepad-text-entry {
+#notepad-tab-area {
   display: flex;
   width: 100%;
   flex-direction: column;
   gap: 0.5rem;
+  padding: 1rem;
+  border-radius: 0.5rem;
 
   textarea {
     width: 100%;
     font-family: inherit;
     font-size: 1.25rem;
+    box-sizing: border-box;
+    background-color: var(--mid-color);
+    color: var(--text-color-light);
+    border-radius: 10px;
+    padding: 20px;
+    border:none;
+
+  }
+  textarea::placeholder{
+    color:var(--text-color-light)
+  }
+  textarea.no-input {
+    caret-color: transparent;
+    pointer-events: none;
+  }
+  h2 {
+    margin-top: 0;
+    margin-bottom: 0;
   }
 }
 
@@ -34,8 +56,55 @@
 }
 
 .notepad-page-button {
-  font-size: 1.25rem;
-  background-color: gray;
+  font-family: inherit;
+  background-color: var(--elem-color);
   border-radius: 0.5rem;
   padding: 0.25rem 0.5rem 0.25rem 0.5rem;
+  cursor: pointer;
+  background-color: var(--mid-color);
+  padding: 10px 20px 10px 20px;
+   border-radius: 20px;
+}
+
+.notepad-page-button:hover {
+  background-color: var(--highlight-color);
+  color: var(--text-color-dark);
+}
+
+.notepad-tab {
+  font-family: inherit;
+  border-radius: 0.5rem;
+  color: black;
+  background-color: var(--mid-color);
+  cursor: pointer;
+  color: var(--text-color-light);
+  padding: 10px 20px 10px 20px;
+  border-radius: 20px;
+}
+
+.notepad-tab.active {
+  background-color: var(--highlight-color);
+  color: var(--text-color-dark);
+}
+
+.generate-button {
+  font-family: inherit;
+  background-color: var(--elem-color);
+  border-radius: 0.5rem;
+  padding: 0.25rem 0.5rem 0.25rem 0.5rem;
+  cursor: pointer;
+}
+
+.generate-button:hover {
+  background-color: var(--highlight-color);
+  color: var(--text-color-dark);
+}
+
+#overlay-link {
+  font-size: 1.25rem;
+  background-color: var(--mid-color);
+  color: var(--text-color-light);
+  border-radius: 0.8rem;
+  padding: 10px 20px 10px 20px;
+   border-radius: 30px;
 }
