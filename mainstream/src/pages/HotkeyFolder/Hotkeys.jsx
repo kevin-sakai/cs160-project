@@ -32,6 +32,7 @@ export const HotkeyPage = ({ keyMap, setKeyMap }) => {
       <p>Selected action:</p>
       <div>
         <select
+          id="select-box"
           name="actions"
           onChange={(e) => {
             setSelectedOption(e.target.value);
@@ -40,8 +41,8 @@ export const HotkeyPage = ({ keyMap, setKeyMap }) => {
         >
           {keyMap.map((a) => {
             return (
-              <div key={a.hotkey}>
-                <option>{a.name}</option>
+              <div className="optdiv" key={a.hotkey}>
+                <option className="opt">{a.name}</option>
               </div>
             );
           })}
