@@ -4,23 +4,14 @@
   align-items: flex-start;
   justify-content: flex-start;
   height: 100vh;
-  background-color: (--bg-color);
+  background-color: var(--elem-color);
   font-family: lexend;
 }
 
-#sidebar {
-  height: 100vh;
-  background: var(--bg-color);
-  border-right: solid gray 5px;
-  padding: 1rem;
-  color: var(--text-color);
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-}
+
 #navbar {
   height: 100vh;
-  background: var(--highlight-color);
+  background: var(--mid-color);
   color: var(--text-color-dark);
   display: flex;
   flex-direction: column;
@@ -34,13 +25,14 @@
   }
   li {
     list-style: none;
-    color: var(--text-color-dark);
+    color: var(--text-color-light);
     font-weight: 600;
     text-decoration: none;
     padding: 10px 10px 10px 50px;
   }
   li:hover {
-    background-color: rgb(219, 219, 219);
+    background-color: var(--elem-color);
+    color:var(--text-color-light)
   }
 }
 Link {
@@ -62,5 +54,10 @@ a {
 }
 
 button {
-  background-color: gray;
+  font-family: inherit;
+  color: var(--text-color-light)
+}
+button:hover {
+  background-color: var(--highlight-color);
+  color: var(--text-color-dark)
 }
