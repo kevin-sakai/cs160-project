@@ -233,6 +233,7 @@ function NoteSuggestions({ noteText, setNoteText }) {
   return (
     <div id="notepad-tab-area">
       <button
+      className='generate-button'
         onClick={() => {sendSuggestionRequest(msgBuffer, setSuggestions)}}>Generate!</button>
       <textarea
         className="no-input"

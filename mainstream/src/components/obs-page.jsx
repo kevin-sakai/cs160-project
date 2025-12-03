@@ -170,6 +170,7 @@ function ObsPage() {
             <label>
               Address
               <input
+                id="obsaddress"
                 type="text"
                 value={address}
                 onChange={(e) => setAddress(e.target.value)}
