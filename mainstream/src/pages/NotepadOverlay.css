@@ -13,7 +13,7 @@
   width: 500px;
   aspect-ratio: 1522/1974;
 }
-
+ 
 .notepad-overlay-text {
   color: var(--text-color-dark);
   font-size: 1.5rem;
@@ -22,4 +22,5 @@
   font-family: "Patrick Hand", cursive;
   font-weight: 400;
   font-style: normal;
+   overflow-wrap: break-word;
 }

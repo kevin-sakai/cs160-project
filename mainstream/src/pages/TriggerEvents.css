@@ -8,45 +8,43 @@
   align-items: stretch;
   width: 100%;
   font-family: comfortaa, 400;
-
 }
 
 /* Section headings */
 .trigger-events-container h1,
 .trigger-events-container h2 {
-
   margin-bottom: 1rem;
 }
-
 
 .trigger-events-container label {
   font-weight: 500;
 }
 
-
 .trigger-events-container input,
 .trigger-events-container select {
-  border:none;
-  padding: 0.5rem;
+  border-radius: 10px;
   margin: 10px;
-  color: #fff;
-  border-radius: 6px;
+  border: none;
+  width: 250px;
+  font-family: inherit;
+  background-color: var(--highlight-color);
+  color: var(--text-color-dark);
 }
-
+input::placeholder {
+  color: var(--text-color-dark);
+}
 /* Regular buttons */
 .trigger-events-container button {
-
   padding: 0.6rem 1.2rem;
   border-radius: 8px;
-  color: #fff;
   cursor: pointer;
   transition: background 0.15s;
+    color:var(--text-color-dark)
 }
 
 .trigger-events-container button:hover {
   background-color: var(--highlight-color);
 }
-
 
 .overlay-box {
   border-radius: 10px;

@@ -125,8 +125,8 @@ export const HotkeyPage = ({ keyMap, setKeyMap }) => {
             if (a.hotkey != "") {
               return (
                 <div className="hotkeylist-action" key={a.hotkey}>
-                  <div>{a.name}</div>
-                  <div>{a.hotkey}</div>
+                  <div className="displayname">{a.name}</div>
+                  <div className="displaykey">{a.hotkey}</div>
                   <button
                   className="butt"
                     onClick={() => {
