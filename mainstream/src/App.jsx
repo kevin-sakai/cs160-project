@@ -30,16 +30,24 @@ function App() {
 
   const [handlers, setHandlers] = useState({
     addNotePage: () => {
-      addPage(notesRef.current, setNotes, notePageRef.current, setNotePage, noteTextRef.current);
+      addPage(
+        notesRef.current,
+        setNotes,
+        notePageRef.current,
+        setNotePage,
+        noteTextRef.current
+      );
       console.log("Added new note page");
     },
     action2: () => {
       console.log("pressed b");
     },
+    opentrigger: () => {
+      console.log("pressed open trigger");
+    },
   });
   const [keyMap, setKeyMap] = useState(() => {
     const item = getItem("keyMap");
-  
     //const item = null;
     return (
       item || [
@@ -54,12 +62,16 @@ function App() {
           hotkey: "b",
           funcname: "action2",
         },
+        {
+          name: "open trigger event page",
+          hotkey: "",
+          funcname: "opentrigger",
+        },
       ]
     );
   });
 
   useEffect(() => {
-
     setItem("keyMap", keyMap);
   }, [keyMap]);
 
@@ -78,12 +90,9 @@ function App() {
 
   const location = useLocation();
 
-
-
   return (
     <div id="app">
       {keyMap.map((a) => {
- 
         return (
           <HotkeyItem
             hotkey={a.hotkey}
