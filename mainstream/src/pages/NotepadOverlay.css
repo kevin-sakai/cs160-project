@@ -7,9 +7,8 @@
   background-size: cover;
   background-repeat: no-repeat;
   background-position: center;
-  font-size: 1.25rem;
-  padding-top: 400px;
-  padding-left: 175px;
+  padding-top: 390px;
+  padding-left: 180px;
   background-size: 500px;
   width: 500px;
   aspect-ratio: 1522/1974;
@@ -17,4 +16,10 @@
 
 .notepad-overlay-text {
   color: var(--elem-color);
+  font-size: 1.5rem;
+  line-height: 2.05;
+  width: 360px;
+  font-family: "Patrick Hand", cursive;
+  font-weight: 400;
+  font-style: normal;
 }
