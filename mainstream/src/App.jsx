@@ -16,7 +16,7 @@ import TriggerEventsPage from "./pages/TriggerEvents";
 import { HotkeyItem } from "./pages/HotkeyFolder/HotkeyItem";
 import { useHotkeys } from "react-hotkeys-hook";
 import { getItem, setItem } from "./util/HotkeyLocalStorage";
-import { ObsProvider } from "./api/obs";
+import { ObsProvider } from "./api/obsData";
 
 function App() {
   // Notes state
