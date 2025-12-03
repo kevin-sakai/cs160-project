@@ -1,16 +1,37 @@
 // components/trigger-events/ChatBanningConfig.jsx
 import React from "react";
 
-export function ChatBanningConfig({ specificSettings, onSpecificChange }) {
+export function ChatBanningConfig({
+  specificSettings,
+  onSpecificChange,
+  onDone,     // <-- ADDED (instead of onContinue)
+  setError,   // <-- ADDED for validation
+}) {
   const updateSpecific = (field, value) => {
+    setError?.(""); // clear errors as user edits
     onSpecificChange({ ...specificSettings, [field]: value });
   };
 
+  const handleDone = () => {
+    // Validation: If spoilers are enabled, gameName must be provided
+    if (
+      specificSettings.banSpoilers === "yes" &&
+      (!specificSettings.gameName ||
+        specificSettings.gameName.trim().length === 0)
+    ) {
+      setError?.("Please enter the name of the game for spoiler detection.");
+      return;
+    }
+
+    // Allow ChatBanning triggers to skip overlays entirely
+    if (onDone) onDone();
+  };
+
   return (
-    <>
+    <div className="trigger-card">
       <h2>Chat Banning & Filtering</h2>
       <p>
-        Automatically remove or flag messages that match certain patterns
+        Automatically detect, flag, or remove messages that match patterns
         (backseat gaming, spoilers, spam, etc.).
       </p>
 
@@ -86,6 +107,17 @@ export function ChatBanningConfig({ specificSettings, onSpecificChange }) {
           />
         </div>
       </div>
-    </>
+
+      {/* DONE BUTTON */}
+      <div className="trigger-actions" style={{ marginTop: "1.5rem" }}>
+        <button
+          onClick={handleDone}
+          type="button"
+          className="trigger-done-button"
+        >
+          Done
+        </button>
+      </div>
+    </div>
   );
 }

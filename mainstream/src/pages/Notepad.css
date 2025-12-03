@@ -37,7 +37,7 @@
 
   }
   textarea::placeholder{
-    color:var(--text-color-light)
+    color:var(--highlight-color)
   }
   textarea.no-input {
     caret-color: transparent;
@@ -53,6 +53,7 @@
   display: flex;
   flex-direction: row;
   gap: 0.5rem;
+    color:var(--text-color-dark);
 }
 
 .notepad-page-button {
@@ -64,6 +65,7 @@
   background-color: var(--mid-color);
   padding: 10px 20px 10px 20px;
    border-radius: 20px;
+     color:var(--text-color-dark);
 }
 
 .notepad-page-button:hover {
@@ -89,10 +91,11 @@
 
 .generate-button {
   font-family: inherit;
-  background-color: var(--elem-color);
+  background-color: var(--mid-color);
   border-radius: 0.5rem;
   padding: 0.25rem 0.5rem 0.25rem 0.5rem;
   cursor: pointer;
+    color:var(--text-color-dark);
 }
 
 .generate-button:hover {
