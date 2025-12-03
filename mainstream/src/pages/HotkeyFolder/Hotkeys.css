@@ -54,6 +54,7 @@ option {
   font-family: comfortaa, 400;
   background-color: var(--mid-color);
   padding: 10px 20px 10px 20px;
+  color:var(--text-color-dark)
 }
 #title {
   display: flex;
