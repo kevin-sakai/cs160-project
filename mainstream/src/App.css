@@ -4,11 +4,11 @@
   align-items: flex-start;
   justify-content: flex-start;
   height: 100vh;
-  background-color: var(--elem-color);
-  font-family: lexend;
-  color:var(--text-color-dark)
-}
 
+width: 70%;
+ font-family: lexend;
+  color: var(--text-color-dark);
+}
 
 #navbar {
   height: 100vh;
@@ -33,7 +33,7 @@
   }
   li:hover {
     background-color: var(--elem-color);
-    color:var(--text-color-light)
+    color: var(--text-color-light);
   }
 }
 Link {
@@ -57,11 +57,11 @@ a {
 button {
   font-family: var(--mid-color);
   color: var(--text-color-light);
-   padding: 10px 20px 10px 20px;
+  padding: 10px 20px 10px 20px;
 }
 button:hover {
   background-color: var(--highlight-color);
-  color: var(--text-color-dark)
+  color: var(--text-color-dark);
 }
 input {
   border: none;
