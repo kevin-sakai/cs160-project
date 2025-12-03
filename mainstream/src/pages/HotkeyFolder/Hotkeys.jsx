@@ -23,7 +23,7 @@ export const HotkeyPage = ({ keyMap, setKeyMap }) => {
       <div id="title">
         <h1>Hotkeys</h1>
         <Link to="../TriggerEventsPage">
-          <button>Trigger Events</button>
+          <button className="butt">Trigger Events</button>
         </Link>
       </div>
 
@@ -62,6 +62,7 @@ export const HotkeyPage = ({ keyMap, setKeyMap }) => {
           value={!isCancel ? Array.from(keys).join(" + "): ""}
         ></input>
         <button
+        className="butt"
           onClick={() => {
             stop();
             setRecordedKeys(Array.from(keys).join(" + "));
@@ -71,6 +72,7 @@ export const HotkeyPage = ({ keyMap, setKeyMap }) => {
           done
         </button>
         <button
+        className="butt"
           onClick={() => {
             setRecordedKeys("");
             stop();
@@ -83,6 +85,7 @@ export const HotkeyPage = ({ keyMap, setKeyMap }) => {
         {isDone && !isCancel ? (
           <div>
             <button
+            className="butt"
               onClick={() => {
                 // setRecordedKeys(Array.from(keys).join(" + "));
                 setKeyMap(
@@ -125,6 +128,7 @@ export const HotkeyPage = ({ keyMap, setKeyMap }) => {
                   <div>{a.name}</div>
                   <div>{a.hotkey}</div>
                   <button
+                  className="butt"
                     onClick={() => {
                       setKeyMap(
                         keyMap.map((act) => {
