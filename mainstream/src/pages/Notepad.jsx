@@ -122,7 +122,8 @@ function NoteStory({ noteText, setNoteText }) {
     "I can't believe you survived that attack...",
     "Huh what game is this??",
     "Actually you're not using that weapon correctly",
-    "You're hilarious lol",
+    "Where did you find that item?",
+    "Seriously you're still playing this game?",
   ];
 
   useEffect(() => {
