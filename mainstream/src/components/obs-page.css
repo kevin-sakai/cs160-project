@@ -20,15 +20,20 @@
 
   overflow-x: auto;
 }
+#obsaddress:placeholder{
+  color:var(--elem-color)
+}
 
 /* inputs */
 .obs-container input {
 
   padding: 0.5rem;
-  color: #fff;
   border-radius: 6px;
   border:none;
   margin:10px;
+}
+.obs-container input::placeholder {
+  color: var(--text-color-dark);
 }
 
 /* Buttons */
