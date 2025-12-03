@@ -62,5 +62,17 @@
 button {
   background-color: var(--mid-color);
   color: black;
+
+
   
+}
+
+button:hover {
+  background-color: var(--highlight-color);
+  color: var(--text-color-dark);
+}
+
+/* on hover for overlay tiles */
+.overlay-tile:hover {
+  opacity: 0.85;
 }
