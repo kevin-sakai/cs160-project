@@ -5,7 +5,7 @@ import NotepadPage from "./pages/Notepad";
 import HomePage from "./pages/Home";
 import "./App.css";
 import { HotkeyPage } from "./pages/HotkeyFolder/Hotkeys";
-import { Routes, Route, useLocation } from "react-router-dom";
+import { Routes, Route, useLocation, useNavigate } from "react-router-dom";
 import { Link } from "react-router-dom";
 import { Navbar } from "./components/Navbar";
 import ObsPage from "./components/obs-page";
@@ -25,29 +25,41 @@ function App() {
   const notesRef = useRef(notes);
   const noteTextRef = useRef(noteText);
   const notePageRef = useRef(notePage);
+  const navigate = useNavigate(); 
 
   // Hotkey mapping start block – new trigger actions can go here
 
   const [handlers, setHandlers] = useState({
     addNotePage: () => {
-      addPage(
-        notesRef.current,
-        setNotes,
-        notePageRef.current,
-        setNotePage,
-        noteTextRef.current
-      );
+      addPage(notesRef.current, setNotes, notePageRef.current, setNotePage, noteTextRef.current);
       console.log("Added new note page");
     },
     action2: () => {
       console.log("pressed b");
     },
-    opentrigger: () => {
-      console.log("pressed open trigger");
+    openTriggerEventsPage: () => {
+      //navigate("/TriggerEventsPage");
+      console.log("Navigating to Trigger Events Page");
+    },
+    activateTimedEventsTrigger: () => {
+      navigate("/TriggerEventsPage", { state: { initialTrigger: "timed" } });
+    },
+    activateClickTrigger: () => {
+      navigate("/TriggerEventsPage", { state: { initialTrigger: "click" } });
+    },
+    activateFollowerTrigger: () => {
+      navigate("/TriggerEventsPage", { state: { initialTrigger: "followers" } });
+    },
+    activateBanningTrigger: () => {
+      navigate("/TriggerEventsPage", { state: { initialTrigger: "banning" } });
+    },
+    activateSentimentTrigger: () => {
+      navigate("/TriggerEventsPage", { state: { initialTrigger: "sentiment" } });
     },
   });
   const [keyMap, setKeyMap] = useState(() => {
     const item = getItem("keyMap");
+  
     //const item = null;
     return (
       item || [
@@ -62,16 +74,49 @@ function App() {
           hotkey: "b",
           funcname: "action2",
         },
+        // Adding the Trigger Events page hotkey by default
+        { 
+          name: "Open Trigger Events Page",
+          hotkey: "", 
+          funcname: "openTriggerEventsPage",
+        },
+        // Add the Timed Events Trigger hotkey by default
         {
-          name: "open trigger event page",
+          name: "Activate Timed Events Trigger",
           hotkey: "",
-          funcname: "opentrigger",
+          funcname: "activateTimedEventsTrigger",
+        },
+        // Add the Click Trigger hotkey by default
+        {
+          name: "Activate Click Trigger",
+          hotkey: "",
+          funcname: "activateClickTrigger",
+        },
+        // Add the Follower Trigger hotkey by default
+        {
+          name: "Activate Follower Trigger",
+          hotkey: "",
+          funcname: "activateFollowerTrigger",
+        },
+        // Add the Banning Trigger hotkey by default
+        {
+          name: "Activate Banning Trigger",
+          hotkey: "",
+          funcname: "activateBanningTrigger",
+        },
+        // Add the Sentiment Trigger hotkey by default
+        {
+          name: "Activate Sentiment Trigger",
+          hotkey: "",
+          funcname: "activateSentimentTrigger",
         },
       ]
     );
   });
+  // just do "" for the tri
 
   useEffect(() => {
+
     setItem("keyMap", keyMap);
   }, [keyMap]);
 
@@ -93,9 +138,12 @@ function App() {
     "/notepad-overlay",
   ];
 
+
+
   return (
     <div id="app">
       {keyMap.map((a) => {
+ 
         return (
           <HotkeyItem
             hotkey={a.hotkey}
