@@ -252,205 +252,7 @@ app.post('/api/obs/scenes/switch', async (req, res) => {
   }
 });
 
-// Get AI-generated insights from OBS data
-// GET /api/obs/insights
-app.get('/api/obs/insights', async (req, res) => {
-  try {
-    await ensureObsConnected();
-    
-    // Collect OBS data
-    const { scenes, currentProgramSceneName } = await obs.call('GetSceneList');
-    
-    // Get sources for each scene
-    const sceneData = [];
-    for (const scene of scenes) {
-      try {
-        const { sceneItems } = await obs.call('GetSceneItemList', {
-          sceneName: scene.sceneName,
-        });
-        sceneData.push({
-          sceneName: scene.sceneName,
-          sourceCount: sceneItems.length,
-          sources: sceneItems.map(item => ({
-            name: item.sourceName,
-            kind: item.inputKind,
-            enabled: item.sceneItemEnabled,
-          })),
-        });
-      } catch (err) {
-        console.error(`Error getting sources for ${scene.sceneName}:`, err);
-      }
-    }
-
-    // Prepare data for ChatGPT
-    const obsDataSummary = {
-      totalScenes: scenes.length,
-      currentScene: currentProgramSceneName,
-      scenes: sceneData,
-      mostUsedScenes: scenes.slice(0, 5).map(s => s.sceneName), // Placeholder - in real app, track usage
-    };
-
-    // Call ChatGPT API for insights
-    const apiKey = process.env.CHATGPT_API_KEY;
-    if (!apiKey) {
-      throw new Error('CHATGPT_API_KEY not in .env');
-    }
-
-    const prompt = `Analyze this OBS Studio streaming data and provide insights in JSON format. 
-Focus on streamer-relevant metrics like scene usage patterns, source efficiency, and recommendations.
-
-OBS Data:
-- Total Scenes: ${obsDataSummary.totalScenes}
-- Current Scene: ${obsDataSummary.currentScene}
-- Scene Details: ${JSON.stringify(obsDataSummary.scenes, null, 2)}
-
-Also analyze chat sentiment if provided. If chat messages are included, analyze sentiment (positive, negative, neutral) and engagement patterns.
-
-Return a JSON object with this structure:
-{
-  "sceneInsights": {
-    "mostUsedScenes": [{"name": "Scene1", "usage": 45}],
-    "recommendations": ["recommendation1", "recommendation2"]
-  },
-  "sourceInsights": {
-    "mostUsedSources": [{"name": "Source1", "count": 5}],
-    "efficiency": "analysis text"
-  },
-  "chatSentiment": {
-    "overall": "positive/negative/neutral",
-    "breakdown": {"positive": 60, "negative": 20, "neutral": 20},
-    "engagement": "high/medium/low"
-  },
-  "recommendations": ["actionable recommendation 1", "recommendation 2"]
-}
-
-If no chat data is provided, set chatSentiment to null.`;
-
-    let chatResponse;
-    try {
-      // Try with JSON mode first
-      try {
-        chatResponse = await axios.post(
-          'https://api.openai.com/v1/chat/completions',
-          {
-            model: 'gpt-4o',
-            messages: [
-              {
-                role: 'system',
-                content: 'You are an expert streaming analytics assistant. Analyze OBS data and provide actionable insights. You MUST respond with ONLY valid JSON, no other text. The JSON should have this structure: {"sceneInsights": {"mostUsedScenes": [{"name": "Scene1", "usage": 45}], "recommendations": []}, "sourceInsights": {"mostUsedSources": [{"name": "Source1", "count": 5}], "efficiency": "text"}, "chatSentiment": {"overall": "positive", "breakdown": {"positive": 60, "negative": 20, "neutral": 20}, "engagement": "high"} or null, "recommendations": []}',
-              },
-              {
-                role: 'user',
-                content: prompt,
-              },
-            ],
-            temperature: 0.7,
-            response_format: { type: 'json_object' },
-          },
-          {
-            headers: {
-              'Authorization': `Bearer ${apiKey}`,
-              'Content-Type': 'application/json',
-            },
-          }
-        );
-      } catch (jsonModeErr) {
-        // Fallback: try without JSON mode if it's not supported
-        if (jsonModeErr.response?.data?.error?.message?.includes('response_format')) {
-          console.log('JSON mode not supported, trying without response_format...');
-          chatResponse = await axios.post(
-            'https://api.openai.com/v1/chat/completions',
-            {
-              model: 'gpt-4o',
-              messages: [
-                {
-                  role: 'system',
-                  content: 'You are an expert streaming analytics assistant. Analyze OBS data and provide actionable insights. You MUST respond with ONLY valid JSON, no other text. The JSON should have this structure: {"sceneInsights": {"mostUsedScenes": [{"name": "Scene1", "usage": 45}], "recommendations": []}, "sourceInsights": {"mostUsedSources": [{"name": "Source1", "count": 5}], "efficiency": "text"}, "chatSentiment": {"overall": "positive", "breakdown": {"positive": 60, "negative": 20, "neutral": 20}, "engagement": "high"} or null, "recommendations": []}',
-                },
-                {
-                  role: 'user',
-                  content: prompt,
-                },
-              ],
-              temperature: 0.7,
-            },
-            {
-              headers: {
-                'Authorization': `Bearer ${apiKey}`,
-                'Content-Type': 'application/json',
-              },
-            }
-          );
-        } else {
-          throw jsonModeErr;
-        }
-      }
-    } catch (axiosErr) {
-      console.error('ChatGPT API Error:', axiosErr.response?.data || axiosErr.message);
-      throw new Error(`ChatGPT API error: ${axiosErr.response?.data?.error?.message || axiosErr.message}`);
-    }
-
-    if (!chatResponse?.data?.choices?.[0]?.message?.content) {
-      throw new Error('Invalid response from ChatGPT API');
-    }
-
-    let insights;
-    try {
-      const responseText = chatResponse.data.choices[0].message.content.trim();
-      // Try to extract JSON if it's wrapped in markdown code blocks
-      let jsonText = responseText;
-      const jsonMatch = responseText.match(/```(?:json)?\s*(\{[\s\S]*\})\s*```/);
-      if (jsonMatch) {
-        jsonText = jsonMatch[1];
-      }
-      insights = JSON.parse(jsonText);
-    } catch (parseErr) {
-      console.error('Failed to parse ChatGPT response:', chatResponse.data.choices[0].message.content);
-      throw new Error(`Failed to parse AI response: ${parseErr.message}`);
-    }
-
-    // Prepare chart data
-    const chartData = {
-      sceneUsage: {
-        labels: insights.sceneInsights?.mostUsedScenes?.map(s => s.name) || [],
-        data: insights.sceneInsights?.mostUsedScenes?.map(s => s.usage) || [],
-      },
-      sourceUsage: {
-        labels: insights.sourceInsights?.mostUsedSources?.map(s => s.name) || [],
-        data: insights.sourceInsights?.mostUsedSources?.map(s => s.count) || [],
-      },
-      chatSentiment: insights.chatSentiment
-        ? {
-            labels: ['Positive', 'Negative', 'Neutral'],
-            data: [
-              insights.chatSentiment.breakdown?.positive || 0,
-              insights.chatSentiment.breakdown?.negative || 0,
-              insights.chatSentiment.breakdown?.neutral || 0,
-            ],
-          }
-        : null,
-      insights: insights,
-    };
-
-    res.json({
-      ok: true,
-      chartData,
-      rawInsights: insights,
-      obsData: obsDataSummary,
-    });
-  } catch (err) {
-    console.error('Error in GET /api/obs/insights:', err);
-    console.error('Error stack:', err.stack);
-    res.status(500).json({
-      error: 'Failed to generate insights',
-      details: err.message || String(err),
-      stack: process.env.NODE_ENV === 'development' ? err.stack : undefined,
-    });
-  }
-});
-
-// Connect to Twitch chat and start collecting messages
-// POST /api/twitch/connect
+// connect to Twitch chat and start collecting messages
 app.post('/api/twitch/connect', async (req, res) => {
   try {
     const botUsername = process.env.TWITCH_BOT_USERNAME;
@@ -478,8 +280,7 @@ app.post('/api/twitch/connect', async (req, res) => {
   }
 });
 
-// Disconnect from Twitch chat
-// POST /api/twitch/disconnect
+// disconnect from Twitch chat
 app.post('/api/twitch/disconnect', (req, res) => {
   try {
     disconnectChatClient();
@@ -496,8 +297,7 @@ app.post('/api/twitch/disconnect', (req, res) => {
   }
 });
 
-// Get sentiment analysis from collected Twitch chat messages
-// GET /api/twitch/sentiment
+// get sentiment analysis from collected Twitch chat messages
 app.get('/api/twitch/sentiment', async (req, res) => {
   try {
     const emotionData = await getEmotionData();

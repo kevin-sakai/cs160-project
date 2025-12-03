@@ -15,6 +15,7 @@ import {
   Legend,
 } from 'chart.js';
 import { Bar, Pie, Radar } from 'react-chartjs-2';
+import '../../../src/styles/variables.css';
 
 ChartJS.register(
   CategoryScale,
@@ -31,6 +32,14 @@ ChartJS.register(
 );
 
 import './Graphs.css';
+
+// Get CSS variable colors
+const getComputedColor = (varName) => {
+  if (typeof window !== 'undefined') {
+    return getComputedStyle(document.documentElement).getPropertyValue(varName).trim();
+  }
+  return '#497bd4';
+};
 
 export default function Graphs() {
   const [loading, setLoading] = useState(true);
@@ -117,10 +126,34 @@ export default function Graphs() {
     };
   }
 
+  function normalizeToPercentages(data) {
+    const total = data.reduce((sum, val) => sum + val, 0);
+    if (total === 0) return data;
+    return data.map(val => Math.round((val / total) * 100));
+  }
+
   const chartOptions = {
     responsive: true,
     plugins: {
       legend: { display: true },
+    },
+  };
+
+  const sceneChartOptions = {
+    responsive: true,
+    plugins: {
+      legend: { display: true },
+    },
+    scales: {
+      y: {
+        beginAtZero: true,
+        max: 100,
+        ticks: {
+          callback: function(value) {
+            return value + '%';
+          },
+        },
+      },
     },
   };
 
@@ -147,17 +180,6 @@ export default function Graphs() {
         </div>
       )}
 
-      {insights && (
-        <section className="insights-section">
-          <h2>AI Recommendations</h2>
-          <ul>
-            {insights.recommendations?.map((rec, idx) => (
-              <li key={idx}>{rec}</li>
-            ))}
-          </ul>
-        </section>
-      )}
-
       <div className="chart-blocks">
         {chartData?.sceneUsage?.labels?.length > 0 && (
           <div className="chart-card">
@@ -165,11 +187,11 @@ export default function Graphs() {
             <Bar
               data={simpleBarConfig(
                 chartData.sceneUsage.labels,
-                chartData.sceneUsage.data,
+                normalizeToPercentages(chartData.sceneUsage.data),
                 'Usage %',
-                'rgba(54, 162, 235, 0.7)'
+                getComputedColor('--elem-color')
               )}
-              options={chartOptions}
+              options={sceneChartOptions}
             />
           </div>
         )}
@@ -182,51 +204,14 @@ export default function Graphs() {
                 chartData.sourceUsage.labels,
                 chartData.sourceUsage.data,
                 'Usage Count',
-                'rgba(255, 99, 132, 0.7)'
+                getComputedColor('--highlight-color')
               )}
               options={chartOptions}
             />
           </div>
         )}
 
-        {chartData?.chatSentiment && (
-          <div className="chart-card">
-            <h3>Chat Sentiment</h3>
-            <Pie
-              data={{
-                labels: chartData.chatSentiment.labels,
-                datasets: [
-                  {
-                    data: chartData.chatSentiment.data,
-                    backgroundColor: [
-                      '#4bc0c0',
-                      '#ff6384',
-                      '#ffce56',
-                    ],
-                  },
-                ],
-              }}
-              options={chartOptions}
-            />
-            {insights?.chatSentiment && (
-              <p className="sentiment-note">
-                Overall: {insights.chatSentiment.overall} | Engagement:{' '}
-                {insights.chatSentiment.engagement}
-              </p>
-            )}
-          </div>
-        )}
-
-        {!chartData?.chatSentiment && (
-          <div className="chart-card">
-            <h3>Chat Sentiment</h3>
-            <p>Chat sentiment data not available.</p>
-          </div>
-        )}
-      </div>
-
-      {/* Twitch Chat Sentiment Section */}
-      <section className="twitch-sentiment-section">
+        <section className="twitch-sentiment-section">
         <h2>Twitch Chat Sentiment Analysis</h2>
         <div className="twitch-controls">
           <button
@@ -290,14 +275,8 @@ export default function Graphs() {
         {!twitchConnected && !sentimentData && (
           <p>Connect to Twitch chat to start analyzing emotions from messages.</p>
         )}
-      </section>
-
-      {insights?.sourceInsights?.efficiency && (
-        <section className="insights-section">
-          <h2>Source Efficiency Analysis</h2>
-          <p>{insights.sourceInsights.efficiency}</p>
         </section>
-      )}
+      </div>
     </div>
   );
 }
