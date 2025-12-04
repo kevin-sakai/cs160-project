@@ -97,7 +97,8 @@ option {
   display: flex;
   flex-direction: column;
   align-items: stretch;
-  font-family: comfortaa, 400;
+  /* font-family: comfortaa;
+  font-weight: 900; */
   /* height: 100vh; */
 }
 
@@ -132,12 +133,12 @@ select {
   border-radius: 10px;
   padding: 10px;
   border: none;
-  width: 240px;
+  width: 400px;
   height: 45px;
   font-family: inherit;
   background-color: var(--highlight-color);
   color: var(--text-color-dark);
-  box-shadow: 0px 0px 10px 3px rgb(120, 138, 209);
+  box-shadow: 0px 0px 10px 3px rgb(149, 168, 241);
   transition: box-shadow 0.5s ease-in-out;
 }
 
