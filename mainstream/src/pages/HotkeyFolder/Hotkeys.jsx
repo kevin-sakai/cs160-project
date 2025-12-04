@@ -5,6 +5,7 @@ import help from "../../assets/help.png";
 import { useHotkeys, useRecordHotkeys } from "react-hotkeys-hook";
 import { func } from "prop-types";
 import x from "../../assets/x.png";
+import line from "../../assets/line.png";
 export const HotkeyPage = ({ keyMap, setKeyMap }) => {
   const [selectedOption, setSelectedOption] = useState(keyMap[0].name);
   const [selectedKey, setSelectedKey] = useState("");
@@ -20,7 +21,7 @@ export const HotkeyPage = ({ keyMap, setKeyMap }) => {
 
   const [keys, { start, stop, isRecording }] = useRecordHotkeys();
   return (
-    <div id="hotkey-page">
+    <div id="hotkey-page" >
       <div id="title">
         <h1>Hotkeys</h1>
         <Link to="../TriggerEventsPage">
@@ -62,6 +63,7 @@ export const HotkeyPage = ({ keyMap, setKeyMap }) => {
           onClick={() => {
             start();
             setIsCancel(false);
+            setListClick(false);
           }}
           value={!isCancel ? Array.from(keys).join(" + ") : ""}
         ></input>
@@ -134,12 +136,14 @@ export const HotkeyPage = ({ keyMap, setKeyMap }) => {
       </div> */}
       {keyMap.length > 0 ? (
         <div id="hotkey-display-list">
+          
           {keyMap.map((a) => {
             if (a.hotkey != "") {
               return (
+                <div className="listitem-container">
                 <div
                   // className="hotkeylist-action"
-                  className= "hotkeylist-action"
+                  className="hotkeylist-action"
                   key={a.hotkey}
                   onClick={() => {
                     setSelectedOption(a.name);
@@ -147,9 +151,8 @@ export const HotkeyPage = ({ keyMap, setKeyMap }) => {
                   }}
                 >
                   <div className="displayname">{a.name}</div>
-                  <div className="displaykey"
-                  
-                  >{a.hotkey}</div>
+                  <div className="displaykey">{a.hotkey}</div>
+                 
                   <button
                     className="butt"
                     onClick={() => {
@@ -171,10 +174,15 @@ export const HotkeyPage = ({ keyMap, setKeyMap }) => {
                     <img className="x" src={x} />
                   </button>
                 </div>
+                 <img className="line" src={line} />
+                 </div>
+                
               );
             }
           })}
+          
         </div>
+        
       ) : (
         <div id="hotkey-display-list">You have no Hotkeys</div>
       )}
