@@ -6,7 +6,7 @@
 }
 input {
   border-radius: 10px;
-  width: 480px;
+  width: 380px;
   height: 20px;
   border: none;
   padding: 10px;
@@ -22,7 +22,7 @@ input {
   border-radius: 10px;
   padding: 10px;
   border: none;
-  width: 500px;
+  width: 400px;
   height: 45px;
   font-family: inherit;
   background-color: var(--highlight-color);
