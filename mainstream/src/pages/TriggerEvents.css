@@ -8,6 +8,7 @@
   align-items: stretch;
   width: 100%;
   font-family: comfortaa, 400;
+    margin: 30px 0px 0px 30px;
 }
 
 /* Section headings */
@@ -28,7 +29,7 @@
   color: var(--text-color-dark);
 }
 input::placeholder {
-  color: var(--text-color-dark);
+   color: rgb(167, 166, 198);
 }
 /* Regular buttons */
 .trigger-events-container button {
@@ -82,4 +83,7 @@ button:hover {
 /* on hover for overlay tiles */
 .overlay-tile:hover {
   opacity: 0.85;
+}
+.overlay-tile-selected {
+  box-shadow: inset 0px 0px 0px 4px rgba(85, 73, 255, 0.54);
 }

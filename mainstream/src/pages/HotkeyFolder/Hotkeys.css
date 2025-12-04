@@ -6,7 +6,7 @@
 }
 input {
   border-radius: 10px;
-  width: 200px;
+  width: 220px;
   height: 20px;
   border: none;
   padding: 10px;
@@ -14,14 +14,15 @@ input {
   background-color: var(--highlight-color);
   color: var(--text-color-dark);
 }
-input::placeholder {
-  color: var(--highlight-color);
+.inp::placeholder {
+  color: rgb(167, 166, 198);
 }
+
 #select-box {
   border-radius: 10px;
   padding: 10px;
   border: none;
-  width: 220px;
+  width: 240px;
   height: 45px;
   font-family: inherit;
   background-color: var(--highlight-color);
@@ -37,24 +38,42 @@ option {
   border-radius: 20px;
   border: none;
   font-family: comfortaa, 400;
-  padding:50px;
+  padding: 50px;
 }
-.opt:hover{
-  color:inherit;
+.opt:hover {
+  color: inherit;
   background-color: inherit;
 }
 .optdiv {
   border-radius: 20px;
   border: none;
 }
-.displayname{
-  width: 350px;
+
+#triplebutt {
+  display: flex;
+  gap: 10px;
+  padding: 20px 0px 0px 0px;
+  button {
+    margin: 0px;
+  }
 }
+#trigbutt {
+  margin-right: 250px;
+}
+
 .butt {
   font-family: comfortaa, 400;
   background-color: var(--mid-color);
   padding: 10px 20px 10px 20px;
-  color:var(--text-color-dark)
+  color: var(--text-color-dark);
+}
+.butt:disabled {
+  background-color: rgb(167, 166, 198);
+  color: rgb(101, 99, 128);
+}
+.x {
+  width: 10px;
+  height: 10px;
 }
 #title {
   display: flex;
@@ -65,12 +84,12 @@ option {
 
 #hotkey-page {
   flex: 1;
+  margin: 30px 0px 0px 30px;
   padding-left: 2rem;
   padding-right: 2rem;
   display: flex;
   flex-direction: column;
   align-items: stretch;
-  width: 100%;
   font-family: comfortaa, 400;
   height: 100vh;
 }
@@ -102,18 +121,44 @@ select {
   width: 180px;
   padding: 10px;
 }
+#flash {
+  border-radius: 10px;
+  padding: 10px;
+  border: none;
+  width: 240px;
+  height: 45px;
+  font-family: inherit;
+  background-color: var(--highlight-color);
+  color: var(--text-color-dark);
+  box-shadow: 0px 0px 10px 3px var(--mid-color);
+  transition: box-shadow 0.5s ease-in-out;
+}
 
 #hotkey-display-list {
-  margin-top: 70px;
-  border-radius: 10px;
+  margin-top: 50px;
+  margin-bottom: 20px;
+  border-radius: 20px;
   background-color: var(--mid-color);
   color: var(--text-color-light);
-  width: 100%;
-  padding: 20px 10px 20px 10px;
+  width: 70%;
+  padding: 30px;
+  display: flex;
+  flex-direction: column;
+  align-items: baseline;
+  gap: 25px;
+
+  div {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    width: 100%;
+  }
   button {
     background-color: var(--elem-color);
+    margin: 0;
   }
 }
+
 #hotkey-dispay-list button:hover {
   background-color: inherit;
 }
@@ -122,7 +167,7 @@ select {
   font-family: comfortaa, 400;
   display: flex;
   justify-content: space-between;
-  padding: 10px;
+
   border-radius: 10px;
 }
 
