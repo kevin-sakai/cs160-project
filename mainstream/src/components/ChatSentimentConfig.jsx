@@ -1,14 +1,16 @@
 // components/ChatSentimentConfig.jsx
 import React from "react";
 import { BaseTriggerSettings } from "./BaseTriggerSettings";
+import help from "../assets/help.png";
+import { useState } from "react";
 
 export function ChatSentimentConfig({
   baseSettings,
   onBaseSettingsChange,
   specificSettings,
   onSpecificChange,
-  onContinue,     // <-- ADDED
-  setError,       // <-- ADDED
+  onContinue, // <-- ADDED
+  setError, // <-- ADDED
 }) {
   const updateSpecific = (field, value) => {
     setError?.(""); // clear errors when user interacts
@@ -17,8 +19,13 @@ export function ChatSentimentConfig({
 
   const handleNext = () => {
     // Basic required validation
-    if (!specificSettings.target || specificSettings.target.trim().length === 0) {
-      setError?.("Please enter a target sentiment / word / phrase / theme before continuing.");
+    if (
+      !specificSettings.target ||
+      specificSettings.target.trim().length === 0
+    ) {
+      setError?.(
+        "Please enter a target sentiment / word / phrase / theme before continuing."
+      );
       return;
     }
 
@@ -29,14 +36,25 @@ export function ChatSentimentConfig({
 
     if (onContinue) onContinue();
   };
-
+  const [trighelp, setTrigHelp] = useState(false);
   return (
     <div className="trigger-card">
-      <h2>Chat Sentiment & Themes</h2>
-      <p>
-        Use an LLM to analyze chat sentiment or themes, and trigger overlays
-        when certain moods or phrases appear.
-      </p>
+      <div className="header">
+        <h2>Chat Sentiment & Themes</h2>
+        <img
+          className="t-helpicon"
+          src={help}
+          onClick={() => {
+            setTrigHelp(!trighelp);
+          }}
+        />
+      </div>
+      {trighelp ? (
+        <p className="trigger-description">
+          Use an LLM to analyze chat sentiment or themes, and trigger overlays
+          when certain moods or phrases appear.
+        </p>
+      ) : null}
 
       <div style={{ display: "grid", gap: "1rem", maxWidth: "480px" }}>
         {/* Match mode */}
@@ -48,10 +66,14 @@ export function ChatSentimentConfig({
             value={specificSettings.matchType || "sentiment"}
             onChange={(e) => updateSpecific("matchType", e.target.value)}
           >
-            <option value="sentiment">Overall sentiment (happy, salty, hype)</option>
+            <option value="sentiment">
+              Overall sentiment (happy, salty, hype)
+            </option>
             <option value="word">Specific word</option>
             <option value="phrase">Specific phrase</option>
-            <option value="theme">High-level theme (e.g., "complaints", "hype")</option>
+            <option value="theme">
+              High-level theme (e.g., "complaints", "hype")
+            </option>
           </select>
         </div>
 
@@ -94,7 +116,9 @@ export function ChatSentimentConfig({
             onChange={(e) => updateSpecific("requireApproval", e.target.value)}
           >
             <option value="no">No, trigger automatically</option>
-            <option value="yes">Yes, show me a notification to approve first</option>
+            <option value="yes">
+              Yes, show me a notification to approve first
+            </option>
           </select>
         </div>
       </div>
