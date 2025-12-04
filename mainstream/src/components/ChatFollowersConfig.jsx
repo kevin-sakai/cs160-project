@@ -1,14 +1,16 @@
 // components/ChatFollowersConfig.jsx
 import React from "react";
 import { BaseTriggerSettings } from "./BaseTriggerSettings";
+import help from "../assets/help.png";
+import { useState } from "react";
 
 export function ChatFollowersConfig({
   baseSettings,
   onBaseSettingsChange,
   specificSettings,
   onSpecificChange,
-  onContinue,      // <-- ADDED
-  setError,        // <-- ADDED
+  onContinue, // <-- ADDED
+  setError, // <-- ADDED
 }) {
   const updateSpecific = (field, value) => {
     setError?.(""); // clear errors when user changes something
@@ -24,14 +26,26 @@ export function ChatFollowersConfig({
 
     if (onContinue) onContinue();
   };
-
+const [trighelp, setTrigHelp] = useState(false);
   return (
     <div className="trigger-card">
-      <h2>Chat Followers</h2>
-      <p>
+      <div className="header">
+        <h2>Chat Followers</h2>
+        <img
+          className="t-helpicon"
+          src={help}
+          onClick={() => {
+            setTrigHelp(!trighelp);
+          }}
+        />
+      </div>
+      {trighelp ? (
+        <p className="trigger-description">
         Trigger an overlay when you reach a follower milestone or receive new
         followers (via Twitch API, once configured).
-      </p>
+        </p>
+      ) : null}
+
 
       <div style={{ display: "grid", gap: "1rem", maxWidth: "480px" }}>
         {/* Mode: total vs new followers */}
