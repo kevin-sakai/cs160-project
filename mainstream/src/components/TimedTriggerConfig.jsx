@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 
 /**
  * Shared base settings for all trigger types:
@@ -8,6 +8,7 @@ import React from "react";
  * - whether to override other overlays
  * - optional hotkey binding
  */
+import help from "../assets/help.png";
 export function BaseTriggerSettings({ settings, onChange }) {
   const update = (field, value) => {
     onChange({ ...settings, [field]: value });
@@ -69,16 +70,12 @@ export function BaseTriggerSettings({ settings, onChange }) {
                 type="number"
                 min="1"
                 value={settings.displayDurationValue ?? ""}
-                onChange={(e) =>
-                  update("displayDurationValue", e.target.value)
-                }
+                onChange={(e) => update("displayDurationValue", e.target.value)}
                 placeholder="Duration"
               />
               <select
                 value={settings.displayDurationUnit || "seconds"}
-                onChange={(e) =>
-                  update("displayDurationUnit", e.target.value)
-                }
+                onChange={(e) => update("displayDurationUnit", e.target.value)}
               >
                 <option value="seconds">seconds</option>
                 <option value="minutes">minutes</option>
@@ -177,13 +174,28 @@ export default function TimedEventsConfig({
     onContinue?.();
   };
 
+  const [trighelp, setTrigHelp] = useState(false);
+
   return (
     <div className="trigger-card">
-      <h2>Timed Events</h2>
-      <p className="trigger-description">
-        Trigger an overlay on a schedule. Configure how long to wait before the
-        first trigger, how often it repeats, and how long it stays visible.
-      </p>
+      <div className="header">
+     
+        <h2>Timed Events</h2>
+        <img
+          className="t-helpicon"
+          src={help}
+          onClick={() => {
+            setTrigHelp(!trighelp);
+          }}
+        />
+      </div>
+      {trighelp ? (
+        <p className="trigger-description">
+          Trigger an overlay on a schedule. Configure how long to wait before
+          the first trigger, how often it repeats, and how long it stays
+          visible.
+        </p>
+      ) : null}
 
       {/* Starting time */}
       <div className="trigger-field">

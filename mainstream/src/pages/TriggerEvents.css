@@ -11,10 +11,7 @@
 }
 
 /* Section headings */
-.trigger-events-container h1,
-.trigger-events-container h2 {
-  margin-bottom: 1rem;
-}
+
 
 .trigger-events-container label {
   font-weight: 500;
@@ -41,7 +38,19 @@ input::placeholder {
   transition: background 0.15s;
     color:var(--text-color-dark)
 }
+.header {
+  display: flex;
+  align-items: center;
+  
+}
+.t-helpicon {
+  height: 20px;
+  padding-left: 15px;
+}
 
+.trigger-description {
+  margin-top: 0px;
+}
 .trigger-events-container button:hover {
   background-color: var(--highlight-color);
 }

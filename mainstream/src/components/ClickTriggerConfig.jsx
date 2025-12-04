@@ -1,6 +1,8 @@
 // components/trigger-events/ClickTriggerConfig.jsx
 import React from "react";
 import { BaseTriggerSettings } from "./BaseTriggerSettings";
+import help from "../assets/help.png";
+import { useState } from "react";
 
 export function ClickTriggerConfig({
   baseSettings,
@@ -11,14 +13,25 @@ export function ClickTriggerConfig({
   const updateSpecific = (field, value) => {
     onSpecificChange({ ...specificSettings, [field]: value });
   };
-
+  const [trighelp, setTrigHelp] = useState(false);
   return (
     <>
+    <div className="header">
       <h2>When I Am Clicked</h2>
-      <p>
-        Choose screen areas that, when clicked with the mouse, will trigger an
-        overlay.
-      </p>
+      <img
+        className="t-helpicon"
+        src={help}
+        onClick={() => {
+          setTrigHelp(!trighelp);
+        }}
+      />
+</div>
+      {trighelp ? (
+        <p  className="trigger-description">
+          Choose screen areas that, when clicked with the mouse, will trigger an
+          overlay.
+        </p>
+      ) : null}
 
       {/* Click-specific fields */}
       <div style={{ display: "grid", gap: "1rem", maxWidth: "480px" }}>
