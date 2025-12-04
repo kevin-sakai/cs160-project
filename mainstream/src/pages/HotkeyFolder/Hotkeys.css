@@ -93,7 +93,7 @@ option {
   flex-direction: column;
   align-items: stretch;
   font-family: comfortaa, 400;
-  height: 100vh;
+  /* height: 100vh; */
 }
 
 .helpicon {
@@ -139,16 +139,16 @@ select {
 #hotkey-display-list {
   margin-top: 50px;
   margin-bottom: 20px;
-  border-radius: 20px;
+  border-radius: 40px;
   background-color: var(--mid-color);
   color: var(--text-color-light);
   width: 70%;
-  padding: 30px 50px 30px 50px;
+  padding: 70px 50px 70px 50px;
   display: flex;
   flex-direction: column;
   align-items: baseline;
   gap: 25px;
-
+  
   div {
     display: flex;
     align-items: baseline;
