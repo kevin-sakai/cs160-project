@@ -4,10 +4,13 @@
   align-items: flex-start;
   justify-content: flex-start;
   height: 100%;
-  
+  font-size: 18px;
   width: 70%;
   font-family: lexend;
   color: var(--text-color-dark);
+}
+button {
+  font-size: 15px;
 }
 #logo {
   width: 200px;
