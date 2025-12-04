@@ -8,6 +8,7 @@ export default function Home() {
     <h1 id="home">
       Home
     </h1>
+    <p>Welcome to Mainstream! We aim to help beginner streamers introduce themselves basic streaming tools to improve their stream experience.</p>
     </div>
   );
 }
