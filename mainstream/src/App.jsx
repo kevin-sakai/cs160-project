@@ -59,9 +59,14 @@ function App() {
       console.log("Added new note page");
     },
     action2: () => {
-      console.log("pressed b");
+      console.log("pressed key");
     },
-
+    action3: () => {
+      console.log("pressed key");
+    },
+    action4: () => {
+      console.log("pressed key");
+    },
     // Generic open Trigger Events page
     openTriggerEventsPage: () => {
       navigate("/TriggerEventsPage");
@@ -117,7 +122,17 @@ function App() {
 
         {
           name: "Action 2",
+          hotkey: "a",
+          funcname: "action2",
+        },
+                {
+          name: "Action 3",
           hotkey: "b",
+          funcname: "action2",
+        },
+                {
+          name: "Action 4",
+          hotkey: "c",
           funcname: "action2",
         },
         // Adding the Trigger Events page hotkey by default
