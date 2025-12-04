@@ -157,9 +157,13 @@ select {
   }
   button {
     background-color: var(--elem-color);
-    
     margin: 0;
   }
+    button:hover {
+    background-color: var(--highlight-color);
+    margin: 0;
+  }
+  
 }
 .displaykey {
  
