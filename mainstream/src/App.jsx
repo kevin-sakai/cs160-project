@@ -218,7 +218,7 @@ function App() {
 
           <Route path="/obspage" element={<ObsPage />} />
 
-        <Route path="/graphs" element={<Graphs />} />
+          <Route path="/graphs" element={<Graphs />} />
 
           {/* new Trigger Events page */}
           <Route

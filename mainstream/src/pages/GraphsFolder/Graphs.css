@@ -8,22 +8,8 @@
   width: 100%;
 }
 
-.content-wrapper {
-  display: flex;
-  gap: 1rem;
-  width: 100%;
-}
-
-.left-column {
-  flex: 2;
-}
-
-.right-column {
-  flex: 1;
-}
-
 .insights-section {
-  background-color: rgb(42, 42, 42);
+  background-color: var(--mid-color);
   padding-left: 1rem;
   padding-right: 1rem;
 }
@@ -35,7 +21,7 @@
 }
 
 .chart-card {
-  background-color: rgb(42, 42, 42);
+  background-color: var(--mid-color);
   padding-left: 1rem;
   padding-right: 1rem;
   display: flex;
@@ -47,12 +33,12 @@
 }
 
 .sentiment-note {
-  background-color: rgb(42, 42, 42);
+  background-color: var(--mid-color);
   color: white;
 }
 
 .twitch-sentiment-section {
-  background-color: rgb(42, 42, 42);
+  background-color: var(--mid-color);
   padding: 1rem;
   padding-left: 1rem;
   padding-right: 1rem;
@@ -73,12 +59,13 @@
 }
 
 .twitch-controls button {
-  padding: 0.6rem 1.2rem;
-  font-size: 14px;
-  background-color: rgb(58, 58, 58);
-  color: white;
-  border: 1px solid rgb(85, 85, 85);
+  font-family: inherit;
+  background-color: var(--mid-color);
+  padding: 10px 20px 10px 20px;
+  border-radius: 20px;
+  color: var(--text-color-dark);
   cursor: pointer;
+  border: none;
   margin-bottom: 0.5rem;
 }
 
@@ -88,7 +75,8 @@
 }
 
 .twitch-controls button:hover:not(:disabled) {
-  background-color: rgb(74, 74, 74);
+  background-color: var(--highlight-color);
+  color: var(--text-color-dark);
 }
 
 .sentiment-stats {

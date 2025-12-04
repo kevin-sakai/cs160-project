@@ -162,7 +162,7 @@ export default function Graphs() {
     scales: {
       r: {
         beginAtZero: true,
-        max: sentimentData?.stats?.totalMessages || 10,
+        max: sentimentData?.emotionData?.data ? Math.max(...sentimentData.emotionData.data) : 10,
       },
     },
     plugins: {
@@ -179,6 +179,17 @@ export default function Graphs() {
           {errorMsg}
         </div>
       )}
+
+      {/* {insights && (
+        <section className="insights-section">
+          <h2>AI Recommendations</h2>
+          <ul>
+            {insights.recommendations?.map((rec, idx) => (
+              <li key={idx}>{rec}</li>
+            ))}
+          </ul>
+        </section>
+      )} */}
 
       <div className="chart-blocks">
         {chartData?.sceneUsage?.labels?.length > 0 && (
@@ -211,7 +222,43 @@ export default function Graphs() {
           </div>
         )}
 
-        <section className="twitch-sentiment-section">
+        {/* {chartData?.chatSentiment && (
+          <div className="chart-card">
+            <h3>Chat Sentiment</h3>
+            <Pie
+              data={{
+                labels: chartData.chatSentiment.labels,
+                datasets: [
+                  {
+                    data: chartData.chatSentiment.data,
+                    backgroundColor: [
+                      '#4bc0c0',
+                      '#ff6384',
+                      '#ffce56',
+                    ],
+                  },
+                ],
+              }}
+              options={chartOptions}
+            />
+            {insights?.chatSentiment && (
+              <p className="sentiment-note">
+                Overall: {insights.chatSentiment.overall} | Engagement:{' '}
+                {insights.chatSentiment.engagement}
+              </p>
+            )}
+          </div>
+        )}
+
+        {!chartData?.chatSentiment && (
+          <div className="chart-card">
+            <h3>Chat Sentiment</h3>
+            <p>Chat sentiment data not available.</p>
+          </div>
+        )} */}
+      </div>
+
+      <section className="twitch-sentiment-section">
         <h2>Twitch Chat Sentiment Analysis</h2>
         <div className="twitch-controls">
           <button
@@ -275,8 +322,7 @@ export default function Graphs() {
         {!twitchConnected && !sentimentData && (
           <p>Connect to Twitch chat to start analyzing emotions from messages.</p>
         )}
-        </section>
-      </div>
+      </section>
     </div>
   );
 }
