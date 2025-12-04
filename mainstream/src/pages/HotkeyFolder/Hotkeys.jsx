@@ -33,6 +33,8 @@ export const HotkeyPage = ({ keyMap, setKeyMap }) => {
 
       {/* <p>selected option: {selectedOption} </p>
       <p>selected key: {selectedKey} </p> */}
+      <div id="form">
+        <div>
       <p>Selected action:</p>
       <div>
         <select
@@ -51,6 +53,9 @@ export const HotkeyPage = ({ keyMap, setKeyMap }) => {
             );
           })}
         </select>
+        </div>
+        </div>
+        <div>
         <p>Selected key(s):</p>
 
         <input
@@ -126,14 +131,10 @@ export const HotkeyPage = ({ keyMap, setKeyMap }) => {
             Clear
           </button>
         </div>
+        </div>
+
       </div>
-      {/* <div>
-        <p>Is recording: {isRecording ? "yes" : "no"}</p>
-        <p>Recorded keys: {Array.from(keys).join(" + ")}</p>
-        <br />
-        <button onClick={start}>Record</button>
-        <button onClick={stop}>Stop</button>
-      </div> */}
+
       {keyMap.length > 0 ? (
         <div id="hotkey-display-list">
           
