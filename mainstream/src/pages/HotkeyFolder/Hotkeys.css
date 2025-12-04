@@ -6,7 +6,7 @@
 }
 input {
   border-radius: 10px;
-  width: 220px;
+  width: 480px;
   height: 20px;
   border: none;
   padding: 10px;
@@ -22,7 +22,7 @@ input {
   border-radius: 10px;
   padding: 10px;
   border: none;
-  width: 240px;
+  width: 500px;
   height: 45px;
   font-family: inherit;
   background-color: var(--highlight-color);
@@ -83,7 +83,12 @@ option {
   width: 78%;
 
 }
-
+#form {
+  display: flex;
+  flex-direction: column;
+  width: 80%;
+  gap: 20px;
+}
 #hotkey-page {
   flex: 1;
   margin: 30px 0px 0px 30px;
