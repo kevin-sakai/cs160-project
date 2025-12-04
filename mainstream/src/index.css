@@ -16,6 +16,7 @@ html {
   background-image: url(./assets/waves.svg);
   background-repeat: no-repeat;
   background-position: bottom;
+  background-size: cover;
 }
 
 #root {
