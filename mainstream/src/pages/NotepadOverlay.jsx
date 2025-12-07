@@ -1,23 +1,22 @@
 import { getCurrentNote, retrieveCurrentNoteUpdate } from '../util/NoteOperations';
 import { useState, useEffect } from 'react';
 import "./NotepadOverlay.css";
-
+import { socket } from './Notepad';
 
 export default function NotepadOverlay() {
-  const [text, setText] = useState(() => {
-    const initialValue = getCurrentNote();
-    return initialValue ? initialValue : "";
-  });
+  const [text, setText] = useState("Waiting for server...");
 
   useEffect(() => {
-    const handleStorageUpdate = (e) => {
-      retrieveCurrentNoteUpdate(e, setText);
-    }
+    socket.on('text_update', (data) => {
+        setText(data.text);
+    });
 
-    window.addEventListener("storage", handleStorageUpdate);
-
-    return () => window.removeEventListener("storage", handleStorageUpdate);
-  });
+    return () => {
+        socket.off('connect');
+        socket.off('disconnect');
+        socket.off('text_update');
+    };
+  }, []);
 
   return (
     <div className="notepad-overlay-bg">

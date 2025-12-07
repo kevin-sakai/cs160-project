@@ -3,6 +3,10 @@ import './Notepad.css';
 import { updateCurrentNote, updateNotes, addPage, changePage, deletePage, storeCurrentNote } from '../util/NoteOperations';
 import { getNextPart, getSuggestion } from '../util/StoryGenerator';
 import { Link } from "react-router-dom"
+import { io } from 'socket.io-client';
+
+const WEBSOCKET_SERVER = 'http://localhost:3001';
+export const socket = io(WEBSOCKET_SERVER);
 
 const NUM_TEXT_ROWS = 15;
 const HISTORY_MAX = 5;
@@ -12,6 +16,10 @@ const HISTORY_MAX = 5;
 
 export default function Notepad({ notes, setNotes, noteText, setNoteText, notePage, setNotePage }) {
   const [currentTab, setCurrentTab] = useState("edit");
+
+  useEffect(() => {
+    socket.emit('text_input', { text: noteText });
+  }, [noteText])
 
   const tabs = {
     "edit": {
