@@ -1,11 +1,13 @@
 // components/trigger-events/ChatBanningConfig.jsx
 import React from "react";
+import help from "../assets/help.png";
+import { useState } from "react";
 
 export function ChatBanningConfig({
   specificSettings,
   onSpecificChange,
-  onDone,     // <-- ADDED (instead of onContinue)
-  setError,   // <-- ADDED for validation
+  onDone, // <-- ADDED (instead of onContinue)
+  setError, // <-- ADDED for validation
 }) {
   const updateSpecific = (field, value) => {
     setError?.(""); // clear errors as user edits
@@ -26,14 +28,25 @@ export function ChatBanningConfig({
     // Allow ChatBanning triggers to skip overlays entirely
     if (onDone) onDone();
   };
-
+  const [trighelp, setTrigHelp] = useState(false);
   return (
     <div className="trigger-card">
-      <h2>Chat Banning & Filtering</h2>
-      <p>
-        Automatically detect, flag, or remove messages that match patterns
-        (backseat gaming, spoilers, spam, etc.).
-      </p>
+      <div className="header">
+        <h2>Chat Banning & Filtering</h2>
+        <img
+          className="t-helpicon"
+          src={help}
+          onClick={() => {
+            setTrigHelp(!trighelp);
+          }}
+        />
+      </div>
+      {trighelp ? (
+        <p className="trigger-description">
+          Automatically detect, flag, or remove messages that match patterns
+          (backseat gaming, spoilers, spam, etc.).
+        </p>
+      ) : null}
 
       <div style={{ display: "grid", gap: "1rem", maxWidth: "480px" }}>
         {/* Backseat gaming */}

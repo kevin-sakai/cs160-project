@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from "react";
 import { useLocation } from "react-router-dom";
 import "./TriggerEvents.css";
+import help from "../assets/help.png";
 
 import TimedEventsConfig, {
   BaseTriggerSettings,
@@ -325,10 +326,7 @@ function TriggerEventsPage({ registerDoneHandler }) {
       }
 
       // If hotkey specified a trigger type, it must match the currently selected trigger
-      if (
-        triggerTypeFromHotkey &&
-        triggerTypeFromHotkey !== selectedTrigger
-      ) {
+      if (triggerTypeFromHotkey && triggerTypeFromHotkey !== selectedTrigger) {
         console.log(
           "Hotkey requested Done for trigger type",
           triggerTypeFromHotkey,
@@ -503,17 +501,29 @@ function TriggerEventsPage({ registerDoneHandler }) {
         return null;
     }
   };
-
+  const [trighelp, setTrigHelp] = useState(false);
   return (
     <div className="trigger-events-container">
       <div className="trigger-events-content">
         <header className="trigger-header">
-          <h1>Trigger Events</h1>
-          <p>
-            Create automated events that react to your stream: timers, clicks on
-            screen, follower milestones, chat moderation, and sentiment-based
-            overlays.
-          </p>
+          <div className="header">
+            <h1>Trigger Events</h1>
+            <img
+              className="t-helpicon"
+              src={help}
+              onClick={() => {
+                setTrigHelp(!trighelp);
+              }}
+            />
+          </div>
+          {trighelp ? (
+            <p className="trigger-description">
+              Create automated events that react to your stream: timers, clicks
+              on screen, follower milestones, chat moderation, and
+              sentiment-based overlays.
+            </p>
+          ) : null}
+
         </header>
 
         <div className="trigger-layout">

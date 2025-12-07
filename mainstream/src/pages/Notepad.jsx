@@ -122,7 +122,8 @@ function NoteStory({ noteText, setNoteText }) {
     "I can't believe you survived that attack...",
     "Huh what game is this??",
     "Actually you're not using that weapon correctly",
-    "You're hilarious lol",
+    "Where did you find that item?",
+    "Seriously you're still playing this game?",
   ];
 
   useEffect(() => {
@@ -152,7 +153,7 @@ function NoteStory({ noteText, setNoteText }) {
     }
   }, [noteText]);
 
-  const sendStoryRequest = async () => {
+  async function sendStoryRequest(msgBuffer) {
     if (!theme || !msgBuffer) {
       return;
     }
@@ -181,8 +182,7 @@ function NoteStory({ noteText, setNoteText }) {
       <label htmlFor="theme-input">Theme:</label>
       <input type="text" name="theme-input" placeholder="Enter theme..." onChange={(e) => setTheme(e.target.value)} />
       <button className="generate-button" onClick={() => {
-        setMsgBuffer(tmpMsgBuffer);
-        sendStoryRequest();
+        sendStoryRequest(tmpMsgBuffer);
       }}>Generate</button>
     </div>
   );
@@ -232,7 +232,6 @@ function NoteSuggestions({ noteText, setNoteText }) {
   return (
     <div id="notepad-tab-area">
       <button
-      className='generate-button'
         onClick={() => {sendSuggestionRequest(msgBuffer, setSuggestions)}}>Generate!</button>
       <textarea
         className="no-input"

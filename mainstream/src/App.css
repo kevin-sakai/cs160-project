@@ -4,14 +4,18 @@
   align-items: flex-start;
   justify-content: flex-start;
   height: 100%;
-
+  font-size: 18px;
   width: 70%;
   font-family: lexend;
   color: var(--text-color-dark);
+  margin-bottom: 30px;
+}
+button {
+  font-size: 15px;
 }
 #logo {
   width: 200px;
-    padding: 10px 10px 10px 30px;
+  padding: 10px 10px 10px 30px;
 }
 #navbar {
   height: 100%;
@@ -26,7 +30,6 @@
   ul {
     padding: 0;
     list-style-type: none;
-
   }
   li {
     list-style: none;
@@ -36,8 +39,12 @@
     padding: 10px 10px 10px 70px;
   }
   li:hover {
-    background-color: var(--elem-color);
     color: var(--text-color-light);
+    background: linear-gradient(
+      106deg,
+      rgba(209, 224, 255, 1) 43%,
+      rgba(220, 239, 242, 1) 100%
+    );
   }
 }
 Link {
