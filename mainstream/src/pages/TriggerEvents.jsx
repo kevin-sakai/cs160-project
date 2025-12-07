@@ -28,6 +28,109 @@ function hexToObsColorInt(hex) {
   return parseInt(normalized, 16);
 }
 
+// --- Timed trigger runtime helpers ---
+
+function msFromUnit(value, unit) {
+  const n = Number(value) || 0;
+  if (unit === "minutes") return n * 60_000;
+  return n * 1_000; // default seconds
+}
+
+/**
+ * Given the config + runtime state for a timed trigger, decide:
+ * - shouldShow: whether the overlay should currently be visible
+ * - nextRuntime: updated runtime state (timesShown, lastFiredAt, activeUntil...)
+ */
+function evaluateTimedTrigger({ base, specific, runtime, now }) {
+  const {
+    frequencyValue,
+    frequencyUnit = "seconds",
+    cooldown = 0,
+    displayDurationType = "permanent",
+    displayDurationValue,
+    displayDurationUnit = "seconds",
+    maxDisplays,
+  } = base || {};
+
+  const { startingTimeMinutes = 0 } = specific || {};
+
+  // Initialize runtime fields
+  let {
+    timesShown = 0,
+    lastFiredAt = null,
+    activeUntil = null,
+    firstAllowedAt = null,
+  } = runtime || {};
+
+  if (!firstAllowedAt) {
+    firstAllowedAt =
+      now + Number(startingTimeMinutes || 0) * 60_000; // delay after activation
+  }
+
+  const maxShows = Number(maxDisplays) || Infinity;
+  const freqMs = msFromUnit(frequencyValue || 0, frequencyUnit);
+  const cooldownMs = (Number(cooldown) || 0) * 1000;
+  const durationMs =
+    displayDurationType === "timed"
+      ? msFromUnit(displayDurationValue || 0, displayDurationUnit)
+      : null;
+
+  // 1. If we already hit the maxDisplays, never show again
+  if (timesShown >= maxShows) {
+    return {
+      shouldShow: false,
+      nextRuntime: { timesShown, lastFiredAt, activeUntil, firstAllowedAt },
+    };
+  }
+
+  // 2. If we haven't reached the initial startingTime yet, don't show
+  if (now < firstAllowedAt) {
+    return {
+      shouldShow: false,
+      nextRuntime: { timesShown, lastFiredAt, activeUntil, firstAllowedAt },
+    };
+  }
+
+  // 3. If overlay is currently active and hasn't expired, keep showing
+  if (activeUntil && now < activeUntil) {
+    return {
+      shouldShow: true,
+      nextRuntime: { timesShown, lastFiredAt, activeUntil, firstAllowedAt },
+    };
+  }
+
+  // 4. Check cooldown and frequency spacing
+  if (lastFiredAt != null) {
+    const sinceLast = now - lastFiredAt;
+    if (sinceLast < cooldownMs || (freqMs > 0 && sinceLast < freqMs)) {
+      // Cooldown or frequency window not satisfied
+      return {
+        shouldShow: false,
+        nextRuntime: { timesShown, lastFiredAt, activeUntil: null, firstAllowedAt },
+      };
+    }
+  }
+
+  // 5. Conditions satisfied → fire a new display now
+  const newTimesShown = timesShown + 1;
+  const newLastFiredAt = now;
+  const newActiveUntil =
+    displayDurationType === "timed" && durationMs > 0
+      ? now + durationMs
+      : null; // permanent or no duration
+
+  return {
+    shouldShow: true,
+    nextRuntime: {
+      timesShown: newTimesShown,
+      lastFiredAt: newLastFiredAt,
+      activeUntil: newActiveUntil,
+      firstAllowedAt,
+    },
+  };
+}
+
+
 // All trigger types available in the dropdown
 const TRIGGER_TYPES = [
   { id: "timed", label: "Timed Events" },
@@ -178,17 +281,19 @@ function TriggerEventsPage({ registerDoneHandler }) {
     try {
       await createColorSource(sceneName, sourceName, hexToObsColorInt(color));
 
-      const newTrigger = {
-        id: Date.now(),
-        triggerType: selectedTrigger,
-        base: baseConfigs[selectedTrigger] ?? {},
-        specific: specificConfigs[selectedTrigger] ?? {},
-        overlay: {
-          color,
-          sceneName,
-          sourceName,
-        },
-      };
+    const newTrigger = {
+      id: Date.now(),
+      triggerType: selectedTrigger,
+      base: baseConfigs[selectedTrigger] ?? {},
+      specific: specificConfigs[selectedTrigger] ?? {},
+      overlay: {
+        color,
+        sceneName,
+        sourceName,
+      },
+      createdAt: Date.now(), // used as "go live" time for the scheduler
+    };
+
 
       setSavedTriggers((prev) => [...prev, newTrigger]);
       alert("Overlay created in OBS and trigger configuration saved!");

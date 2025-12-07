@@ -2,10 +2,13 @@
 import { useEffect, useRef, useState } from "react";
 import OBSWebSocket from "obs-websocket-js";
 import "./obs-page.css";
+import { useObsConnection } from "../api/obsData";
 
 function ObsPage() {
   const [address, setAddress] = useState("ws://127.0.0.1:4455");
-  const [password, setPassword] = useState("");
+  const [password, setPassword] = useState(
+    () => window.localStorage.getItem("obsPassword") || ""
+  );
   const [status, setStatus] = useState("disconnected");
 
   const [health, setHealth] = useState(null);
@@ -18,7 +21,10 @@ function ObsPage() {
 
   const obsRef = useRef(null);
 
-  // Create / cleanup OBS client
+  // Get the shared OBS password setter from the global context
+  const { setPassword: setSharedObsPassword } = useObsConnection();
+
+  // Create / cleanup OBS client (local instance used by this page)
   useEffect(() => {
     const obs = new OBSWebSocket();
     obsRef.current = obs;
@@ -45,8 +51,13 @@ function ObsPage() {
       setErrorMsg("");
       setStatus("connecting");
 
+      // Local connection (for this page’s UI)
       await obsRef.current.connect(address, password || undefined);
       setStatus("connected");
+
+      // ✅ Also update the shared provider so TriggerEvents can use OBS too
+      setSharedObsPassword(password || "");
+      // Provider will persist to localStorage and connect via ws://127.0.0.1:4455
 
       // Health info = OBS version info
       const versionInfo = await obsRef.current.call("GetVersion");
@@ -132,7 +143,7 @@ function ObsPage() {
         sceneName: currentScene,
         inputName: name,
         inputKind: "color_source_v3", // simple color source
-        inputSettings: {},            // use OBS defaults
+        inputSettings: {}, // use OBS defaults
         sceneItemEnabled: true,
       });
 
@@ -163,7 +174,7 @@ function ObsPage() {
       <div style={{ padding: "1rem" }}>
         <h1>OBS Control</h1>
 
-        {/* Connection section (new) */}
+        {/* Connection section */}
         <section className="obs-connection">
           <h2>Connect to OBS</h2>
           <form onSubmit={handleConnect} className="obs-connect-form">
@@ -197,7 +208,7 @@ function ObsPage() {
         {loading && <p>Loading OBS status...</p>}
         {errorMsg && <p style={{ color: "red" }}>{errorMsg}</p>}
 
-        {/* Health section – reusing your old UI */}
+        {/* Health section */}
         <section>
           <h2>OBS Version / Health</h2>
           <pre style={{ background: "#ffffffff", padding: "0.5rem" }}>
