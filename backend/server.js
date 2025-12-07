@@ -9,8 +9,6 @@ const {
   disconnectChatClient,
   getEmotionData,
   getSentimentStats,
-  refreshSentimentHistory,
-  getSentimentHistory,
 } = require('./sentiment');
 
 const app = express();
