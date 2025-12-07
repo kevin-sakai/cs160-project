@@ -35,7 +35,6 @@ ChartJS.register(
 
 import './Graphs.css';
 
-// Get CSS variable colors
 const getComputedColor = (varName) => {
   if (typeof window !== 'undefined') {
     return getComputedStyle(document.documentElement).getPropertyValue(varName).trim();
