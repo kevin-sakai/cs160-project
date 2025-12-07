@@ -22,6 +22,7 @@
 
 .chart-card {
   background-color: var(--mid-color);
+  border-radius: 12px;
   padding-left: 1rem;
   padding-right: 1rem;
   display: flex;
@@ -42,7 +43,8 @@
   padding: 1rem;
   padding-left: 1rem;
   padding-right: 1rem;
-  margin-top: 2rem;
+  margin-top: 0;
+  border-radius: 12px;
 }
 
 .twitch-sentiment-section h2 {
@@ -60,10 +62,10 @@
 
 .twitch-controls button {
   font-family: inherit;
-  background-color: var(--mid-color);
+  background-color: var(--highlight-color);
+  color: var(--text-color-dark);
   padding: 10px 20px 10px 20px;
   border-radius: 20px;
-  color: var(--text-color-dark);
   cursor: pointer;
   border: none;
   margin-bottom: 0.5rem;
@@ -75,12 +77,12 @@
 }
 
 .twitch-controls button:hover:not(:disabled) {
-  background-color: var(--highlight-color);
-  color: var(--text-color-dark);
+  background-color: var(--text-color-dark);
+  color: var(--highlight-color);
 }
 
 .sentiment-stats {
-  background-color: rgb(30, 30, 30);
+  background-color: var(--hightlight-text-color);
   padding: 1rem;
   margin-top: 1rem;
 }
@@ -98,7 +100,7 @@
 }
 
 .emotion-item {
-  background-color: rgb(60, 60, 60);
+  background-color: var(--elem-color);
   padding: 0.75rem;
   display: flex;
   gap: 1rem;
@@ -107,11 +109,11 @@
 
 .emotion-item span:first-child {
   font-weight: 600;
-  color: white;
+  color: var(--text-color-dark);
 }
 
 .emotion-item span:last-child {
-  color: white;
+  color: var(--text-color-dark);
 }
 
 .error-message {

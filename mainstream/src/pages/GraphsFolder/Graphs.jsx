@@ -13,8 +13,9 @@ import {
   Filler,
   Tooltip,
   Legend,
+  TimeScale,
 } from 'chart.js';
-import { Bar, Pie, Radar } from 'react-chartjs-2';
+import { Bar, Radar } from 'react-chartjs-2';
 import '../../../src/styles/variables.css';
 
 ChartJS.register(
@@ -28,7 +29,8 @@ ChartJS.register(
   PointElement,
   Filler,
   Tooltip,
-  Legend
+  Legend,
+  TimeScale
 );
 
 import './Graphs.css';
@@ -75,7 +77,10 @@ export default function Graphs() {
       await connectTwitchChat();
       setTwitchConnected(true);
       // Load sentiment data after connecting
-      setTimeout(() => loadTwitchSentiment(), 2000);
+      setTimeout(() => {
+        loadTwitchSentiment();
+        loadSentimentHistory();
+      }, 2000);
     } catch (err) {
       console.error('Error connecting to Twitch:', err);
       setErrorMsg(`Failed to connect to Twitch: ${err.message}`);
@@ -180,17 +185,6 @@ export default function Graphs() {
         </div>
       )}
 
-      {/* {insights && (
-        <section className="insights-section">
-          <h2>AI Recommendations</h2>
-          <ul>
-            {insights.recommendations?.map((rec, idx) => (
-              <li key={idx}>{rec}</li>
-            ))}
-          </ul>
-        </section>
-      )} */}
-
       <div className="chart-blocks">
         {chartData?.sceneUsage?.labels?.length > 0 && (
           <div className="chart-card">
@@ -221,41 +215,6 @@ export default function Graphs() {
             />
           </div>
         )}
-
-        {/* {chartData?.chatSentiment && (
-          <div className="chart-card">
-            <h3>Chat Sentiment</h3>
-            <Pie
-              data={{
-                labels: chartData.chatSentiment.labels,
-                datasets: [
-                  {
-                    data: chartData.chatSentiment.data,
-                    backgroundColor: [
-                      '#4bc0c0',
-                      '#ff6384',
-                      '#ffce56',
-                    ],
-                  },
-                ],
-              }}
-              options={chartOptions}
-            />
-            {insights?.chatSentiment && (
-              <p className="sentiment-note">
-                Overall: {insights.chatSentiment.overall} | Engagement:{' '}
-                {insights.chatSentiment.engagement}
-              </p>
-            )}
-          </div>
-        )}
-
-        {!chartData?.chatSentiment && (
-          <div className="chart-card">
-            <h3>Chat Sentiment</h3>
-            <p>Chat sentiment data not available.</p>
-          </div>
-        )} */}
       </div>
 
       <section className="twitch-sentiment-section">

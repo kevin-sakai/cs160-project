@@ -3,12 +3,14 @@ require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
 const { OBSWebSocket } = require('obs-websocket-js');
-const axios = require('axios');
+// axios removed — not needed when insights are generated locally
 const {
   initializeChatClient,
   disconnectChatClient,
   getEmotionData,
   getSentimentStats,
+  refreshSentimentHistory,
+  getSentimentHistory,
 } = require('./sentiment');
 
 const app = express();
@@ -43,11 +45,35 @@ const obs = new OBSWebSocket();
 let isConnected = false;
 let isConnecting = false;
 
+// Track scene usage over time
+const sceneUsageTracker = {
+  currentScene: null,
+  sceneStartTime: null,
+  sceneDurations: {}, // { sceneName: totalMs }
+};
+
 // Set up event listeners for logging and reconnection tracking
 obs.on('ConnectionOpened', () => {
   console.log('OBS WebSocket connection opened');
   isConnected = true;
   isConnecting = false;
+});
+
+// Track scene switches
+obs.on('CurrentProgramSceneChanged', (data) => {
+  const { sceneName } = data;
+  
+  // Log previous scene duration
+  if (sceneUsageTracker.currentScene && sceneUsageTracker.sceneStartTime) {
+    const duration = Date.now() - sceneUsageTracker.sceneStartTime;
+    sceneUsageTracker.sceneDurations[sceneUsageTracker.currentScene] =
+      (sceneUsageTracker.sceneDurations[sceneUsageTracker.currentScene] || 0) + duration;
+  }
+  
+  // Switch to new scene
+  sceneUsageTracker.currentScene = sceneName;
+  sceneUsageTracker.sceneStartTime = Date.now();
+  console.log(`Scene switched to: ${sceneName}`);
 });
 
 obs.on('ConnectionClosed', () => {
@@ -252,15 +278,13 @@ app.post('/api/obs/scenes/switch', async (req, res) => {
   }
 });
 
-// get AI-generated insights from OBS data
+//get source/scene data from obs for da graphs
 app.get('/api/obs/insights', async (req, res) => {
   try {
     await ensureObsConnected();
     
-    // Collect OBS data
     const { scenes, currentProgramSceneName } = await obs.call('GetSceneList');
     
-    // Get sources for each scene
     const sceneData = [];
     for (const scene of scenes) {
       try {
@@ -281,134 +305,55 @@ app.get('/api/obs/insights', async (req, res) => {
       }
     }
 
-    // Prepare data for ChatGPT
     const obsDataSummary = {
       totalScenes: scenes.length,
       currentScene: currentProgramSceneName,
       scenes: sceneData,
-      mostUsedScenes: scenes.slice(0, 5).map(s => s.sceneName), // Placeholder - in real app, track usage
+      mostUsedScenes: scenes.slice(0, 5).map(s => s.sceneName),
     };
 
-    // Call ChatGPT API for insights
-    const apiKey = process.env.CHATGPT_API_KEY;
-    if (!apiKey) {
-      throw new Error('CHATGPT_API_KEY not in .env');
+    let insights;
+    
+    // get time for current scene
+    if (sceneUsageTracker.currentScene && sceneUsageTracker.sceneStartTime) {
+      const duration = Date.now() - sceneUsageTracker.sceneStartTime;
+      sceneUsageTracker.sceneDurations[sceneUsageTracker.currentScene] =
+        (sceneUsageTracker.sceneDurations[sceneUsageTracker.currentScene] || 0) + duration;
+      sceneUsageTracker.sceneStartTime = Date.now();
     }
+    
+    //sort them scenes by time used
+    const mostUsedScenes = (obsDataSummary.mostUsedScenes || [])
+      .map((name) => ({
+        name,
+        usage: sceneUsageTracker.sceneDurations[name] || 0,
+      }))
+      .sort((a, b) => b.usage - a.usage);
 
-    const prompt = `Analyze this OBS Studio streaming data and provide insights in JSON format. 
-Focus on streamer-relevant metrics like scene usage patterns, source efficiency, and recommendations.
-
-OBS Data:
-- Total Scenes: ${obsDataSummary.totalScenes}
-- Current Scene: ${obsDataSummary.currentScene}
-- Scene Details: ${JSON.stringify(obsDataSummary.scenes, null, 2)}
-
-Also analyze chat sentiment if provided. If chat messages are included, analyze sentiment (positive, negative, neutral) and engagement patterns.
-
-Return a JSON object with this structure:
-{
-  "sceneInsights": {
-    "mostUsedScenes": [{"name": "Scene1", "usage": 45}],
-    "recommendations": ["recommendation1", "recommendation2"]
-  },
-  "sourceInsights": {
-    "mostUsedSources": [{"name": "Source1", "count": 5}],
-    "efficiency": "analysis text"
-  },
-  "chatSentiment": {
-    "overall": "positive/negative/neutral",
-    "breakdown": {"positive": 60, "negative": 20, "neutral": 20},
-    "engagement": "high/medium/low"
-  },
-  "recommendations": ["actionable recommendation 1", "recommendation 2"]
-}
-
-If no chat data is provided, set chatSentiment to null.`;
-
-    let chatResponse;
-    try {
-      // Try with JSON mode first
-      try {
-        chatResponse = await axios.post(
-          'https://api.openai.com/v1/chat/completions',
-          {
-            model: 'gpt-4o',
-            messages: [
-              {
-                role: 'system',
-                content: 'You are an expert streaming analytics assistant. Analyze OBS data and provide actionable insights. You MUST respond with ONLY valid JSON, no other text. The JSON should have this structure: {"sceneInsights": {"mostUsedScenes": [{"name": "Scene1", "usage": 45}], "recommendations": []}, "sourceInsights": {"mostUsedSources": [{"name": "Source1", "count": 5}], "efficiency": "text"}, "chatSentiment": {"overall": "positive", "breakdown": {"positive": 60, "negative": 20, "neutral": 20}, "engagement": "high"} or null, "recommendations": []}',
-              },
-              {
-                role: 'user',
-                content: prompt,
-              },
-            ],
-            temperature: 0.7,
-            response_format: { type: 'json_object' },
-          },
-          {
-            headers: {
-              'Authorization': `Bearer ${apiKey}`,
-              'Content-Type': 'application/json',
-            },
-          }
-        );
-      } catch (jsonModeErr) {
-        // Fallback: try without JSON mode if it's not supported
-        if (jsonModeErr.response?.data?.error?.message?.includes('response_format')) {
-          console.log('JSON mode not supported, trying without response_format...');
-          chatResponse = await axios.post(
-            'https://api.openai.com/v1/chat/completions',
-            {
-              model: 'gpt-4o',
-              messages: [
-                {
-                  role: 'system',
-                  content: 'You are an expert streaming analytics assistant. Analyze OBS data and provide actionable insights. You MUST respond with ONLY valid JSON, no other text. The JSON should have this structure: {"sceneInsights": {"mostUsedScenes": [{"name": "Scene1", "usage": 45}], "recommendations": []}, "sourceInsights": {"mostUsedSources": [{"name": "Source1", "count": 5}], "efficiency": "text"}, "chatSentiment": {"overall": "positive", "breakdown": {"positive": 60, "negative": 20, "neutral": 20}, "engagement": "high"} or null, "recommendations": []}',
-                },
-                {
-                  role: 'user',
-                  content: prompt,
-                },
-              ],
-              temperature: 0.7,
-            },
-            {
-              headers: {
-                'Authorization': `Bearer ${apiKey}`,
-                'Content-Type': 'application/json',
-              },
-            }
-          );
-        } else {
-          throw jsonModeErr;
+      //count source usages by scene
+      const sourceCounts = {};
+      for (const s of obsDataSummary.scenes || []) {
+        for (const src of s.sources || []) {
+          sourceCounts[src.name] = (sourceCounts[src.name] || 0) + 1;
         }
       }
-    } catch (axiosErr) {
-      console.error('ChatGPT API Error:', axiosErr.response?.data || axiosErr.message);
-      throw new Error(`ChatGPT API error: ${axiosErr.response?.data?.error?.message || axiosErr.message}`);
-    }
 
-    if (!chatResponse?.data?.choices?.[0]?.message?.content) {
-      throw new Error('Invalid response from ChatGPT API');
-    }
+      const mostUsedSources = Object.entries(sourceCounts)
+        .map(([name, count]) => ({ name, count }))
+        .sort((a, b) => b.count - a.count)
+        .slice(0, 10);
 
-    let insights;
-    try {
-      const responseText = chatResponse.data.choices[0].message.content.trim();
-      // Try to extract JSON if it's wrapped in markdown code blocks
-      let jsonText = responseText;
-      const jsonMatch = responseText.match(/```(?:json)?\s*(\{[\s\S]*\})\s*```/);
-      if (jsonMatch) {
-        jsonText = jsonMatch[1];
-      }
-      insights = JSON.parse(jsonText);
-    } catch (parseErr) {
-      console.error('Failed to parse ChatGPT response:', chatResponse.data.choices[0].message.content);
-      throw new Error(`Failed to parse AI response: ${parseErr.message}`);
-    }
+      insights = {
+        sceneInsights: {
+          mostUsedScenes,
+          recommendations: [],
+        },
+        sourceInsights: {
+          mostUsedSources,
+          efficiency: 'derived from source counts',
+        },
+      };
 
-    // Prepare chart data
     const chartData = {
       sceneUsage: {
         labels: insights.sceneInsights?.mostUsedScenes?.map(s => s.name) || [],
@@ -418,23 +363,11 @@ If no chat data is provided, set chatSentiment to null.`;
         labels: insights.sourceInsights?.mostUsedSources?.map(s => s.name) || [],
         data: insights.sourceInsights?.mostUsedSources?.map(s => s.count) || [],
       },
-      chatSentiment: insights.chatSentiment
-        ? {
-            labels: ['Positive', 'Negative', 'Neutral'],
-            data: [
-              insights.chatSentiment.breakdown?.positive || 0,
-              insights.chatSentiment.breakdown?.negative || 0,
-              insights.chatSentiment.breakdown?.neutral || 0,
-            ],
-          }
-        : null,
-      insights: insights,
     };
 
     res.json({
       ok: true,
       chartData,
-      rawInsights: insights,
       obsData: obsDataSummary,
     });
   } catch (err) {

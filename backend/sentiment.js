@@ -5,7 +5,6 @@ const openai = new OpenAI({
   apiKey: process.env.CHATGPT_API_KEY,
 });
 
-// Initialize Twitch chat client
 let chatClient = null;
 let chatMessages = [];
 let isConnected = false;
@@ -42,7 +41,7 @@ function initializeChatClient(botUsername, oauthToken, channel) {
     });
 
     chatClient.on('chat', (channel, userstate, message, self) => {
-      if (self) return; // Ignore bot's own messages
+      if (self) return; // ignore bot's own messages
 
       chatMessages.push({
         username: userstate['display-name'],
@@ -50,7 +49,7 @@ function initializeChatClient(botUsername, oauthToken, channel) {
         timestamp: new Date(),
       });
 
-      // Keep only last 100 messages to avoid memory issues
+      // crashes my computer if i dont do this
       if (chatMessages.length > 100) {
         chatMessages.shift();
       }
@@ -90,10 +89,10 @@ async function analyzeSentiment(text) {
 
     let emotion = response.choices[0].message.content.trim().toLowerCase();
     
-    // Remove any punctuation and extra characters
+    // remove any punctuation and extra characters
     emotion = emotion.replace(/[^a-z]/g, '');
     
-    // Validate emotion is one of our 7 categories
+    // validate emotion is one of the 7 categories
     const validEmotions = ['joyful', 'positive', 'satisfied', 'neutral', 'confused', 'angry', 'rage'];
     
     if (!validEmotions.includes(emotion)) {
@@ -105,7 +104,7 @@ async function analyzeSentiment(text) {
     return emotion;
   } catch (error) {
     console.error('Error analyzing sentiment with ChatGPT:', error.message);
-    return 'neutral'; // Default to neutral on error
+    return 'neutral';
   }
 }
 
@@ -120,7 +119,6 @@ async function getSentimentStats() {
     rage: 0,
   };
 
-  // Analyze all messages
   for (const msg of chatMessages) {
     const emotion = await analyzeSentiment(msg.message);
     emotionCounts[emotion]++;
@@ -164,14 +162,14 @@ async function getEmotionData() {
       stats.emotionPercentages.angry,
       stats.emotionPercentages.rage,
     ],
-    totalMessages: stats.totalMessages,
+        totalMessages: stats.totalMessages,
+      };
+    }
+    
+  module.exports = {
+    initializeChatClient,
+    disconnectChatClient,
+    analyzeSentiment,
+    getSentimentStats,
+    getEmotionData,
   };
-}
-
-module.exports = {
-  initializeChatClient,
-  disconnectChatClient,
-  analyzeSentiment,
-  getSentimentStats,
-  getEmotionData,
-};
