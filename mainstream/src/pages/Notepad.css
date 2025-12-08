@@ -6,7 +6,6 @@
   align-items: flex-start;
   margin: 30px 0px 0px 30px;
   flex: 1;
-  height: 100vh;
 }
 
 
@@ -30,14 +29,13 @@
     font-size: 1.25rem;
     box-sizing: border-box;
     background-color: var(--mid-color);
-    color: var(--text-color-light);
+    
     border-radius: 10px;
     padding: 20px;
-    border:none;
-
+    border: none;
   }
-  textarea::placeholder{
-    color:var(--highlight-color)
+  textarea::placeholder {
+    color: var(--highlight-color);
   }
   textarea.no-input {
     caret-color: transparent;
@@ -48,14 +46,30 @@
     margin-bottom: 0;
   }
 }
-
+.textcontainer {
+  display: flex;
+  width: 100%;
+  justify-content: space-evenly;
+gap: 20px;
+}
 #notepad-page-buttons {
   display: flex;
   flex-direction: row;
   gap: 0.5rem;
-    color:var(--text-color-dark);
+  color: var(--text-color-dark);
 }
-
+#colorinput {
+  width: 100%;
+}
+.colorcontainer {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: center;
+}
+#fontcolorp {
+  align-self: flex-start;
+}
 .notepad-page-button {
   font-family: inherit;
   background-color: var(--elem-color);
@@ -64,8 +78,8 @@
   cursor: pointer;
   background-color: var(--mid-color);
   padding: 10px 20px 10px 20px;
-   border-radius: 20px;
-     color:var(--text-color-dark);
+  border-radius: 20px;
+  color: var(--text-color-dark);
 }
 
 .notepad-page-button:hover {
@@ -95,7 +109,7 @@
   border-radius: 0.5rem;
   padding: 0.25rem 0.5rem 0.25rem 0.5rem;
   cursor: pointer;
-    color:var(--text-color-dark);
+  color: var(--text-color-dark);
 }
 
 .generate-button:hover {
@@ -109,6 +123,6 @@
   color: var(--text-color-light);
   border-radius: 0.8rem;
   padding: 10px 20px 10px 20px;
-   border-radius: 30px;
-   margin: 10px 10px 30px 10px;
+  border-radius: 30px;
+  margin: 10px 10px 30px 10px;
 }

@@ -74,10 +74,6 @@ export async function switchScene(sceneName) {
   }
   return await res.json();
 }
-<<<<<<< HEAD
-
-=======
->>>>>>> a1bf15893972812008fb1f648bc969bce2e7c085
 
 export async function getInsights() {
   const res = await fetch(`${BASE_URL}/insights`);

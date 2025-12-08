@@ -14,7 +14,7 @@ import { ClickTriggerConfig } from "../components/ClickTriggerConfig";
 import { useObsConnection } from "../api/obsData";
 
 import "../components/BaseTriggerSettings.css";
-import "../components/BaseTriggerSettings.jsx"
+import "../components/BaseTriggerSettings.jsx";
 
 import {
   OVERLAY_TEMPLATES,
@@ -112,9 +112,7 @@ function evaluateTimedTrigger({ base, specific, runtime, now }) {
   const newTimesShown = timesShown + 1;
   const newLastFiredAt = now;
   const newActiveUntil =
-    displayDurationType === "timed" && durationMs > 0
-      ? now + durationMs
-      : null; // permanent or no duration
+    displayDurationType === "timed" && durationMs > 0 ? now + durationMs : null; // permanent or no duration
 
   return {
     shouldShow: true,
@@ -194,7 +192,7 @@ function TriggerEventsPage({ registerDoneHandler }) {
       return [];
     }
   });
-    // Runtime state per trigger (timed overlays)
+  // Runtime state per trigger (timed overlays)
   const [runtimeState, setRuntimeState] = useState({});
 
   // Load scenes from the shared OBS connection
@@ -245,8 +243,7 @@ function TriggerEventsPage({ registerDoneHandler }) {
     }
   }, [savedTriggers]);
 
-
-    // ============================
+  // ============================
   // Timed trigger scheduler
   // ============================
   useEffect(() => {
@@ -325,7 +322,6 @@ function TriggerEventsPage({ registerDoneHandler }) {
 
     return () => clearInterval(interval);
   }, [status, savedTriggers, setSceneItemVisibility]);
-
 
   // --- overlay selection & creation ---
 
@@ -750,7 +746,9 @@ function OverlayGrid({
         >
           Done
         </button>
+
       </div>
+      <div>blank box</div>
     </div>
   );
 }

@@ -11,10 +11,6 @@ import { Link } from "react-router-dom";
 import { Navbar } from "./components/Navbar";
 import ObsPage from "./components/obs-page";
 import NotepadOverlay from "./pages/NotepadOverlay";
-<<<<<<< HEAD
-
-=======
->>>>>>> a1bf15893972812008fb1f648bc969bce2e7c085
 import Graphs from "./pages/GraphsFolder/Graphs";
 import { getNotesState, addPage, blankNote } from "./util/NoteOperations";
 import { HotKeys } from "react-keyboard";
@@ -237,10 +233,8 @@ function App() {
           <Route path="/overlay" element={<OverlayDisplay />} />
 
           <Route path="/graphs" element={<Graphs />} />
-<<<<<<< HEAD
-=======
 
->>>>>>> a1bf15893972812008fb1f648bc969bce2e7c085
+
           {/* new Trigger Events page */}
           <Route
             path="/TriggerEventsPage"
@@ -260,6 +254,7 @@ function App() {
           />
         </Routes>
       </ObsProvider>
+    
     </div>
   );
 }
