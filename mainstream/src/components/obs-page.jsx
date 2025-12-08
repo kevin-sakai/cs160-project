@@ -295,8 +295,8 @@ function ObsPage() {
         setSources([]);
       }
 
-      // 4) Optionally re-sync from OBS (in case anything else changed)
-      await loadScenes();
+      // 4) re-sync from OBS (in case anything else changed)
+      //await loadScenes();
     } catch (err) {
       console.error(err);
       const msg = err.message || "Failed to delete scene.";
