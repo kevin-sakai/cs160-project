@@ -1,6 +1,7 @@
 // frontend/src/api/obs.js
 
 const BASE_URL = 'http://localhost:3000/api/obs';
+const TWITCH_BASE_URL = 'http://localhost:3000/api/twitch';
 
 export async function getObsHealth() {
   const res = await fetch(`${BASE_URL}/health`);
@@ -70,6 +71,49 @@ export async function switchScene(sceneName) {
   if (!res.ok) {
     const error = await res.json().catch(() => ({}));
     throw new Error(error.error || 'Failed to switch scene');
+  }
+  return await res.json();
+}
+
+export async function getInsights() {
+  const res = await fetch(`${BASE_URL}/insights`);
+  if (!res.ok) {
+    const error = await res.json().catch(() => ({}));
+    throw new Error(error.error || 'Failed to get insights');
+  }
+  return await res.json();
+}
+
+// Twitch Chat Sentiment API functions
+export async function connectTwitchChat() {
+  const res = await fetch(`${TWITCH_BASE_URL}/connect`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+  });
+  if (!res.ok) {
+    const error = await res.json().catch(() => ({}));
+    throw new Error(error.error || 'Failed to connect to Twitch chat');
+  }
+  return await res.json();
+}
+
+export async function disconnectTwitchChat() {
+  const res = await fetch(`${TWITCH_BASE_URL}/disconnect`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+  });
+  if (!res.ok) {
+    const error = await res.json().catch(() => ({}));
+    throw new Error(error.error || 'Failed to disconnect from Twitch chat');
+  }
+  return await res.json();
+}
+
+export async function getTwitchSentiment() {
+  const res = await fetch(`${TWITCH_BASE_URL}/sentiment`);
+  if (!res.ok) {
+    const error = await res.json().catch(() => ({}));
+    throw new Error(error.error || 'Failed to get Twitch sentiment');
   }
   return await res.json();
 }
