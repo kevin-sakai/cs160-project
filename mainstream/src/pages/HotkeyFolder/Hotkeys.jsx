@@ -6,7 +6,9 @@ import { useHotkeys, useRecordHotkeys } from "react-hotkeys-hook";
 import { func } from "prop-types";
 import x from "../../assets/x.png";
 import line from "../../assets/line.png";
-export const HotkeyPage = ({ keyMap, setKeyMap }) => {
+
+
+export const HotkeyPage = ({ keyMap, setKeyMap, setCurrPage, currPage }) => {
   const [selectedOption, setSelectedOption] = useState(keyMap[0].name);
   const [selectedKey, setSelectedKey] = useState("");
   const [needHelp, setNeedHelp] = useState(false);
@@ -25,7 +27,7 @@ export const HotkeyPage = ({ keyMap, setKeyMap }) => {
       <div id="title">
         <h1>Hotkeys</h1>
         <Link to="../TriggerEventsPage">
-          <button className="butt" id="trigbutt">
+          <button onClick={()=> {setCurrPage("triggereventspage")}} className="butt" id="trigbutt">
             Trigger Events
           </button>
         </Link>

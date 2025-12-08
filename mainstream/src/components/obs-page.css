@@ -164,3 +164,155 @@ background-color: var(--highlight-color);
   display: flex;
   flex-direction: row;
 }
+
+/* ========== Sources table layout ========== */
+
+/* CATEGORY BLOCK */
+.obs-sources-category-block {
+  padding: 0.6rem 0.75rem;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.03);
+}
+
+/* CATEGORY TITLE */
+.obs-sources-group-title {
+  font-size: 0.9rem;
+  font-weight: 600;
+  opacity: 0.9;
+  margin-bottom: 0.45rem;
+}
+
+/* EACH SOURCE ROW */
+.obs-source-row {
+  display: grid;
+  grid-template-columns: 1fr auto auto;
+  align-items: center;
+  padding: 0.45rem 0.25rem;
+  font-size: 0.8rem;
+}
+
+/* White bottom line ONLY if multiple sources */
+.obs-source-row--bordered {
+  border-bottom: 1px solid #ffffff;
+}
+
+/* NAME */
+.obs-source-name {
+  text-align: left;
+}
+
+/* VISIBILITY TAGS */
+.obs-source-visible,
+.obs-source-hidden {
+  font-size: 0.75rem;
+  padding: 0.1rem 0.45rem;
+  border-radius: 6px;
+  text-align: center;
+}
+
+.obs-source-visible {
+  background: rgba(40, 167, 69, 0.2);
+}
+
+.obs-source-hidden {
+  background: rgba(220, 53, 69, 0.2);
+}
+
+/* ACTION BUTTONS */
+.obs-source-actions {
+  display: flex;
+  gap: 0.3rem;
+}
+
+.obs-source-actions button {
+  font-size: 0.7rem;
+  padding: 0.3rem 0.55rem;
+}
+
+.obs-source-delete {
+  background: rgba(220, 53, 69, 0.25);
+}
+
+
+/* Category separator row inside the table */
+.obs-sources-category-row td {
+  font-weight: 600;
+  font-size: 0.78rem;
+  padding: 0.45rem 0.5rem 0.25rem;
+  background: rgba(255, 255, 255, 0.06);
+}
+
+/* Keep the zebra striping subtle  */
+.obs-sources-table tbody tr:nth-child(even) {
+  background: rgba(255, 255, 255, 0.02);
+}
+
+/* Visibility chips stay small */
+.obs-source-visible,
+.obs-source-hidden {
+  font-size: 0.75rem;
+  padding: 0.1rem 0.45rem;
+}
+
+/* Smaller buttons just for sources area (override global .obs-container button) */
+.obs-sources-panel button {
+  font-size: 0.75rem;
+  padding: 0.35rem 0.7rem;
+  margin-bottom: 0.25rem; /* less vertical space */
+}
+
+/* Make the action buttons row tight and compact */
+.obs-source-actions {
+  display: flex;
+  gap: 0.3rem;
+}
+
+/* slightly more compact add-source form */
+.obs-add-source-form label {
+  font-size: 0.8rem;
+}
+
+.obs-add-source-form input,
+.obs-add-source-form select {
+  font-size: 0.8rem;
+  padding: 0.35rem 0.5rem;
+}
+
+
+.sourceTypeContainer {
+  display: flex;
+  align-items: center;
+}
+
+/* Label + dropdown in one row */
+.sourceTypeLabel {
+  display: flex;
+  align-items: center;
+  gap: 1rem;              /* space between "Source type" and dropdown */
+  font-size: 0.8rem;
+}
+
+/* Rounded white dropdown */
+.sourceTypeSelect {
+  background-color: #ffffff;
+  color: #000000;
+  border-radius: 6px;      
+  border: none;
+  font-size: 0.8rem;
+  outline: none;
+}
+
+/* Optional: remove default browser arrow styling a bit */
+.sourceTypeSelect:focus {
+  box-shadow: 0 0 0 2px var(--highlight-color);
+}
+
+.home-link {
+  color: #0910d6;       /* dark grey */
+  text-decoration: underline;
+  font-weight: 700;
+}
+
+.home-link:hover {
+  color: #030646;         /* even darker on hover */
+}
