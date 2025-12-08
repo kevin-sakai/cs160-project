@@ -47,6 +47,14 @@ button {
     );
   }
 }
+.onPage {
+  color: var(--text-color-light);
+  background: linear-gradient(
+    106deg,
+    rgba(209, 224, 255, 1) 43%,
+    rgba(220, 239, 242, 1) 100%
+  );
+}
 Link {
   text-decoration: none;
 }
