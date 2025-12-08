@@ -620,21 +620,25 @@ function TriggerEventsPage({ registerDoneHandler }) {
               ))}
             </select>
 
-            {status !== "connected" && (
-              <p className="trigger-status-hint">
-                OBS not connected. Go to the OBS page and connect first.
-              </p>
-            )}
           </aside>
 
           {/* Right side: config or overlay selection */}
           <section className="trigger-main">
-            {errorMsg && <div className="trigger-error">{errorMsg}</div>}
-            {obsError && !errorMsg && (
-              <div className="trigger-error">
-                OBS error: {obsError.message || String(obsError)}
-              </div>
-            )}
+            <div className="trigger-error">
+                {status !== "connected" && (
+                  <p className="trigger-status-hint">
+                    OBS status:{" "}
+                    {status === "disconnected" && (
+                      <>
+                        Not connected.<br />
+                        Go to the OBS page and connect first.
+                      </>
+                    )}
+                    {status === "connecting" && "Connecting to OBS…"}
+                    {status === "error" && "Error talking to OBS. Check the OBS page."}
+                  </p>
+                )}
+            </div>
 
             {step === "config" ? (
               renderTriggerConfig()

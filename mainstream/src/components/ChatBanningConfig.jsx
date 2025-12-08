@@ -116,7 +116,7 @@ export function ChatBanningConfig({
             onChange={(e) => updateSpecific("bannedPhrases", e.target.value)}
             placeholder="Comma-separated list: word1, phrase 2, ..."
             rows={3}
-            style={{ width: "100%" }}
+            style={{ width: "100%", backgroundColor: "white", borderRadius: "8px", borderColor: "white"}}
           />
         </div>
       </div>
