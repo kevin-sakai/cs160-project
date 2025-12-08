@@ -1,8 +1,17 @@
-import { useState, useEffect } from 'react';
-import './Notepad.css';
-import { updateCurrentNote, updateNotes, addPage, changePage, deletePage, storeCurrentNote } from '../util/NoteOperations';
-import { getNextPart, getSuggestion } from '../util/StoryGenerator';
-import { Link } from "react-router-dom"
+import { useState, useEffect } from "react";
+import "./Notepad.css";
+import {
+  updateCurrentNote,
+  updateNotes,
+  addPage,
+  changePage,
+  deletePage,
+  storeCurrentNote,
+} from "../util/NoteOperations";
+import { getNextPart, getSuggestion } from "../util/StoryGenerator";
+import { Link } from "react-router-dom";
+import { HexColorPicker, HexColorInput } from "react-colorful";
+import { color } from "chart.js/helpers";
 
 const NUM_TEXT_ROWS = 15;
 const HISTORY_MAX = 5;
@@ -10,31 +19,37 @@ const HISTORY_MAX = 5;
 // key: pagenum
 // {date: <date last modified>, text: <note text>}
 
-export default function Notepad({ notes, setNotes, noteText, setNoteText, notePage, setNotePage }) {
+export default function Notepad({
+  notes,
+  setNotes,
+  noteText,
+  setNoteText,
+  notePage,
+  setNotePage,
+}) {
   const [currentTab, setCurrentTab] = useState("edit");
 
   const tabs = {
-    "edit": {
+    edit: {
       label: "Create Notes",
-      elem: <NoteEditor
-              notes={notes}
-              setNotes={setNotes}
-              noteText={noteText}
-              setNoteText={setNoteText}
-              notePage={notePage}
-              setNotePage={setNotePage} />,
+      elem: (
+        <NoteEditor
+          notes={notes}
+          setNotes={setNotes}
+          noteText={noteText}
+          setNoteText={setNoteText}
+          notePage={notePage}
+          setNotePage={setNotePage}
+        />
+      ),
     },
-    "story": {
+    story: {
       label: "Generate A Story",
-      elem: <NoteStory
-              noteText={noteText}
-              setNoteText={setNoteText} />,
+      elem: <NoteStory noteText={noteText} setNoteText={setNoteText} />,
     },
-    "suggest": {
+    suggest: {
       label: "Get Suggestions",
-      elem: <NoteSuggestions
-              noteText={noteText}
-              setNoteText={setNoteText} />,
+      elem: <NoteSuggestions noteText={noteText} setNoteText={setNoteText} />,
     },
   };
 
@@ -44,22 +59,32 @@ export default function Notepad({ notes, setNotes, noteText, setNoteText, notePa
         <h1>Notepad</h1>
       </div>
       <div id="notepad-tabs">
-        {Object.entries(tabs).map(([tabId, {label, elem}]) => (
+        {Object.entries(tabs).map(([tabId, { label, elem }]) => (
           <NotepadTab
             key={tabId}
             tabId={tabId}
             tabLabel={label}
             currentTab={currentTab}
-            setCurrentTab={setCurrentTab} />
+            setCurrentTab={setCurrentTab}
+          />
         ))}
       </div>
       {tabs[currentTab].elem}
-      <Link id="overlay-link" to='/notepad-overlay'>Open Overlay</Link>
+      <Link id="overlay-link" to="/notepad-overlay">
+        Open Overlay
+      </Link>
     </div>
   );
 }
 
-function NoteEditor({ notes, setNotes, noteText, setNoteText, notePage, setNotePage }) {
+function NoteEditor({
+  notes,
+  setNotes,
+  noteText,
+  setNoteText,
+  notePage,
+  setNotePage,
+}) {
   useEffect(() => {
     const keystrokeTimer = setTimeout(() => {
       updateNotes(notes, setNotes, notePage, noteText);
@@ -69,32 +94,78 @@ function NoteEditor({ notes, setNotes, noteText, setNoteText, notePage, setNoteP
   }, [noteText]);
 
   useEffect(() => {
-    updateCurrentNote(setNoteText, notes[notePage].text)
+    updateCurrentNote(setNoteText, notes[notePage].text);
   }, [notePage, notes]);
 
+  const [fontColor, setFontColor] = useState("#373670");
   return (
     <div id="notepad-tab-area">
-      <textarea
-        value={noteText}
-        onChange={(e) => updateCurrentNote(setNoteText, e.target.value)}
-        placeholder="Start Writing A Note!"
-        rows={NUM_TEXT_ROWS}>
-      </textarea>
+      <div className="textcontainer">
+        <textarea
+          style={{ color: fontColor }}
+          value={noteText}
+          onChange={(e) => updateCurrentNote(setNoteText, e.target.value)}
+          placeholder="Start Writing A Note!"
+          rows={NUM_TEXT_ROWS}
+        ></textarea>
+        <div className="colorcontainer">
+        <HexColorPicker color={fontColor} onChange={setFontColor} />
+                <p id="fontcolorp">Font Color:</p>
+        <HexColorInput id="colorinput" color={fontColor} onChange={setFontColor} />
+
+        </div>
+      </div>
       <div id="notepad-page-buttons">
         <button
           className="notepad-page-button"
-          onClick={() => changePage(notes, setNotes, notePage, notePage - 1, setNotePage, notes.length, noteText)}>&#x2190;</button>
+          onClick={() =>
+            changePage(
+              notes,
+              setNotes,
+              notePage,
+              notePage - 1,
+              setNotePage,
+              notes.length,
+              noteText
+            )
+          }
+        >
+          &#x2190;
+        </button>
         <button
           className="notepad-page-button"
-          onClick={() => changePage(notes, setNotes, notePage, notePage + 1, setNotePage, notes.length, noteText)}>&#x2192;</button>
+          onClick={() =>
+            changePage(
+              notes,
+              setNotes,
+              notePage,
+              notePage + 1,
+              setNotePage,
+              notes.length,
+              noteText
+            )
+          }
+        >
+          &#x2192;
+        </button>
         <button
           className="notepad-page-button"
-          onClick={() => addPage(notes, setNotes, notePage, setNotePage, noteText)}>New Note</button>
+          onClick={() =>
+            addPage(notes, setNotes, notePage, setNotePage, noteText)
+          }
+        >
+          New Note
+        </button>
         <button
           className="notepad-page-button"
-          onClick={() => deletePage(notes, setNotes, notePage, setNotePage)}>Delete</button>
+          onClick={() => deletePage(notes, setNotes, notePage, setNotePage)}
+        >
+          Delete
+        </button>
       </div>
-      <h2>Page {notePage + 1}/{notes.length}</h2>
+      <h2>
+        Page {notePage + 1}/{notes.length}
+      </h2>
       <h2>{notes[notePage].date}</h2>
     </div>
   );
@@ -102,7 +173,10 @@ function NoteEditor({ notes, setNotes, noteText, setNoteText, notePage, setNoteP
 
 function NotepadTab({ tabId, tabLabel, currentTab, setCurrentTab }) {
   return (
-    <button className={tabId === currentTab ? "notepad-tab active" : "notepad-tab"} onClick={() => setCurrentTab(tabId)}>
+    <button
+      className={tabId === currentTab ? "notepad-tab active" : "notepad-tab"}
+      onClick={() => setCurrentTab(tabId)}
+    >
       {tabLabel}
     </button>
   );
@@ -149,7 +223,7 @@ function NoteStory({ noteText, setNoteText }) {
 
   useEffect(() => {
     if (noteText.length > 300) {
-      setNoteText(prev => "..." + prev.slice(43));
+      setNoteText((prev) => "..." + prev.slice(43));
     }
   }, [noteText]);
 
@@ -158,7 +232,9 @@ function NoteStory({ noteText, setNoteText }) {
       return;
     }
     const mergedHistory = storyHistory.join(" ");
-    const history = mergedHistory ? mergedHistory : "None, the story begins here.";
+    const history = mergedHistory
+      ? mergedHistory
+      : "None, the story begins here.";
     const messages = formatMessages(msgBuffer);
     try {
       const response = await getNextPart(theme, history, messages);
@@ -177,13 +253,23 @@ function NoteStory({ noteText, setNoteText }) {
         tabIndex={-1}
         value={noteText}
         rows={NUM_TEXT_ROWS}
-        readOnly>
-      </textarea>
+        readOnly
+      ></textarea>
       <label htmlFor="theme-input">Theme:</label>
-      <input type="text" name="theme-input" placeholder="Enter theme..." onChange={(e) => setTheme(e.target.value)} />
-      <button className="generate-button" onClick={() => {
-        sendStoryRequest(tmpMsgBuffer);
-      }}>Generate</button>
+      <input
+        type="text"
+        name="theme-input"
+        placeholder="Enter theme..."
+        onChange={(e) => setTheme(e.target.value)}
+      />
+      <button
+        className="generate-button"
+        onClick={() => {
+          sendStoryRequest(tmpMsgBuffer);
+        }}
+      >
+        Generate
+      </button>
     </div>
   );
 }
@@ -232,22 +318,34 @@ function NoteSuggestions({ noteText, setNoteText }) {
   return (
     <div id="notepad-tab-area">
       <button
-        onClick={() => {sendSuggestionRequest(msgBuffer, setSuggestions)}}>Generate!</button>
+        onClick={() => {
+          sendSuggestionRequest(msgBuffer, setSuggestions);
+        }}
+      >
+        Generate!
+      </button>
       <textarea
         className="no-input"
         tabIndex={-1}
         value={noteText}
         rows={NUM_TEXT_ROWS}
-        readOnly>
-      </textarea>
+        readOnly
+      ></textarea>
       <label htmlFor="theme-input">Theme:</label>
-      <input type="text" name="theme-input" placeholder="Enter theme..." onChange={(e) => setTheme(e.target.value)} />
+      <input
+        type="text"
+        name="theme-input"
+        placeholder="Enter theme..."
+        onChange={(e) => setTheme(e.target.value)}
+      />
     </div>
   );
 }
 
 function formatMessages(msgBuffer) {
-  return msgBuffer ? msgBuffer.map((msg, index) => `Message ${index + 1}: ${msg}`).join("\n") : "";
+  return msgBuffer
+    ? msgBuffer.map((msg, index) => `Message ${index + 1}: ${msg}`).join("\n")
+    : "";
 }
 
 function updateHistory(setHistory, nextChunk) {

@@ -1,17 +1,20 @@
-// components/ChatSentimentConfig.jsx
-import React from "react";
+// src/components/ChatSentimentConfig.jsx
+import React, { useState } from "react";
 import { BaseTriggerSettings } from "./BaseTriggerSettings";
+import { CollapsibleSection } from "./CollapsibleSection";
 import help from "../assets/help.png";
-import { useState } from "react";
+
 
 export function ChatSentimentConfig({
   baseSettings,
   onBaseSettingsChange,
   specificSettings,
   onSpecificChange,
-  onContinue, // <-- ADDED
-  setError, // <-- ADDED
+  onContinue,
+  setError,
 }) {
+  const [trighelp, setTrigHelp] = useState(false);
+
   const updateSpecific = (field, value) => {
     setError?.(""); // clear errors when user interacts
     onSpecificChange({ ...specificSettings, [field]: value });
@@ -34,28 +37,36 @@ export function ChatSentimentConfig({
       return;
     }
 
-    if (onContinue) onContinue();
+    onContinue?.();
   };
-  const [trighelp, setTrigHelp] = useState(false);
+
+  // Shared base trigger settings, grouped into sub-sections
+  const groups = BaseTriggerSettings({
+    settings: baseSettings,
+    onChange: onBaseSettingsChange,
+  });
+
   return (
     <div className="trigger-card">
+      {/* Header */}
       <div className="header">
-        <h2>Chat Sentiment & Themes</h2>
+        <h2>Chat Sentiment &amp; Themes</h2>
         <img
           className="t-helpicon"
           src={help}
-          onClick={() => {
-            setTrigHelp(!trighelp);
-          }}
+          alt="Help"
+          onClick={() => setTrigHelp(!trighelp)}
         />
       </div>
-      {trighelp ? (
+
+      {trighelp && (
         <p className="trigger-description">
           Use an LLM to analyze chat sentiment or themes, and trigger overlays
           when certain moods or phrases appear.
         </p>
-      ) : null}
+      )}
 
+      {/* SENTIMENT-SPECIFIC SETTINGS */}
       <div style={{ display: "grid", gap: "1rem", maxWidth: "480px" }}>
         {/* Match mode */}
         <div>
@@ -72,7 +83,7 @@ export function ChatSentimentConfig({
             <option value="word">Specific word</option>
             <option value="phrase">Specific phrase</option>
             <option value="theme">
-              High-level theme (e.g., "complaints", "hype")
+              High-level theme (e.g., &quot;complaints&quot;, &quot;hype&quot;)
             </option>
           </select>
         </div>
@@ -99,7 +110,7 @@ export function ChatSentimentConfig({
           <input
             type="number"
             min="1"
-            value={specificSettings.minUsers ?? ""}
+            value={specificSettings.minUsers ?? 1}
             onChange={(e) => updateSpecific("minUsers", e.target.value)}
             placeholder="e.g., 5"
             style={{ width: "100%" }}
@@ -113,7 +124,9 @@ export function ChatSentimentConfig({
           </label>
           <select
             value={specificSettings.requireApproval ?? "no"}
-            onChange={(e) => updateSpecific("requireApproval", e.target.value)}
+            onChange={(e) =>
+              updateSpecific("requireApproval", e.target.value)
+            }
           >
             <option value="no">No, trigger automatically</option>
             <option value="yes">
@@ -123,12 +136,22 @@ export function ChatSentimentConfig({
         </div>
       </div>
 
-      {/* Common shared settings */}
-      <h3 style={{ marginTop: "1.5rem" }}>Common settings</h3>
-      <BaseTriggerSettings
-        settings={baseSettings}
-        onChange={onBaseSettingsChange}
-      />
+      {/* ADVANCED SETTINGS (shared base options) */}
+      <h3 style={{ marginTop: "1.5rem", marginBottom: "0.5rem" }}>
+        Advanced Settings
+      </h3>
+
+      <CollapsibleSection title="Trigger Timing" defaultOpen={false}>
+        {groups.timing}
+      </CollapsibleSection>
+
+      <CollapsibleSection title="On-Screen Behavior" defaultOpen={false}>
+        {groups.display}
+      </CollapsibleSection>
+
+      <CollapsibleSection title="Shortcuts & Control" defaultOpen={false}>
+        {groups.shortcuts}
+      </CollapsibleSection>
 
       {/* NEXT BUTTON */}
       <div className="trigger-actions" style={{ marginTop: "1.5rem" }}>
@@ -143,3 +166,4 @@ export function ChatSentimentConfig({
     </div>
   );
 }
+export default ChatSentimentConfig;

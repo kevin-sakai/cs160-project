@@ -19,6 +19,8 @@ import { HotkeyItem } from "./pages/HotkeyFolder/HotkeyItem";
 import { useHotkeys } from "react-hotkeys-hook";
 import { getItem, setItem } from "./util/HotkeyLocalStorage";
 import { ObsProvider } from "./api/obsData";
+import OverlayDisplay from "./pages/OverlayDisplay";
+
 
 function App() {
   // Notes state
@@ -76,19 +78,19 @@ function App() {
     },
 
     // Timed Events Trigger hotkey
-    activateTimedEventsTrigger: () => {
+    configureTimedEventsTrigger: () => {
       navigate("/TriggerEventsPage", { state: { initialTrigger: "timed" } });
       requestTriggerEventsDoneClick("timed");
     },
 
     // Click Trigger hotkey
-    activateClickTrigger: () => {
+    configureClickTrigger: () => {
       navigate("/TriggerEventsPage", { state: { initialTrigger: "click" } });
       requestTriggerEventsDoneClick("click");
     },
 
     // Follower Trigger hotkey
-    activateFollowerTrigger: () => {
+    configureFollowerTrigger: () => {
       navigate("/TriggerEventsPage", {
         state: { initialTrigger: "followers" },
       });
@@ -96,13 +98,13 @@ function App() {
     },
 
     // Banning Trigger hotkey
-    activateBanningTrigger: () => {
+    configureBanningTrigger: () => {
       navigate("/TriggerEventsPage", { state: { initialTrigger: "banning" } });
       requestTriggerEventsDoneClick("banning");
     },
 
     // Sentiment Trigger hotkey
-    activateSentimentTrigger: () => {
+    configureSentimentTrigger: () => {
       navigate("/TriggerEventsPage", {
         state: { initialTrigger: "sentiment" },
       });
@@ -126,12 +128,12 @@ function App() {
           hotkey: "a",
           funcname: "action2",
         },
-                {
+        {
           name: "Action 3",
           hotkey: "b",
           funcname: "action2",
         },
-                {
+        {
           name: "Action 4",
           hotkey: "c",
           funcname: "action2",
@@ -144,33 +146,33 @@ function App() {
         },
         // Add the Timed Events Trigger hotkey by default
         {
-          name: "Activate Timed Events Trigger",
+          name: "Configure Timed Events Trigger",
           hotkey: "",
-          funcname: "activateTimedEventsTrigger",
+          funcname: "configureTimedEventsTrigger",
         },
         // Add the Click Trigger hotkey by default
         {
-          name: "Activate Click Trigger",
+          name: "Configure Click Trigger",
           hotkey: "",
-          funcname: "activateClickTrigger",
+          funcname: "configureClickTrigger",
         },
         // Add the Follower Trigger hotkey by default
         {
-          name: "Activate Follower Trigger",
+          name: "Configure Follower Trigger",
           hotkey: "",
-          funcname: "activateFollowerTrigger",
+          funcname: "configureFollowerTrigger",
         },
         // Add the Banning Trigger hotkey by default
         {
-          name: "Activate Banning Trigger",
+          name: "Configure Banning Trigger",
           hotkey: "",
-          funcname: "activateBanningTrigger",
+          funcname: "configureBanningTrigger",
         },
         // Add the Sentiment Trigger hotkey by default
         {
-          name: "Activate Sentiment Trigger",
+          name: "Configure Sentiment Trigger",
           hotkey: "",
-          funcname: "activateSentimentTrigger",
+          funcname: "configureSentimentTrigger",
         },
       ]
     );
@@ -193,6 +195,7 @@ function App() {
 
   const location = useLocation();
   const hiddenNavbarPages = ["/notepad-overlay"];
+  const isOverlayRoute = location.pathname === "/overlay";
 
   return (
     <div id="app">
@@ -226,14 +229,11 @@ function App() {
             }
           />
 
-          <Route
-            path="/hotkeys"
-            element={<HotkeyPage keyMap={keyMap} setKeyMap={setKeyMap} />}
-          />
-
           <Route path="/obspage" element={<ObsPage />} />
+          <Route path="/overlay" element={<OverlayDisplay />} />
 
           <Route path="/graphs" element={<Graphs />} />
+
 
           {/* new Trigger Events page */}
           <Route
@@ -247,10 +247,14 @@ function App() {
               />
             }
           />
-
           <Route path="/notepad-overlay" element={<NotepadOverlay />} />
+          <Route
+            path="/hotkeys"
+            element={<HotkeyPage keyMap={keyMap} setKeyMap={setKeyMap} />}
+          />
         </Routes>
       </ObsProvider>
+    
     </div>
   );
 }

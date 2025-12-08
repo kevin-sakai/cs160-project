@@ -1,13 +1,58 @@
-// components/trigger-events/BaseTriggerSettings.jsx
+// src/components/BaseTriggerSettings.jsx
 import React from "react";
 
-export function BaseTriggerSettings({ settings, onChange }) {
-  const update = (field, value) => {
-    onChange({ ...settings, [field]: value });
+/**
+ * BaseTriggerSettings
+ *
+ * NOT a React component you render as <BaseTriggerSettings />.
+ * Instead, it's a helper that returns grouped JSX blocks so each
+ * Trigger config file can wrap them in its own collapsible sections.
+ *
+ * Usage:
+ *   const groups = BaseTriggerSettings({
+ *     settings: baseSettings,
+ *     onChange: onBaseSettingsChange,
+ *   });
+ *
+ *   <CollapsibleSection title="Trigger Timing">
+ *     {groups.timing}
+ *   </CollapsibleSection>
+ *
+ *   <CollapsibleSection title="On-Screen Behavior">
+ *     {groups.display}
+ *   </CollapsibleSection>
+ *
+ *   <CollapsibleSection title="Shortcuts & Control">
+ *     {groups.shortcuts}
+ *   </CollapsibleSection>
+ */
+
+export function BaseTriggerSettings({ settings = {}, onChange }) {
+  // Defaults for all triggers
+  const defaults = {
+    frequencyValue: 60,
+    frequencyUnit: "seconds",
+    cooldown: 0,
+    displayDurationType: "permanent",
+    displayDurationValue: 10,
+    displayDurationUnit: "seconds",
+    maxDisplays: 5,
+    overrideOthers: "no",
+    hotkey: "",
   };
 
-  return (
-    <div style={{ display: "grid", gap: "1rem", maxWidth: "480px" }}>
+  const s = { ...defaults, ...settings };
+
+  const update = (field, value) => {
+    const next = { ...s, [field]: value };
+    onChange(next);
+  };
+
+  // ==============================
+  // TRIGGER TIMING SECTION
+  // ==============================
+  const timing = (
+    <div style={{ display: "grid", gap: "1rem" }}>
       {/* Frequency */}
       <div>
         <label style={{ display: "block", marginBottom: "0.25rem" }}>
@@ -17,19 +62,20 @@ export function BaseTriggerSettings({ settings, onChange }) {
           <input
             type="number"
             min="1"
-            value={settings.frequencyValue ?? ""}
+            value={s.frequencyValue}
             onChange={(e) => update("frequencyValue", e.target.value)}
-            placeholder="e.g., 4"
+            placeholder="e.g., 60"
             style={{ width: "90px" }}
           />
           <select
-            value={settings.frequencyUnit || "seconds"}
+            value={s.frequencyUnit}
             onChange={(e) => update("frequencyUnit", e.target.value)}
           >
             <option value="seconds">seconds</option>
             <option value="minutes">minutes</option>
           </select>
         </div>
+        <small>How often the trigger is allowed to fire.</small>
       </div>
 
       {/* Cooldown */}
@@ -40,41 +86,65 @@ export function BaseTriggerSettings({ settings, onChange }) {
         <input
           type="number"
           min="0"
-          value={settings.cooldown ?? ""}
+          value={s.cooldown}
           onChange={(e) => update("cooldown", e.target.value)}
-          placeholder="Seconds of cooldown after firing"
+          placeholder="Seconds after firing before it can fire again"
           style={{ width: "100%" }}
         />
       </div>
 
-      {/* How long it's displayed */}
+      {/* Max displays */}
       <div>
         <label style={{ display: "block", marginBottom: "0.25rem" }}>
-          Display duration
+          Maximum number of displays
+        </label>
+        <input
+          type="number"
+          min="1"
+          value={s.maxDisplays}
+          onChange={(e) => update("maxDisplays", e.target.value)}
+          placeholder="e.g., 5"
+          style={{ width: "100%" }}
+        />
+      </div>
+    </div>
+  );
+
+  // ==============================
+  // ON-SCREEN BEHAVIOR SECTION
+  // ==============================
+  const display = (
+    <div style={{ display: "grid", gap: "1rem" }}>
+      {/* Display duration */}
+      <div>
+        <label style={{ display: "block", marginBottom: "0.25rem" }}>
+          Display Duration
         </label>
         <div style={{ display: "flex", gap: "0.5rem", alignItems: "center" }}>
           <select
-            value={settings.displayDurationType || "permanent"}
-            onChange={(e) => update("displayDurationType", e.target.value)}
+            value={s.displayDurationType}
+            onChange={(e) =>
+              update("displayDurationType", e.target.value)
+            }
           >
             <option value="permanent">Permanent</option>
             <option value="timed">Timed</option>
           </select>
 
-          {settings.displayDurationType !== "permanent" && (
+          {s.displayDurationType !== "permanent" && (
             <>
               <input
                 type="number"
                 min="1"
-                value={settings.displayDurationValue ?? ""}
+                value={s.displayDurationValue}
                 onChange={(e) =>
                   update("displayDurationValue", e.target.value)
                 }
-                placeholder="Duration"
+                placeholder="Seconds"
                 style={{ width: "90px" }}
               />
               <select
-                value={settings.displayDurationUnit || "seconds"}
+                value={s.displayDurationUnit}
                 onChange={(e) =>
                   update("displayDurationUnit", e.target.value)
                 }
@@ -87,43 +157,35 @@ export function BaseTriggerSettings({ settings, onChange }) {
         </div>
       </div>
 
-      {/* Total number of times it's displayed */}
-      <div>
-        <label style={{ display: "block", marginBottom: "0.25rem" }}>
-          Maximum number of displays
-        </label>
-        <input
-          type="number"
-          min="1"
-          value={settings.maxDisplays ?? ""}
-          onChange={(e) => update("maxDisplays", e.target.value)}
-          placeholder="e.g., 5"
-          style={{ width: "100%" }}
-        />
-      </div>
-
-      {/* Override other overlays */}
+      {/* Override */}
       <div>
         <label style={{ display: "block", marginBottom: "0.25rem" }}>
           Override other overlays?
         </label>
         <select
-          value={settings.overrideOthers ?? "no"}
+          value={s.overrideOthers}
           onChange={(e) => update("overrideOthers", e.target.value)}
         >
           <option value="no">No</option>
-          <option value="yes">Yes (hide other overlays while active)</option>
+          <option value="yes">Yes (hide other overlays)</option>
         </select>
       </div>
+    </div>
+  );
 
-      {/* Hotkey binding */}
+  // ==============================
+  // SHORTCUTS & CONTROL SECTION
+  // ==============================
+  const shortcuts = (
+    <div style={{ display: "grid", gap: "1rem" }}>
+      {/* Hotkey */}
       <div>
         <label style={{ display: "block", marginBottom: "0.25rem" }}>
-          Bind to hotkey? (optional)
+          Bind to hotkey (optional)
         </label>
         <input
           type="text"
-          value={settings.hotkey ?? ""}
+          value={s.hotkey}
           onChange={(e) => update("hotkey", e.target.value)}
           placeholder="e.g., Ctrl+Shift+O"
           style={{ width: "100%" }}
@@ -131,4 +193,9 @@ export function BaseTriggerSettings({ settings, onChange }) {
       </div>
     </div>
   );
+
+  return { timing, display, shortcuts };
 }
+
+
+export default BaseTriggerSettings;
