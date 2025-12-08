@@ -13,6 +13,7 @@ export const Navbar = () => {
                 <Link to='Hotkeys'><li>Hotkeys</li></Link>
                 <Link to='obspage'><li>Obs Page</li></Link>
                 <Link to='TriggerEventsPage'><li>Trigger Events</li></Link>
+                <Link to='overlay'><li>Overlay Display</li></Link>
             </ul>
         </div>)
 }
