@@ -195,6 +195,7 @@ function App() {
 
   const location = useLocation();
   const hiddenNavbarPages = ["/notepad-overlay"];
+  const isOverlayRoute = location.pathname === "/overlay";
 
   return (
     <div id="app">

@@ -2,7 +2,7 @@
 import { useEffect, useState, useRef } from "react";
 import OBSWebSocket from "obs-websocket-js";
 
-export function useObs(password) {
+export function useObs({ address = "ws://127.0.0.1:4455", password }) {
   const [status, setStatus] = useState("disconnected");
   const [error, setError] = useState(null);
   const obsRef = useRef(null);
@@ -15,7 +15,7 @@ export function useObs(password) {
       try {
         setStatus("connecting");
         setError(null);
-        await obs.connect("ws://127.0.0.1:4455", password);
+        await obs.connect(address, password || undefined);
         setStatus("connected");
       } catch (err) {
         console.error("OBS connection error:", err);
@@ -31,9 +31,7 @@ export function useObs(password) {
         obsRef.current.disconnect().catch(() => {});
       }
     };
-  }, [password]);
-
-  // --- WebSocket OBS calls ---
+  }, [address, password]);
 
   async function getScenes() {
     if (!obsRef.current) throw new Error("Not connected to OBS");
@@ -60,9 +58,49 @@ export function useObs(password) {
       inputSettings: {
         color: colorValue,
         width: 1920,
-        height: 1080
+        height: 1080,
       },
       sceneItemEnabled: true,
+    });
+  }
+
+  async function createBrowserOverlay(sceneName, sourceName, templateId) {
+    if (!obsRef.current) throw new Error("Not connected to OBS");
+
+    const url = `http://localhost:5173/overlay?template=${encodeURIComponent(
+      templateId
+    )}`;
+
+    return obsRef.current.call("CreateInput", {
+      sceneName,
+      inputName: sourceName,
+      inputKind: "browser_source",
+      inputSettings: {
+        url,
+        width: 1920,
+        height: 1080,
+        shutdown: false,
+        refresh_browser_when_scene_activated: true,
+      },
+      sceneItemEnabled: true,
+    });
+  }
+
+  // toggle visibility of an existing overlay source
+  async function setSceneItemVisibility(sceneName, sourceName, enabled) {
+    if (!obsRef.current) throw new Error("Not connected to OBS");
+
+    // 1) Look up the scene item id by source name
+    const { sceneItemId } = await obsRef.current.call("GetSceneItemId", {
+      sceneName,
+      sourceName,
+    });
+
+    // 2) Enable / disable that scene item
+    return obsRef.current.call("SetSceneItemEnabled", {
+      sceneName,
+      sceneItemId,
+      sceneItemEnabled: enabled,
     });
   }
 
@@ -73,6 +111,8 @@ export function useObs(password) {
     switchScene,
     createScene,
     createColorSource,
+    createBrowserOverlay,
+    setSceneItemVisibility, // 👈 export the new helper
   };
 }
 
