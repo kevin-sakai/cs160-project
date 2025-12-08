@@ -306,3 +306,13 @@ background-color: var(--highlight-color);
 .sourceTypeSelect:focus {
   box-shadow: 0 0 0 2px var(--highlight-color);
 }
+
+.home-link {
+  color: #0910d6;       /* dark grey */
+  text-decoration: underline;
+  font-weight: 700;
+}
+
+.home-link:hover {
+  color: #030646;         /* even darker on hover */
+}

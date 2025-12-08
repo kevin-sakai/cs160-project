@@ -3,6 +3,7 @@ import { useEffect, useState, Fragment } from "react";
 import "./obs-page.css";
 import { useObsConnection } from "../api/obsData";
 import help from "../assets/help.png";
+import { Link } from "react-router-dom";
 
 // Map OBS input kinds to friendly category names
 function getSourceCategoryLabel(kind) {
@@ -439,7 +440,7 @@ function ObsPage() {
               Connect Info. Input the <strong>Server IP</strong> into{" "}
               <strong>Server IP</strong>, the <strong>Server Port</strong> into{" "}
               <strong>Port</strong>, and the <strong>Server Password</strong>{" "}
-              into <strong>Password</strong>.
+              into <strong>Password</strong>. For more help, see the <strong><Link to="/"  className="home-link">Home page</Link>.</strong>
             </p>
           )}
           <form onSubmit={handleConnect} className="obs-connect-form">
