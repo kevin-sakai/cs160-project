@@ -367,7 +367,7 @@ function ObsPage() {
                     type="text"
                     value={ip}
                     onChange={(e) => setIp(e.target.value)}
-                    placeholder="127.0.0.1 or 2001:db8:85a3::8a2e:370:7334 format"
+                    placeholder="127.0.0.1 or 2001:db8:85a3::8a2e:370:7334 format "
                   />
                 </label>
               </div>
