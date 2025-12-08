@@ -117,3 +117,11 @@ export async function getTwitchSentiment() {
   }
   return await res.json();
 }
+
+export async function getTwitchMessages() {
+  const res = await fetch(`${TWITCH_BASE_URL}/messages`);
+  if (!res.ok) {
+    throw new Error('Failed to get messages');
+  }
+  return await res.json();
+}

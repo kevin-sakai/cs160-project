@@ -18,7 +18,8 @@ export function getNotesState() {
 }
 
 export function getCurrentNote() {
-  return localStorage.getItem(LOCALSTORAGE_CURR_KEY);
+  const text = localStorage.getItem(LOCALSTORAGE_CURR_KEY);
+  return text;
 }
 
 export function retrieveCurrentNoteUpdate(e, setText) {

@@ -12,6 +12,11 @@ import { getNextPart, getSuggestion } from "../util/StoryGenerator";
 import { Link } from "react-router-dom";
 import { HexColorPicker, HexColorInput } from "react-colorful";
 import { color } from "chart.js/helpers";
+import { io } from 'socket.io-client';
+import { connectTwitchChat, getTwitchMessages } from '../api/obs';
+
+const WEBSOCKET_SERVER = 'http://localhost:3000';
+export const socket = io(WEBSOCKET_SERVER);
 
 const NUM_TEXT_ROWS = 15;
 const HISTORY_MAX = 5;
@@ -29,27 +34,37 @@ export default function Notepad({
 }) {
   const [currentTab, setCurrentTab] = useState("edit");
 
+  connectTwitchChat();
+
+  useEffect(() => {
+    socket.emit('text_input', { text: noteText });
+  }, [noteText])
+
   const tabs = {
     edit: {
       label: "Create Notes",
-      elem: (
-        <NoteEditor
-          notes={notes}
-          setNotes={setNotes}
-          noteText={noteText}
-          setNoteText={setNoteText}
-          notePage={notePage}
-          setNotePage={setNotePage}
-        />
-      ),
+      elem: <NoteEditor
+              notes={notes}
+              setNotes={setNotes}
+              noteText={noteText}
+              setNoteText={setNoteText}
+              notePage={notePage}
+              setNotePage={setNotePage} />,
+      tip: "The Standard note editor. Create new notes, view or edit existing notes.",
     },
     story: {
       label: "Generate A Story",
-      elem: <NoteStory noteText={noteText} setNoteText={setNoteText} />,
+      elem: <NoteStory
+              noteText={noteText}
+              setNoteText={setNoteText} />,
+      tip: "Automatically generate a story based on chat activity and populate the notepad with the story.",
     },
     suggest: {
       label: "Get Suggestions",
-      elem: <NoteSuggestions noteText={noteText} setNoteText={setNoteText} />,
+      elem: <NoteSuggestions
+              noteText={noteText}
+              setNoteText={setNoteText} />,
+      tip: "Get suggestions based on chat activity for topics or questions, then choose a suggestion to display.",
     },
   };
 
@@ -59,11 +74,12 @@ export default function Notepad({
         <h1>Notepad</h1>
       </div>
       <div id="notepad-tabs">
-        {Object.entries(tabs).map(([tabId, { label, elem }]) => (
+        {Object.entries(tabs).map(([tabId, {label, elem, tip}]) => (
           <NotepadTab
             key={tabId}
             tabId={tabId}
             tabLabel={label}
+            tooltip={tip}
             currentTab={currentTab}
             setCurrentTab={setCurrentTab}
           />
@@ -102,17 +118,20 @@ function NoteEditor({
     <div id="notepad-tab-area">
       <div className="textcontainer">
         <textarea
-          style={{ color: fontColor }}
           value={noteText}
           onChange={(e) => updateCurrentNote(setNoteText, e.target.value)}
           placeholder="Start Writing A Note!"
           rows={NUM_TEXT_ROWS}
         ></textarea>
         <div className="colorcontainer">
-        <HexColorPicker color={fontColor} onChange={setFontColor} />
-                <p id="fontcolorp">Font Color:</p>
-        <HexColorInput id="colorinput" color={fontColor} onChange={setFontColor} />
-
+          <HexColorPicker color={fontColor} onChange={setFontColor} />
+          <div className="colordisplay">
+            <p id="fontcolorp">Font Color:</p>
+            <HexColorInput id="colorinput" color={fontColor} onChange={setFontColor} />
+          </div>
+          <div className="textcolorsample" style={{ color: fontColor }}>
+            Sample Text.
+          </div>
         </div>
       </div>
       <div id="notepad-page-buttons">
@@ -171,13 +190,11 @@ function NoteEditor({
   );
 }
 
-function NotepadTab({ tabId, tabLabel, currentTab, setCurrentTab }) {
+function NotepadTab({ tabId, tabLabel, tooltip, currentTab, setCurrentTab }) {
   return (
-    <button
-      className={tabId === currentTab ? "notepad-tab active" : "notepad-tab"}
-      onClick={() => setCurrentTab(tabId)}
-    >
+    <button className={`tooltip notepad-tab${tabId === currentTab ? " active" : ""}`} onClick={() => setCurrentTab(tabId)}>
       {tabLabel}
+      <span className="tooltiptext">{tooltip}</span>
     </button>
   );
 }
@@ -199,6 +216,23 @@ function NoteStory({ noteText, setNoteText }) {
     "Where did you find that item?",
     "Seriously you're still playing this game?",
   ];
+
+  useEffect(() => {
+    const eventName = 'new_chat_message';
+
+    const handleMsg = (data) => {
+      const msg = data.msg;
+      console.log(`got msg ${msg}`);
+      setMsgBuffer((prev) => [...prev, msg]);
+    };
+
+    socket.on(eventName, handleMsg);
+
+    return () => {
+      socket.off(eventName, handleMsg);
+    };
+
+  }, []);
 
   useEffect(() => {
     setNoteText("");
@@ -226,6 +260,12 @@ function NoteStory({ noteText, setNoteText }) {
       setNoteText((prev) => "..." + prev.slice(43));
     }
   }, [noteText]);
+
+  useEffect(() => {
+    if (msgBuffer.length > 4) {
+      sendStoryRequest(msgBuffer);
+    }
+  }, [msgBuffer]);
 
   async function sendStoryRequest(msgBuffer) {
     if (!theme || !msgBuffer) {
