@@ -20,11 +20,10 @@
   width: 100%;
   flex-direction: column;
   gap: 0.5rem;
-  padding: 1rem;
   border-radius: 0.5rem;
 
   textarea {
-    width: 100%;
+    width: 500px;
     font-family: inherit;
     font-size: 1.25rem;
     box-sizing: border-box;
@@ -32,7 +31,7 @@
     color: var(--text-color-dark);
     border-radius: 10px;
     padding: 20px;
-    border:none;
+    border: none;
     resize: none;
   }
   textarea::placeholder {
@@ -149,7 +148,7 @@
   border-radius: 0.25rem;
   position: absolute;
   top: 65px;
-  left: 500px;
+  left: 490px;
   z-index: 1;
   width: 325px;
 }
@@ -173,4 +172,6 @@
 .notepad-main {
   display: flex;
   flex-direction: row;
+  padding: 0.5rem;
+  gap: 1rem;
 }

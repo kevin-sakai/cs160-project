@@ -41,6 +41,10 @@ export default function Notepad({
   }, [noteText])
 
   useEffect(() => {
+    socket.emit('color_change', { color: fontColor });
+  }, [fontColor])
+
+  useEffect(() => {
     connectTwitchChat();
     return () => {
       if (socket.connected) {
@@ -313,6 +317,7 @@ function NoteSuggestions({ noteText, setNoteText }) {
   const [textBuffer, setTextBuffer] = useState("");
   const [msgBuffer, setMsgBuffer] = useState([]);
   const [suggestions, setSuggestions] = useState(null);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     const eventName = 'new_chat_message';
@@ -351,11 +356,13 @@ function NoteSuggestions({ noteText, setNoteText }) {
   async function sendSuggestionRequest(msgBuf) {
     const messages = formatMessages(msgBuf);
     try {
+      setLoading(true);
       const response = await getSuggestion(messages);
       const parsedResponse = JSON.parse(response);
       setSuggestions(parsedResponse);
       console.log(parsedResponse);
       setMsgBuffer([]);
+      setLoading(false);
     } catch (e) {
       console.log(e);
     }
@@ -377,6 +384,7 @@ function NoteSuggestions({ noteText, setNoteText }) {
       >
         Get Suggestions
       </button>
+      {loading ? (<p>Loading...</p>) : null}
       {suggestions ? (
         <SuggestionList
           suggestions={suggestions}

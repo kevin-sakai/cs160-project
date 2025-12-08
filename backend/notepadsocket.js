@@ -1,6 +1,7 @@
 const { Server } = require('socket.io');
 
 let currentNoteText = "";
+let currentColor = "#373670"
 
 let notepadSocket;
 
@@ -17,18 +18,28 @@ const initNotepadWebsocket = (httpServer) => {
       console.log(`Client connected: ${socket.id}`);
 
       socket.emit('text_update', { text: currentNoteText });
+      socket.emit('color_update', {color: currentColor});
 
       const handleInput = (data) => {
-          const newText = data.text;
-          currentNoteText = newText;
-          socket.broadcast.emit('text_update', { text: newText });
+        const newText = data.text;
+        currentNoteText = newText;
+        socket.broadcast.emit('text_update', { text: newText });
       }
 
       socket.on('text_input', handleInput);
 
+      const handleColorChange = (data) => {
+        const newColor = data.color;
+        currentColor = newColor;
+        socket.broadcast.emit('color_update', {color: newColor});
+      }
+
+      socket.on('color_change', handleColorChange);
+
       socket.on('disconnect', () => {
           console.log(`Client disconnected: ${socket.id}`);
           socket.off('text_input', handleInput);
+          socket.off('color_change', handleColorChange);
       });
     });
 
