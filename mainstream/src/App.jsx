@@ -11,10 +11,8 @@ import { Link } from "react-router-dom";
 import { Navbar } from "./components/Navbar";
 import ObsPage from "./components/obs-page";
 import NotepadOverlay from "./pages/NotepadOverlay";
-<<<<<<< HEAD
+
 import Graphs from "./pages/GraphsFolder/Graphs";
-=======
->>>>>>> 78d51491537dc3ef7d162ac123ddc273c6bbb313
 import { getNotesState, addPage, blankNote } from "./util/NoteOperations";
 import { HotKeys } from "react-keyboard";
 import TriggerEventsPage from "./pages/TriggerEvents";
@@ -129,12 +127,12 @@ function App() {
           hotkey: "a",
           funcname: "action2",
         },
-                {
+        {
           name: "Action 3",
           hotkey: "b",
           funcname: "action2",
         },
-                {
+        {
           name: "Action 4",
           hotkey: "c",
           funcname: "action2",
@@ -229,18 +227,9 @@ function App() {
             }
           />
 
-          <Route
-            path="/hotkeys"
-            element={<HotkeyPage keyMap={keyMap} setKeyMap={setKeyMap} />}
-          />
-
           <Route path="/obspage" element={<ObsPage />} />
 
-<<<<<<< HEAD
           <Route path="/graphs" element={<Graphs />} />
-
-=======
->>>>>>> 78d51491537dc3ef7d162ac123ddc273c6bbb313
           {/* new Trigger Events page */}
           <Route
             path="/TriggerEventsPage"
@@ -253,8 +242,11 @@ function App() {
               />
             }
           />
-
           <Route path="/notepad-overlay" element={<NotepadOverlay />} />
+          <Route
+            path="/hotkeys"
+            element={<HotkeyPage keyMap={keyMap} setKeyMap={setKeyMap} />}
+          />
         </Routes>
       </ObsProvider>
     </div>

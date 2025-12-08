@@ -1,10 +1,7 @@
 // frontend/src/api/obs.js
 
 const BASE_URL = 'http://localhost:3000/api/obs';
-<<<<<<< HEAD
 const TWITCH_BASE_URL = 'http://localhost:3000/api/twitch';
-=======
->>>>>>> 78d51491537dc3ef7d162ac123ddc273c6bbb313
 
 export async function getObsHealth() {
   const res = await fetch(`${BASE_URL}/health`);
@@ -77,7 +74,7 @@ export async function switchScene(sceneName) {
   }
   return await res.json();
 }
-<<<<<<< HEAD
+
 
 export async function getInsights() {
   const res = await fetch(`${BASE_URL}/insights`);
@@ -121,5 +118,3 @@ export async function getTwitchSentiment() {
   }
   return await res.json();
 }
-=======
->>>>>>> 78d51491537dc3ef7d162ac123ddc273c6bbb313
