@@ -1,0 +1,44 @@
+/* /src/components/BaseTriggerSettings.css */
+
+/* Layout + typography for shared base trigger settings
+   inside each collapsible advanced section */
+.trigger-card .collapsible-section-body {
+  display: grid;
+  gap: 1rem;
+  max-width: 480px;
+}
+
+/* Labels inside advanced/base settings */
+.trigger-card .collapsible-section-body label {
+  font-size: 0.85rem;
+  font-weight: 600;
+  margin-bottom: 0.25rem;
+}
+
+/* Helper text under fields */
+.trigger-card .collapsible-section-body small {
+  font-size: 0.75rem;
+  color: #a0a0ad;
+}
+
+/* Inputs/selects inside advanced/base settings */
+.trigger-card .collapsible-section-body input,
+.trigger-card .collapsible-section-body select {
+  border-radius: 8px;
+  border: 1px solid rgba(0, 0, 0, 0.2);
+  padding: 0.35rem 0.5rem;
+  font-size: 0.9rem;
+  font-family: inherit;
+  background-color: var(--highlight-color);
+  color: var(--text-color-dark);
+}
+
+/* Keep numeric fields from stretching too wide by default */
+.trigger-card .collapsible-section-body input[type="number"] {
+  max-width: 110px;
+}
+
+/* Allow full-width fields where you explicitly set style={{ width: "100%" }} */
+.trigger-card .collapsible-section-body input[style*="100%"] {
+  max-width: none;
+}

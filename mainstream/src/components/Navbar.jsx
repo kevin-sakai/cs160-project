@@ -14,6 +14,7 @@ export const Navbar = () => {
                 <Link to='obspage'><li>Obs Page</li></Link>
                 <Link to='graphs'><li>Graphs</li></Link>
                 <Link to='TriggerEventsPage'><li>Trigger Events</li></Link>
+                <Link to='overlay'><li>Overlay Display</li></Link>
             </ul>
         </div>)
 }

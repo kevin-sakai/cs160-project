@@ -4,8 +4,9 @@ import { updateCurrentNote, updateNotes, addPage, changePage, deletePage, storeC
 import { getNextPart, getSuggestion } from '../util/StoryGenerator';
 import { Link } from "react-router-dom"
 import { io } from 'socket.io-client';
+import { getTwitchMessages } from '../api/obs';
 
-const WEBSOCKET_SERVER = 'http://localhost:3001';
+const WEBSOCKET_SERVER = 'http://localhost:3000';
 export const socket = io(WEBSOCKET_SERVER);
 
 const NUM_TEXT_ROWS = 15;
@@ -138,6 +139,21 @@ function NoteStory({ noteText, setNoteText }) {
     "Where did you find that item?",
     "Seriously you're still playing this game?",
   ];
+
+  useEffect(() => {
+    const eventName = 'new_chat_message';
+
+    const handleMsg = (data) => {
+      console.log(`got msg ${data}`);
+    };
+
+    socket.on(eventName, handleMsg);
+
+    return () => {
+      socket.off(eventName, handleMsg);
+    };
+
+  }, []);
 
   useEffect(() => {
     setNoteText("");

@@ -456,10 +456,18 @@ app.get('/api/twitch/sentiment', async (req, res) => {
   }
 });
 
+app.get('api/twitch/messages', async (req, res) => {
+  const messages = getMessageList();
+  res.json({
+    ok: true,
+    msg: JSON.stringify(messages),
+  });
+});
+
 const httpServer = http.createServer(app);
 let currentNoteText = "";
 
-const notepadSocket = new Server(httpServer, {
+export const notepadSocket = new Server(httpServer, {
     cors: {
         origin: "http://localhost:5173", 
         methods: ["GET", "POST"]
