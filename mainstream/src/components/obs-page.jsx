@@ -3,7 +3,7 @@ import { useEffect, useRef, useState } from "react";
 import OBSWebSocket from "obs-websocket-js";
 import "./obs-page.css";
 import { useObsConnection } from "../api/obsData";
-
+import help from "../assets/help.png";
 function ObsPage() {
   const [address, setAddress] = useState(
     () => window.localStorage.getItem("obsAddress") || "ws://127.0.0.1:4455"
@@ -24,11 +24,8 @@ function ObsPage() {
   const obsRef = useRef(null);
 
   // 👉 Get both setters from the shared context
-  const {
-    setPassword: setSharedObsPassword,
-    setAddress: setSharedObsAddress,
-  } = useObsConnection();
-
+  const { setPassword: setSharedObsPassword, setAddress: setSharedObsAddress } =
+    useObsConnection();
 
   // Create / cleanup OBS client (local instance used by this page)
   useEffect(() => {
@@ -84,7 +81,6 @@ function ObsPage() {
       setLoading(false);
     }
   }
-
 
   async function loadScenes() {
     if (!obsRef.current) return;
@@ -177,7 +173,7 @@ function ObsPage() {
       setErrorMsg(err.message || "Failed to switch scene.");
     }
   }
-
+  const [addhelp, setAddHelp] = useState(false);
   return (
     <div className="obs-container">
       <div style={{ padding: "1rem" }}>
@@ -185,7 +181,20 @@ function ObsPage() {
 
         {/* Connection section */}
         <section className="obs-connection">
-          <h2>Connect to OBS</h2>
+          <div className="header">
+            <h2>Connect to OBS</h2>
+            <img
+              className="t-helpicon"
+              src={help}
+              alt="Help"
+              onClick={() => setAddHelp(!addhelp)}
+            />
+          </div>
+          {addhelp && (
+            <p className="trigger-description">
+              In OBS look for tools &gt; WebSocketServer Settings &gt; Show Connect Info. Input Server IP into address and Server Password into password.
+            </p>
+          )}
           <form onSubmit={handleConnect} className="obs-connect-form">
             <label>
               Address
