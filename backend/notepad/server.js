@@ -6,7 +6,7 @@ const { Server } = require('socket.io');
 const app = express();
 const HTTP_PORT = 3001;
 
-let currentText = "test";
+let currentText = "";
 
 app.use(express.json());
 app.use(cors());
