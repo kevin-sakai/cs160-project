@@ -13,7 +13,7 @@ import { Link } from "react-router-dom";
 import { HexColorPicker, HexColorInput } from "react-colorful";
 import { color } from "chart.js/helpers";
 import { io } from 'socket.io-client';
-import { getTwitchMessages } from '../api/obs';
+import { connectTwitchChat, getTwitchMessages } from '../api/obs';
 
 const WEBSOCKET_SERVER = 'http://localhost:3000';
 export const socket = io(WEBSOCKET_SERVER);
@@ -33,6 +33,8 @@ export default function Notepad({
   setNotePage,
 }) {
   const [currentTab, setCurrentTab] = useState("edit");
+
+  connectTwitchChat();
 
   useEffect(() => {
     socket.emit('text_input', { text: noteText });
@@ -116,17 +118,20 @@ function NoteEditor({
     <div id="notepad-tab-area">
       <div className="textcontainer">
         <textarea
-          style={{ color: fontColor }}
           value={noteText}
           onChange={(e) => updateCurrentNote(setNoteText, e.target.value)}
           placeholder="Start Writing A Note!"
           rows={NUM_TEXT_ROWS}
         ></textarea>
         <div className="colorcontainer">
-        <HexColorPicker color={fontColor} onChange={setFontColor} />
-                <p id="fontcolorp">Font Color:</p>
-        <HexColorInput id="colorinput" color={fontColor} onChange={setFontColor} />
-
+          <HexColorPicker color={fontColor} onChange={setFontColor} />
+          <div className="colordisplay">
+            <p id="fontcolorp">Font Color:</p>
+            <HexColorInput id="colorinput" color={fontColor} onChange={setFontColor} />
+          </div>
+          <div className="textcolorsample" style={{ color: fontColor }}>
+            Sample Text.
+          </div>
         </div>
       </div>
       <div id="notepad-page-buttons">
@@ -216,7 +221,9 @@ function NoteStory({ noteText, setNoteText }) {
     const eventName = 'new_chat_message';
 
     const handleMsg = (data) => {
-      console.log(`got msg ${data}`);
+      const msg = data.msg;
+      console.log(`got msg ${msg}`);
+      setMsgBuffer((prev) => [...prev, msg]);
     };
 
     socket.on(eventName, handleMsg);
@@ -253,6 +260,12 @@ function NoteStory({ noteText, setNoteText }) {
       setNoteText((prev) => "..." + prev.slice(43));
     }
   }, [noteText]);
+
+  useEffect(() => {
+    if (msgBuffer.length > 4) {
+      sendStoryRequest(msgBuffer);
+    }
+  }, [msgBuffer]);
 
   async function sendStoryRequest(msgBuffer) {
     if (!theme || !msgBuffer) {

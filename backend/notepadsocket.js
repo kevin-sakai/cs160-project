@@ -2,45 +2,48 @@ const { Server } = require('socket.io');
 
 let currentNoteText = "";
 
-const httpServer = http.createServer(app);
+let notepadSocket;
 
-httpServer.listen(port, () => {
-    console.log(`Backend server listening on http://localhost:${port}`);
-});
-
-const notepadSocket = new Server(httpServer, {
-    cors: {
-        origin: "http://localhost:5173", 
-        methods: ["GET", "POST"]
-    }
-});
-
-app.get("/api/notepad", (req, res) => {
-    console.log("GET request for text");
-    res.json({ text: currentNoteText });
-});
-
-notepadSocket.on('connection', (socket) => {
-    console.log(`Client connected: ${socket.id}`);
-
-    socket.emit('text_update', { text: currentNoteText });
-
-    socket.on('text_input', (data) => {
-        const newText = data.text;
-        currentNoteText = newText;
-        socket.broadcast.emit('text_update', { text: newText });
-        socket.emit('confirm_input', { message: 'Text update received.' });
+const initNotepadWebsocket = (httpServer) => {
+  if (!notepadSocket) {
+    notepadSocket = new Server(httpServer, {
+            cors: {
+                origin: "http://localhost:3000",
+                methods: ["GET", "POST"]
+            }
     });
 
-    socket.on('disconnect', () => {
-        console.log(`Client disconnected: ${socket.id}`);
-    });
-});
+    notepadSocket.on('connection', (socket) => {
+      console.log(`Client connected: ${socket.id}`);
 
-function getNotepadSocket() {
+      socket.emit('text_update', { text: currentNoteText });
+
+      socket.on('text_input', (data) => {
+          const newText = data.text;
+          currentNoteText = newText;
+          socket.broadcast.emit('text_update', { text: newText });
+          socket.emit('confirm_input', { message: 'Text update received.' });
+      });
+
+      socket.on('disconnect', () => {
+          console.log(`Client disconnected: ${socket.id}`);
+      });
+    });
+
+    return notepadSocket;
+  }
+}
+
+const getNotepadWebsocket = () => {
   return notepadSocket;
 }
 
+const getNoteText = () => {
+  return currentNoteText;
+}
+
 module.exports = {
-  getNotepadSocket,
+  initNotepadWebsocket,
+  getNotepadWebsocket,
+  getNoteText,
 }

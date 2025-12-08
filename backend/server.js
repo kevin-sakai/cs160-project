@@ -11,7 +11,10 @@ const {
   getSentimentStats,
 } = require('./sentiment');
 const http = require('http');
-
+const {
+  initNotepadWebsocket,
+  getNoteText,
+} = require("./notepadsocket.js");
 
 
 const app = express();
@@ -462,6 +465,19 @@ app.get('api/twitch/messages', async (req, res) => {
     ok: true,
     msg: JSON.stringify(messages),
   });
+});
+
+const httpServer = http.createServer(app);
+
+initNotepadWebsocket(httpServer);
+
+app.get("/api/notepad", (req, res) => {
+    console.log("GET request for text");
+    res.json({ text: getNoteText() });
+});
+
+httpServer.listen(port, () => {
+    console.log(`Backend server listening on http://localhost:${port}`);
 });
 
 /*
