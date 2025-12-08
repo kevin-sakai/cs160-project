@@ -3,6 +3,13 @@ require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
 const { OBSWebSocket } = require('obs-websocket-js');
+// axios removed — not needed when insights are generated locally
+const {
+  initializeChatClient,
+  disconnectChatClient,
+  getEmotionData,
+  getSentimentStats,
+} = require('./sentiment');
 
 const app = express();
 const port = process.env.PORT || 3000;
@@ -36,11 +43,35 @@ const obs = new OBSWebSocket();
 let isConnected = false;
 let isConnecting = false;
 
+// Track scene usage over time
+const sceneUsageTracker = {
+  currentScene: null,
+  sceneStartTime: null,
+  sceneDurations: {}, // { sceneName: totalMs }
+};
+
 // Set up event listeners for logging and reconnection tracking
 obs.on('ConnectionOpened', () => {
   console.log('OBS WebSocket connection opened');
   isConnected = true;
   isConnecting = false;
+});
+
+// Track scene switches
+obs.on('CurrentProgramSceneChanged', (data) => {
+  const { sceneName } = data;
+  
+  // Log previous scene duration
+  if (sceneUsageTracker.currentScene && sceneUsageTracker.sceneStartTime) {
+    const duration = Date.now() - sceneUsageTracker.sceneStartTime;
+    sceneUsageTracker.sceneDurations[sceneUsageTracker.currentScene] =
+      (sceneUsageTracker.sceneDurations[sceneUsageTracker.currentScene] || 0) + duration;
+  }
+  
+  // Switch to new scene
+  sceneUsageTracker.currentScene = sceneName;
+  sceneUsageTracker.sceneStartTime = Date.now();
+  console.log(`Scene switched to: ${sceneName}`);
 });
 
 obs.on('ConnectionClosed', () => {
@@ -241,6 +272,183 @@ app.post('/api/obs/scenes/switch', async (req, res) => {
       error: 'Failed to switch scene',
       details: err.message || String(err),
       code: err.code,
+    });
+  }
+});
+
+//get source/scene data from obs for da graphs
+app.get('/api/obs/insights', async (req, res) => {
+  try {
+    await ensureObsConnected();
+    
+    const { scenes, currentProgramSceneName } = await obs.call('GetSceneList');
+    
+    const sceneData = [];
+    for (const scene of scenes) {
+      try {
+        const { sceneItems } = await obs.call('GetSceneItemList', {
+          sceneName: scene.sceneName,
+        });
+        sceneData.push({
+          sceneName: scene.sceneName,
+          sourceCount: sceneItems.length,
+          sources: sceneItems.map(item => ({
+            name: item.sourceName,
+            kind: item.inputKind,
+            enabled: item.sceneItemEnabled,
+          })),
+        });
+      } catch (err) {
+        console.error(`Error getting sources for ${scene.sceneName}:`, err);
+      }
+    }
+
+    const obsDataSummary = {
+      totalScenes: scenes.length,
+      currentScene: currentProgramSceneName,
+      scenes: sceneData,
+      mostUsedScenes: scenes.slice(0, 5).map(s => s.sceneName),
+    };
+
+    let insights;
+    
+    // get time for current scene
+    if (sceneUsageTracker.currentScene && sceneUsageTracker.sceneStartTime) {
+      const duration = Date.now() - sceneUsageTracker.sceneStartTime;
+      sceneUsageTracker.sceneDurations[sceneUsageTracker.currentScene] =
+        (sceneUsageTracker.sceneDurations[sceneUsageTracker.currentScene] || 0) + duration;
+      sceneUsageTracker.sceneStartTime = Date.now();
+    }
+    
+    //sort them scenes by time used
+    const mostUsedScenes = (obsDataSummary.mostUsedScenes || [])
+      .map((name) => ({
+        name,
+        usage: sceneUsageTracker.sceneDurations[name] || 0,
+      }))
+      .sort((a, b) => b.usage - a.usage);
+
+      //count source usages by scene
+      const sourceCounts = {};
+      for (const s of obsDataSummary.scenes || []) {
+        for (const src of s.sources || []) {
+          sourceCounts[src.name] = (sourceCounts[src.name] || 0) + 1;
+        }
+      }
+
+      const mostUsedSources = Object.entries(sourceCounts)
+        .map(([name, count]) => ({ name, count }))
+        .sort((a, b) => b.count - a.count)
+        .slice(0, 10);
+
+      insights = {
+        sceneInsights: {
+          mostUsedScenes,
+          recommendations: [],
+        },
+        sourceInsights: {
+          mostUsedSources,
+          efficiency: 'derived from source counts',
+        },
+      };
+
+    const chartData = {
+      sceneUsage: {
+        labels: insights.sceneInsights?.mostUsedScenes?.map(s => s.name) || [],
+        data: insights.sceneInsights?.mostUsedScenes?.map(s => s.usage) || [],
+      },
+      sourceUsage: {
+        labels: insights.sourceInsights?.mostUsedSources?.map(s => s.name) || [],
+        data: insights.sourceInsights?.mostUsedSources?.map(s => s.count) || [],
+      },
+    };
+
+    res.json({
+      ok: true,
+      chartData,
+      obsData: obsDataSummary,
+    });
+  } catch (err) {
+    console.error('Error in GET /api/obs/insights:', err);
+    console.error('Error stack:', err.stack);
+    res.status(500).json({
+      error: 'Failed to generate insights',
+      details: err.message || String(err),
+      stack: process.env.NODE_ENV === 'development' ? err.stack : undefined,
+    });
+  }
+});
+
+// connect to Twitch chat and start collecting messages
+app.post('/api/twitch/connect', async (req, res) => {
+  try {
+    const botUsername = process.env.TWITCH_BOT_USERNAME;
+    const oauthToken = process.env.TWITCH_OAUTH_TOKEN;
+    const channel = process.env.TWITCH_CHANNEL;
+
+    if (!botUsername || !oauthToken || !channel) {
+      return res.status(400).json({
+        error: 'Missing Twitch environment variables',
+        details: 'TWITCH_BOT_USERNAME, TWITCH_OAUTH_TOKEN, and TWITCH_CHANNEL are required',
+      });
+    }
+
+    await initializeChatClient(botUsername, oauthToken, channel);
+    res.json({
+      ok: true,
+      message: `Connected to ${channel}'s Twitch chat`,
+    });
+  } catch (err) {
+    console.error('Error connecting to Twitch chat:', err);
+    res.status(500).json({
+      error: 'Failed to connect to Twitch chat',
+      details: err.message || String(err),
+    });
+  }
+});
+
+// disconnect from Twitch chat
+app.post('/api/twitch/disconnect', (req, res) => {
+  try {
+    disconnectChatClient();
+    res.json({
+      ok: true,
+      message: 'Disconnected from Twitch chat',
+    });
+  } catch (err) {
+    console.error('Error disconnecting from Twitch chat:', err);
+    res.status(500).json({
+      error: 'Failed to disconnect from Twitch chat',
+      details: err.message || String(err),
+    });
+  }
+});
+
+// get sentiment analysis from collected Twitch chat messages
+app.get('/api/twitch/sentiment', async (req, res) => {
+  try {
+    const emotionData = await getEmotionData();
+    const stats = await getSentimentStats();
+
+    res.json({
+      ok: true,
+      emotionData: {
+        labels: emotionData.labels,
+        data: emotionData.data,
+        percentages: emotionData.percentages,
+      },
+      stats: {
+        totalMessages: stats.totalMessages,
+        emotionCounts: stats.emotionCounts,
+        emotionPercentages: stats.emotionPercentages,
+      },
+      recentMessages: stats.recentMessages,
+    });
+  } catch (err) {
+    console.error('Error getting sentiment analysis:', err);
+    res.status(500).json({
+      error: 'Failed to get sentiment analysis',
+      details: err.message || String(err),
     });
   }
 });
