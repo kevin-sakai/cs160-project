@@ -159,3 +159,8 @@ background-color: var(--highlight-color);
   display: flex;
   flex-direction: column;
 }
+
+.serverIP {
+  display: flex;
+  flex-direction: row;
+}

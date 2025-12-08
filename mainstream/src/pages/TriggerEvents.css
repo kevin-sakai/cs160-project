@@ -91,7 +91,7 @@ button:hover {
 }
 
 /* ERROR MESSAGES */
-.trigger-error {
+.trigger-status-hint {
   background: rgba(220, 53, 69, 0.12);
   border: 1px solid #8d0002;
   color:#8d0002;

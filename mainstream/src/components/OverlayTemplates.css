@@ -235,7 +235,7 @@
 /* ---------- 6. Glass Card ---------- */
 
 .overlay-template--glass-card {
-  background: radial-gradient(circle at top, rgba(255, 255, 255, 0.12), #1f1f1f);
+  background: radial-gradient(circle at top, rgba(255, 255, 255, 0.055), #5c89bda7);
 }
 
 .glass-card-inner {
