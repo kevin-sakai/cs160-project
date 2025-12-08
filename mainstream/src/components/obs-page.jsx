@@ -3,6 +3,7 @@ import { useEffect, useRef, useState } from "react";
 import OBSWebSocket from "obs-websocket-js";
 import "./obs-page.css";
 import { useObsConnection } from "../api/obsData";
+import help from "../assets/help.png";
 
 // Map OBS input kinds to friendly category names
 function getSourceCategoryLabel(kind) {
@@ -234,6 +235,7 @@ function ObsPage() {
       setHealth(msg);
     }
   }
+  const [addhelp, setAddHelp] = useState(false);
 
   // Helper: text inside the status box
   function renderStatusText() {
@@ -259,7 +261,20 @@ function ObsPage() {
 
         {/* Connection section */}
         <section className="obs-connection">
-          <h2>Connect to OBS</h2>
+          <div className="header">
+            <h2>Connect to OBS</h2>
+            <img
+              className="t-helpicon"
+              src={help}
+              alt="Help"
+              onClick={() => setAddHelp(!addhelp)}
+            />
+          </div>
+          {addhelp && (
+            <p className="trigger-description">
+              In OBS look for tools &gt; WebSocketServer Settings &gt; Show Connect Info. Input Server IP into address and Server Password into password.
+            </p>
+          )}
           <form onSubmit={handleConnect} className="obs-connect-form">
             <div className="credentials-inputs">
               <label>

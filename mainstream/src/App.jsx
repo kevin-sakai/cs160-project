@@ -196,7 +196,7 @@ function App() {
   const location = useLocation();
   const hiddenNavbarPages = ["/notepad-overlay"];
   const isOverlayRoute = location.pathname === "/overlay";
-
+  const [currPage, setCurrPage] = useState("home")
   return (
     <div id="app">
       <ObsProvider>
@@ -210,7 +210,7 @@ function App() {
           );
         })}
 
-        {hiddenNavbarPages.includes(location.pathname) ? null : <Navbar />}
+        {hiddenNavbarPages.includes(location.pathname) ? null : <Navbar currPage={currPage} setCurrPage={setCurrPage}/>}
 
         <Routes>
           <Route path="/" element={<HomePage />} />
