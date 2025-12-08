@@ -277,13 +277,26 @@ function ObsPage() {
 
     try {
       setErrorMsg("");
+
+      // 1) Delete in OBS
       await removeScene(sceneName);
-      // Reload scenes after deletion
-      await loadScenes();
+
+      // 2) Optimistically update local state so the list re-renders
+      setScenes((prevScenes) =>
+        prevScenes.filter((scene) => scene.sceneName !== sceneName)
+      );
+
+      // 3) Clear selection if we just deleted the active/expanded scene
+      if (currentScene === sceneName) {
+        setCurrentScene("");
+      }
       if (expandedSceneName === sceneName) {
         setExpandedSceneName("");
         setSources([]);
       }
+
+      // 4) Optionally re-sync from OBS (in case anything else changed)
+      await loadScenes();
     } catch (err) {
       console.error(err);
       const msg = err.message || "Failed to delete scene.";
@@ -291,6 +304,7 @@ function ObsPage() {
       setHealth(msg);
     }
   }
+
 
   async function handleToggleSceneExpand(sceneName) {
     if (expandedSceneName === sceneName) {
