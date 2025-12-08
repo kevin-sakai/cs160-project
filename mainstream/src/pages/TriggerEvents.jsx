@@ -4,9 +4,7 @@ import { useLocation } from "react-router-dom";
 import "./TriggerEvents.css";
 import help from "../assets/help.png";
 
-import TimedEventsConfig, {
-  BaseTriggerSettings,
-} from "../components/TimedTriggerConfig";
+import TimedEventsConfig from "../components/TimedTriggerConfig";
 
 import { ChatFollowersConfig } from "../components/ChatFollowersConfig";
 import { ChatBanningConfig } from "../components/ChatBanningConfig";
@@ -15,21 +13,15 @@ import { ClickTriggerConfig } from "../components/ClickTriggerConfig";
 
 import { useObsConnection } from "../api/obsData";
 
-// Convert "#RRGGBB" or "#AARRGGBB" to uint32 color OBS expects (AARRGGBB)
-function hexToObsColorInt(hex) {
-  if (!hex) return 0xffffffff;
-  let normalized = hex.replace("#", "");
-  if (normalized.length === 6) {
-    // assume full alpha if none provided
-    normalized = "FF" + normalized;
-  }
-  if (normalized.length !== 8) {
-    normalized = "FFFFFFFF"; // white fallback
-  }
-  return parseInt(normalized, 16);
-}
+import "../components/BaseTriggerSettings.css";
+import "../components/BaseTriggerSettings.jsx"
 
-// --- Timed trigger runtime helpers ---
+import {
+  OVERLAY_TEMPLATES,
+  OverlayTemplatePreview,
+} from "../components/OverlayTemplates";
+
+// --- Timed trigger runtime helpers (kept for future runtime logic) ---
 
 function msFromUnit(value, unit) {
   const n = Number(value) || 0;
@@ -64,8 +56,7 @@ function evaluateTimedTrigger({ base, specific, runtime, now }) {
   } = runtime || {};
 
   if (!firstAllowedAt) {
-    firstAllowedAt =
-      now + Number(startingTimeMinutes || 0) * 60_000; // delay after activation
+    firstAllowedAt = now + Number(startingTimeMinutes || 0) * 60_000; // delay after activation
   }
 
   const maxShows = Number(maxDisplays) || Infinity;
@@ -107,7 +98,12 @@ function evaluateTimedTrigger({ base, specific, runtime, now }) {
       // Cooldown or frequency window not satisfied
       return {
         shouldShow: false,
-        nextRuntime: { timesShown, lastFiredAt, activeUntil: null, firstAllowedAt },
+        nextRuntime: {
+          timesShown,
+          lastFiredAt,
+          activeUntil: null,
+          firstAllowedAt,
+        },
       };
     }
   }
@@ -130,7 +126,6 @@ function evaluateTimedTrigger({ base, specific, runtime, now }) {
     },
   };
 }
-
 
 // All trigger types available in the dropdown
 const TRIGGER_TYPES = [
@@ -155,11 +150,13 @@ function TriggerEventsPage({ registerDoneHandler }) {
 
   // use the shared OBS connection
   const {
-    status, // data type: 'disconnected' | 'connecting' | 'connected'
-    error: obsError, // data type: Error | null
-    getScenes: obsGetScenes, // function
-    createScene, // function
-    createColorSource, // function
+    status, // 'disconnected' | 'connecting' | 'connected'
+    error: obsError,
+    getScenes: obsGetScenes,
+    createScene,
+    createColorSource, // still available if you want color overlays elsewhere
+    createBrowserOverlay, // for template-based browser overlays
+    setSceneItemVisibility, // for toggling visibility of existing sources
   } = useObsConnection();
 
   // OBS scenes and selection
@@ -167,8 +164,8 @@ function TriggerEventsPage({ registerDoneHandler }) {
   const [selectedSceneName, setSelectedSceneName] = useState("");
   const [isLoadingScenes, setIsLoadingScenes] = useState(false);
 
-  // Overlay selection (color tile)
-  const [selectedOverlayColor, setSelectedOverlayColor] = useState(null);
+  // Overlay selection (template)
+  const [selectedTemplateId, setSelectedTemplateId] = useState(null);
 
   // Shared base settings per trigger
   const [baseConfigs, setBaseConfigs] = useState({
@@ -197,6 +194,8 @@ function TriggerEventsPage({ registerDoneHandler }) {
       return [];
     }
   });
+    // Runtime state per trigger (timed overlays)
+  const [runtimeState, setRuntimeState] = useState({});
 
   // Load scenes from the shared OBS connection
   useEffect(() => {
@@ -246,11 +245,93 @@ function TriggerEventsPage({ registerDoneHandler }) {
     }
   }, [savedTriggers]);
 
+
+    // ============================
+  // Timed trigger scheduler
+  // ============================
+  useEffect(() => {
+    if (status !== "connected") return;
+    if (!savedTriggers || savedTriggers.length === 0) return;
+
+    const interval = setInterval(() => {
+      const now = Date.now();
+
+      setRuntimeState((prevRuntime) => {
+        const nextRuntime = { ...prevRuntime };
+
+        for (const trig of savedTriggers) {
+          if (trig.triggerType !== "timed" || !trig.overlay) {
+            // keep any existing runtime state but don't evaluate
+            nextRuntime[trig.id] = prevRuntime[trig.id] || {};
+            continue;
+          }
+
+          const prevForTrig = prevRuntime[trig.id] || {};
+          const { shouldShow, nextRuntime: updated } = evaluateTimedTrigger({
+            base: trig.base || {},
+            specific: trig.specific || {},
+            runtime: prevForTrig,
+            now,
+          });
+
+          const wasVisible = !!prevForTrig.isVisible;
+          updated.isVisible = shouldShow;
+          nextRuntime[trig.id] = updated;
+
+          // Only poke OBS when visibility actually changes
+          if (shouldShow !== wasVisible) {
+            const { sceneName, sourceName } = trig.overlay;
+
+            // Fire & forget; don't block the loop
+            setSceneItemVisibility(sceneName, sourceName, shouldShow).catch(
+              (err) => {
+                console.error(
+                  "Failed to toggle overlay visibility for trigger",
+                  trig.id,
+                  err
+                );
+              }
+            );
+
+            // If this overlay overrides others, hide their overlays too
+            if (shouldShow && trig.base?.overrideOthers === "yes") {
+              for (const other of savedTriggers) {
+                if (
+                  other.id !== trig.id &&
+                  other.overlay &&
+                  other.overlay.sceneName &&
+                  other.overlay.sourceName
+                ) {
+                  setSceneItemVisibility(
+                    other.overlay.sceneName,
+                    other.overlay.sourceName,
+                    false
+                  ).catch((err) => {
+                    console.error(
+                      "Failed to hide other overlay for overrideOthers trigger",
+                      other.id,
+                      err
+                    );
+                  });
+                }
+              }
+            }
+          }
+        }
+
+        return nextRuntime;
+      });
+    }, 1000); // check once per second
+
+    return () => clearInterval(interval);
+  }, [status, savedTriggers, setSceneItemVisibility]);
+
+
   // --- overlay selection & creation ---
 
-  // Just select an overlay color (no OBS calls yet)
-  const handleOverlaySelect = (color) => {
-    setSelectedOverlayColor(color);
+  // Just select an overlay template (no OBS calls yet)
+  const handleTemplateSelect = (templateId) => {
+    setSelectedTemplateId(templateId);
     setErrorMsg("");
   };
 
@@ -258,8 +339,8 @@ function TriggerEventsPage({ registerDoneHandler }) {
   const handleCreateTriggerWithOverlay = async () => {
     setErrorMsg("");
 
-    if (!selectedOverlayColor) {
-      setErrorMsg("Please select an overlay style first.");
+    if (!selectedTemplateId) {
+      setErrorMsg("Please select an overlay template first.");
       return;
     }
 
@@ -276,31 +357,31 @@ function TriggerEventsPage({ registerDoneHandler }) {
     }
 
     const sceneName = selectedSceneName;
-    const color = selectedOverlayColor;
-    const sourceName = `Trigger-${selectedTrigger}-${Date.now()}`;
+    const templateId = selectedTemplateId;
+    const sourceName = `Trigger-${selectedTrigger}-${templateId}-${Date.now()}`;
 
     try {
-      await createColorSource(sceneName, sourceName, hexToObsColorInt(color));
+      // Create a browser source in OBS that loads your overlay page for this template
+      await createBrowserOverlay(sceneName, sourceName, templateId);
 
-    const newTrigger = {
-      id: Date.now(),
-      triggerType: selectedTrigger,
-      base: baseConfigs[selectedTrigger] ?? {},
-      specific: specificConfigs[selectedTrigger] ?? {},
-      overlay: {
-        color,
-        sceneName,
-        sourceName,
-      },
-      createdAt: Date.now(), // used as "go live" time for the scheduler
-    };
-
+      const newTrigger = {
+        id: Date.now(),
+        triggerType: selectedTrigger,
+        base: baseConfigs[selectedTrigger] ?? {},
+        specific: specificConfigs[selectedTrigger] ?? {},
+        overlay: {
+          templateId,
+          sceneName,
+          sourceName,
+        },
+        createdAt: Date.now(), // used as "go live" time for the scheduler
+      };
 
       setSavedTriggers((prev) => [...prev, newTrigger]);
-      alert("Overlay created in OBS and trigger configuration saved!");
+      alert("Browser overlay created in OBS and trigger configuration saved!");
 
       // Optionally reset overlay selection
-      setSelectedOverlayColor(null);
+      setSelectedTemplateId(null);
       // Optionally go back to config
       // setStep("config");
     } catch (err) {
@@ -350,7 +431,7 @@ function TriggerEventsPage({ registerDoneHandler }) {
     registerDoneHandler,
     step,
     selectedTrigger,
-    selectedOverlayColor,
+    selectedTemplateId,
     selectedSceneName,
     status,
   ]);
@@ -396,13 +477,13 @@ function TriggerEventsPage({ registerDoneHandler }) {
     setSelectedTrigger(value);
     setStep("config");
     setErrorMsg("");
-    setSelectedOverlayColor(null);
+    setSelectedTemplateId(null);
   };
 
   const handleBackToConfig = () => {
     setStep("config");
     setErrorMsg("");
-    setSelectedOverlayColor(null);
+    setSelectedTemplateId(null);
   };
 
   const goToOverlays = () => {
@@ -501,7 +582,9 @@ function TriggerEventsPage({ registerDoneHandler }) {
         return null;
     }
   };
+
   const [trighelp, setTrigHelp] = useState(false);
+
   return (
     <div className="trigger-events-container">
       <div className="trigger-events-content">
@@ -523,7 +606,6 @@ function TriggerEventsPage({ registerDoneHandler }) {
               sentiment-based overlays.
             </p>
           ) : null}
-
         </header>
 
         <div className="trigger-layout">
@@ -563,14 +645,15 @@ function TriggerEventsPage({ registerDoneHandler }) {
             ) : (
               <OverlayGrid
                 onBack={handleBackToConfig}
-                onOverlaySelect={handleOverlaySelect}
-                selectedOverlayColor={selectedOverlayColor}
+                onTemplateSelect={handleTemplateSelect}
+                selectedTemplateId={selectedTemplateId}
                 onDone={handleCreateTriggerWithOverlay}
                 scenes={scenes}
                 selectedSceneName={selectedSceneName}
                 onSceneChange={handleSceneChange}
                 onCreateScene={handleCreateScene}
                 isLoadingScenes={isLoadingScenes}
+                templates={OVERLAY_TEMPLATES}
               />
             )}
           </section>
@@ -585,30 +668,22 @@ function TriggerEventsPage({ registerDoneHandler }) {
  */
 function OverlayGrid({
   onBack,
-  onOverlaySelect,
-  selectedOverlayColor,
+  onTemplateSelect,
+  selectedTemplateId,
   onDone,
   scenes,
   selectedSceneName,
   onSceneChange,
   onCreateScene,
   isLoadingScenes,
+  templates,
 }) {
-  const dummyOverlays = [
-    "#e57373",
-    "#64b5f6",
-    "#81c784",
-    "#ffb74d",
-    "#ba68c8",
-    "#4db6ac",
-  ];
-
   return (
     <div className="trigger-card">
       <h2>Choose Scene & Overlay</h2>
       <p>
         Pick which OBS scene this overlay should be added to, then choose an
-        overlay style.
+        overlay template.
       </p>
 
       {/* Scene selection (mirrors ObsPage’s scene picker) */}
@@ -643,21 +718,21 @@ function OverlayGrid({
         )}
       </div>
 
-      {/* Overlay grid */}
+      {/* Overlay template grid */}
       <div className="overlay-grid">
-        {dummyOverlays.map((color, index) => {
-          const isSelected = color === selectedOverlayColor;
+        {templates.map((tpl) => {
+          const isSelected = tpl.id === selectedTemplateId;
           return (
             <button
-              key={index}
+              key={tpl.id}
               type="button"
               className={`overlay-tile ${
                 isSelected ? "overlay-tile-selected" : ""
               }`}
-              style={{ backgroundColor: color }}
-              onClick={() => onOverlaySelect?.(color)}
+              onClick={() => onTemplateSelect?.(tpl.id)}
             >
-              Overlay {index + 1}
+              <OverlayTemplatePreview templateId={tpl.id} />
+              <div className="overlay-tile-label">{tpl.name}</div>
             </button>
           );
         })}
@@ -671,7 +746,7 @@ function OverlayGrid({
           type="button"
           className="trigger-done-button"
           onClick={onDone}
-          disabled={!selectedOverlayColor}
+          disabled={!selectedTemplateId}
         >
           Done
         </button>

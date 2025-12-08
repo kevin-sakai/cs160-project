@@ -1,64 +1,72 @@
-// components/ChatFollowersConfig.jsx
-import React from "react";
+// src/components/ChatFollowersConfig.jsx
+import React, { useState } from "react";
 import { BaseTriggerSettings } from "./BaseTriggerSettings";
+import { CollapsibleSection } from "./CollapsibleSection";
 import help from "../assets/help.png";
-import { useState } from "react";
 
 export function ChatFollowersConfig({
   baseSettings,
   onBaseSettingsChange,
   specificSettings,
   onSpecificChange,
-  onContinue, // <-- ADDED
-  setError, // <-- ADDED
+  onContinue,
+  setError,
 }) {
+  const [trighelp, setTrigHelp] = useState(false);
+
   const updateSpecific = (field, value) => {
-    setError?.(""); // clear errors when user changes something
+    setError?.(""); // clear errors on edit
     onSpecificChange({ ...specificSettings, [field]: value });
   };
 
   const handleNext = () => {
-    // Optional basic validation
     if (!specificSettings.threshold || specificSettings.threshold <= 0) {
       setError?.("Please enter a valid follower threshold before continuing.");
       return;
     }
 
-    if (onContinue) onContinue();
+    onContinue?.();
   };
-const [trighelp, setTrigHelp] = useState(false);
+
+  // Get grouped base settings blocks (timing, display, shortcuts)
+  const groups = BaseTriggerSettings({
+    settings: baseSettings,
+    onChange: onBaseSettingsChange,
+  });
+
   return (
     <div className="trigger-card">
+      {/* Header */}
       <div className="header">
         <h2>Chat Followers</h2>
         <img
           className="t-helpicon"
           src={help}
-          onClick={() => {
-            setTrigHelp(!trighelp);
-          }}
+          alt="Help"
+          onClick={() => setTrigHelp(!trighelp)}
         />
       </div>
-      {trighelp ? (
+
+      {trighelp && (
         <p className="trigger-description">
-        Trigger an overlay when you reach a follower milestone or receive new
-        followers (via Twitch API, once configured).
+          Trigger an overlay when you reach a follower milestone or receive new
+          followers (via Twitch API once configured).
         </p>
-      ) : null}
+      )}
 
-
+      {/* SPECIFIC SETTINGS */}
       <div style={{ display: "grid", gap: "1rem", maxWidth: "480px" }}>
-        {/* Mode: total vs new followers */}
+        {/* Mode */}
         <div>
           <label style={{ display: "block", marginBottom: "0.25rem" }}>
             Trigger when...
           </label>
           <select
-            value={specificSettings.mode || "total"}
+            value={specificSettings.mode || "new"}
             onChange={(e) => updateSpecific("mode", e.target.value)}
           >
-            <option value="total">Total follower count reaches...</option>
             <option value="new">New followers count reaches...</option>
+            <option value="total">Total follower count reaches...</option>
           </select>
         </div>
 
@@ -70,7 +78,7 @@ const [trighelp, setTrigHelp] = useState(false);
           <input
             type="number"
             min="1"
-            value={specificSettings.threshold ?? ""}
+            value={specificSettings.threshold ?? 1}
             onChange={(e) => updateSpecific("threshold", e.target.value)}
             placeholder="e.g., 500 (total) or 3 (new)"
             style={{ width: "100%" }}
@@ -120,14 +128,24 @@ const [trighelp, setTrigHelp] = useState(false);
         </div>
       </div>
 
-      {/* Common shared settings */}
-      <h3 style={{ marginTop: "1.5rem" }}>Common settings</h3>
-      <BaseTriggerSettings
-        settings={baseSettings}
-        onChange={onBaseSettingsChange}
-      />
+      {/* ADVANCED SETTINGS (per-base trigger settings, grouped & collapsible) */}
+      <h3 style={{ marginTop: "1.5rem", marginBottom: "0.5rem" }}>
+        Advanced Settings
+      </h3>
 
-      {/* NEXT BUTTON (required to go to overlays) */}
+      <CollapsibleSection title="Trigger Timing" defaultOpen={false}>
+        {groups.timing}
+      </CollapsibleSection>
+
+      <CollapsibleSection title="On-Screen Behavior" defaultOpen={false}>
+        {groups.display}
+      </CollapsibleSection>
+
+      <CollapsibleSection title="Shortcuts & Control" defaultOpen={false}>
+        {groups.shortcuts}
+      </CollapsibleSection>
+
+      {/* NEXT BUTTON */}
       <div className="trigger-actions" style={{ marginTop: "1.5rem" }}>
         <button
           onClick={handleNext}
@@ -140,3 +158,4 @@ const [trighelp, setTrigHelp] = useState(false);
     </div>
   );
 }
+export default ChatFollowersConfig;

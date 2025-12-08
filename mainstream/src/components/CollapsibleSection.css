@@ -1,0 +1,63 @@
+/* Main wrapper */
+.collapsible-section {
+  margin: 0.35rem 0;
+  padding-left: 0.5rem; /* visually nest under Advanced Settings */
+}
+
+/* Header: NOT a button; looks like a setting row */
+.collapsible-section-header {
+  width: 100%;
+  background: none;
+  border: none;
+  cursor: pointer;
+
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  font-size: 1rem;
+  font-weight: 600;
+  padding: 4px 0;
+
+  color: var(--text-color-dark);
+  opacity: 0.85;
+}
+
+/* Hover should be subtle */
+.collapsible-section-header:hover {
+  background: rgba(255, 255, 255, 0.06);
+  border-radius: 4px;
+}
+
+/* Title inside header */
+.collapsible-section-title {
+  font-size: inherit;
+  font-weight: inherit;
+}
+
+/* Chevron */
+.collapsible-section-chevron {
+  font-size: 1.05rem;
+  font-weight: 600;
+  transition: transform 0.2s ease;
+  opacity: 0.7;
+}
+
+/* Rotate closed */
+.collapsible-section-chevron {
+  transform: rotate(-90deg);
+}
+
+/* Rotate open */
+.collapsible-section-chevron.open {
+  transform: rotate(0deg);
+}
+
+/* Body container */
+.collapsible-section-body {
+  margin-top: 0.35rem;
+  padding: 0.6rem 0.8rem;
+  background: rgba(255, 255, 255, 0.04);
+  border-radius: 6px;
+  border-left: 3px solid var(--highlight-color); /* left indicator */
+}

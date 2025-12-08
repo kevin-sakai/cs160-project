@@ -5,7 +5,9 @@ import "./obs-page.css";
 import { useObsConnection } from "../api/obsData";
 
 function ObsPage() {
-  const [address, setAddress] = useState("ws://127.0.0.1:4455");
+  const [address, setAddress] = useState(
+    () => window.localStorage.getItem("obsAddress") || "ws://127.0.0.1:4455"
+  );
   const [password, setPassword] = useState(
     () => window.localStorage.getItem("obsPassword") || ""
   );
@@ -21,8 +23,12 @@ function ObsPage() {
 
   const obsRef = useRef(null);
 
-  // Get the shared OBS password setter from the global context
-  const { setPassword: setSharedObsPassword } = useObsConnection();
+  // 👉 Get both setters from the shared context
+  const {
+    setPassword: setSharedObsPassword,
+    setAddress: setSharedObsAddress,
+  } = useObsConnection();
+
 
   // Create / cleanup OBS client (local instance used by this page)
   useEffect(() => {
@@ -55,15 +61,17 @@ function ObsPage() {
       await obsRef.current.connect(address, password || undefined);
       setStatus("connected");
 
-      // ✅ Also update the shared provider so TriggerEvents can use OBS too
+      // ✅ Update shared provider so TriggerEvents uses the same address + password
       setSharedObsPassword(password || "");
-      // Provider will persist to localStorage and connect via ws://127.0.0.1:4455
+      setSharedObsAddress(address || "ws://127.0.0.1:4455");
 
-      // Health info = OBS version info
+      // Also persist locally so the connect form remembers it
+      window.localStorage.setItem("obsAddress", address);
+      window.localStorage.setItem("obsPassword", password || "");
+
       const versionInfo = await obsRef.current.call("GetVersion");
       setHealth(versionInfo);
 
-      // Load scenes once connected
       await loadScenes();
     } catch (err) {
       console.error("OBS connect error:", err);
@@ -76,6 +84,7 @@ function ObsPage() {
       setLoading(false);
     }
   }
+
 
   async function loadScenes() {
     if (!obsRef.current) return;
