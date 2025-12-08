@@ -169,3 +169,8 @@
   gap: 0.5rem;
   align-items: center;
 }
+
+.notepad-main {
+  display: flex;
+  flex-direction: row;
+}

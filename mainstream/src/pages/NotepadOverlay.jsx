@@ -12,7 +12,10 @@ export default function NotepadOverlay() {
     });
 
     return () => {
+      if (socket.connected) {
         socket.off('text_update');
+        socket.disconnect();
+      }
     };
   }, []);
 

@@ -18,15 +18,17 @@ const initNotepadWebsocket = (httpServer) => {
 
       socket.emit('text_update', { text: currentNoteText });
 
-      socket.on('text_input', (data) => {
+      const handleInput = (data) => {
           const newText = data.text;
           currentNoteText = newText;
           socket.broadcast.emit('text_update', { text: newText });
-          socket.emit('confirm_input', { message: 'Text update received.' });
-      });
+      }
+
+      socket.on('text_input', handleInput);
 
       socket.on('disconnect', () => {
           console.log(`Client disconnected: ${socket.id}`);
+          socket.off('text_input', handleInput);
       });
     });
 
