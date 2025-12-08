@@ -13,7 +13,7 @@ import { Link } from "react-router-dom";
 import { HexColorPicker, HexColorInput } from "react-colorful";
 import { color } from "chart.js/helpers";
 import { io } from 'socket.io-client';
-import { connectTwitchChat, getTwitchMessages } from '../api/obs';
+import { connectTwitchChat, disconnectTwitchChat } from '../api/obs';
 
 const WEBSOCKET_SERVER = 'http://localhost:3000';
 export const socket = io(WEBSOCKET_SERVER);
@@ -33,12 +33,26 @@ export default function Notepad({
   setNotePage,
 }) {
   const [currentTab, setCurrentTab] = useState("edit");
+  const [fontColor, setFontColor] = useState("#373670");
 
-  connectTwitchChat();
 
   useEffect(() => {
     socket.emit('text_input', { text: noteText });
   }, [noteText])
+
+  useEffect(() => {
+    socket.emit('color_change', { color: fontColor });
+  }, [fontColor])
+
+  useEffect(() => {
+    connectTwitchChat();
+    return () => {
+      if (socket.connected) {
+        socket.disconnect();
+      }
+      disconnectTwitchChat();
+    };
+  }, []);
 
   const tabs = {
     edit: {
@@ -85,7 +99,19 @@ export default function Notepad({
           />
         ))}
       </div>
-      {tabs[currentTab].elem}
+      <div className="notepad-main">
+        {tabs[currentTab].elem}
+        <div className="colorcontainer">
+          <HexColorPicker color={fontColor} onChange={setFontColor} />
+          <div className="colordisplay">
+            <p id="fontcolorp">Font Color:</p>
+            <HexColorInput id="colorinput" color={fontColor} onChange={setFontColor} />
+          </div>
+          <div className="textcolorsample" style={{ color: fontColor }}>
+            Sample Text
+          </div>
+        </div>
+      </div>
       <Link id="overlay-link" to="/notepad-overlay">
         Open Overlay
       </Link>
@@ -113,7 +139,6 @@ function NoteEditor({
     updateCurrentNote(setNoteText, notes[notePage].text);
   }, [notePage, notes]);
 
-  const [fontColor, setFontColor] = useState("#373670");
   return (
     <div id="notepad-tab-area">
       <div className="textcontainer">
@@ -123,16 +148,6 @@ function NoteEditor({
           placeholder="Start Writing A Note!"
           rows={NUM_TEXT_ROWS}
         ></textarea>
-        <div className="colorcontainer">
-          <HexColorPicker color={fontColor} onChange={setFontColor} />
-          <div className="colordisplay">
-            <p id="fontcolorp">Font Color:</p>
-            <HexColorInput id="colorinput" color={fontColor} onChange={setFontColor} />
-          </div>
-          <div className="textcolorsample" style={{ color: fontColor }}>
-            Sample Text.
-          </div>
-        </div>
       </div>
       <div id="notepad-page-buttons">
         <button
@@ -206,16 +221,6 @@ function NoteStory({ noteText, setNoteText }) {
   const [storyHistory, setStoryHistory] = useState([]);
   const [theme, setTheme] = useState("");
   const [msgBuffer, setMsgBuffer] = useState([]);
-
-  const tmpMsgBuffer = [
-    "What's up?",
-    "I just beat this game yesterday, how far are you?",
-    "I can't believe you survived that attack...",
-    "Huh what game is this??",
-    "Actually you're not using that weapon correctly",
-    "Where did you find that item?",
-    "Seriously you're still playing this game?",
-  ];
 
   useEffect(() => {
     const eventName = 'new_chat_message';
@@ -302,24 +307,34 @@ function NoteStory({ noteText, setNoteText }) {
         placeholder="Enter theme..."
         onChange={(e) => setTheme(e.target.value)}
       />
-      <button
-        className="generate-button"
-        onClick={() => {
-          sendStoryRequest(tmpMsgBuffer);
-        }}
-      >
-        Generate
-      </button>
     </div>
   );
 }
 
 function NoteSuggestions({ noteText, setNoteText }) {
-  const typingSpeed = 25;
+  const typingSpeed = 50;
 
   const [textBuffer, setTextBuffer] = useState("");
   const [msgBuffer, setMsgBuffer] = useState([]);
   const [suggestions, setSuggestions] = useState(null);
+  const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    const eventName = 'new_chat_message';
+
+    const handleMsg = (data) => {
+      const msg = data.msg;
+      console.log(`got msg ${msg}`);
+      setMsgBuffer((prev) => [...prev, msg]);
+    };
+
+    socket.on(eventName, handleMsg);
+
+    return () => {
+      socket.off(eventName, handleMsg);
+    };
+
+  }, []);
 
   useEffect(() => {
     setNoteText("");
@@ -338,18 +353,16 @@ function NoteSuggestions({ noteText, setNoteText }) {
     return () => clearInterval(typingInterval);
   }, [textBuffer]);
 
-  useEffect(() => {
-    storeCurrentNote(noteText);
-  }, [noteText]);
-
-  async function sendSuggestionRequest(msgBuf, setSuggest) {
+  async function sendSuggestionRequest(msgBuf) {
     const messages = formatMessages(msgBuf);
     try {
+      setLoading(true);
       const response = await getSuggestion(messages);
       const parsedResponse = JSON.parse(response);
-      setSuggest(parsedResponse);
+      setSuggestions(parsedResponse);
       console.log(parsedResponse);
       setMsgBuffer([]);
+      setLoading(false);
     } catch (e) {
       console.log(e);
     }
@@ -357,13 +370,6 @@ function NoteSuggestions({ noteText, setNoteText }) {
 
   return (
     <div id="notepad-tab-area">
-      <button
-        onClick={() => {
-          sendSuggestionRequest(msgBuffer, setSuggestions);
-        }}
-      >
-        Generate!
-      </button>
       <textarea
         className="no-input"
         tabIndex={-1}
@@ -371,15 +377,41 @@ function NoteSuggestions({ noteText, setNoteText }) {
         rows={NUM_TEXT_ROWS}
         readOnly
       ></textarea>
-      <label htmlFor="theme-input">Theme:</label>
-      <input
-        type="text"
-        name="theme-input"
-        placeholder="Enter theme..."
-        onChange={(e) => setTheme(e.target.value)}
-      />
+      <button
+        onClick={() => {
+          sendSuggestionRequest(msgBuffer, setSuggestions);
+        }}
+      >
+        Get Suggestions
+      </button>
+      {loading ? (<p>Loading...</p>) : null}
+      {suggestions ? (
+        <SuggestionList
+          suggestions={suggestions}
+          setTextBuffer={setTextBuffer}
+          setSuggestions={setSuggestions} />) : null}
     </div>
   );
+}
+
+function SuggestionList({ suggestions, setTextBuffer, setSuggestions }) {
+  return (
+    <div className="suggestion-choices">
+      {Object.values(suggestions).map((suggestion) =>
+        (<SuggestionItem suggestion={suggestion}
+          setTextBuffer={setTextBuffer}
+          setSuggestions={setSuggestions} />))}
+    </div>
+  )
+}
+
+function SuggestionItem({ suggestion, setTextBuffer, setSuggestions }) {
+  return (
+    <button onClick={() => {
+      setTextBuffer(suggestion);
+      setSuggestions(null);
+    }}>{suggestion}</button>
+  )
 }
 
 function formatMessages(msgBuffer) {
