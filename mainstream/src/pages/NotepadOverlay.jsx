@@ -12,8 +12,6 @@ export default function NotepadOverlay() {
     });
 
     return () => {
-        socket.off('connect');
-        socket.off('disconnect');
         socket.off('text_update');
     };
   }, []);

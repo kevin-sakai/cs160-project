@@ -34,7 +34,7 @@
     border-radius: 10px;
     padding: 20px;
     border:none;
-
+    resize: none;
   }
   textarea::placeholder{
     color:var(--highlight-color)
@@ -60,12 +60,13 @@
   font-family: inherit;
   background-color: var(--elem-color);
   border-radius: 0.5rem;
+  font-size: 1rem;
   padding: 0.25rem 0.5rem 0.25rem 0.5rem;
   cursor: pointer;
   background-color: var(--mid-color);
   padding: 10px 20px 10px 20px;
-   border-radius: 20px;
-     color:var(--text-color-dark);
+  border-radius: 20px;
+  color:var(--text-color-dark);
 }
 
 .notepad-page-button:hover {
@@ -111,4 +112,23 @@
   padding: 10px 20px 10px 20px;
    border-radius: 30px;
    margin: 10px 10px 30px 10px;
+}
+
+.tooltip:hover .tooltiptext {
+  visibility: visible;
+}
+
+.tooltiptext {
+  visibility: hidden;
+  width: 130px;
+  background-color: var(--mid-color);
+  color: var(--text-color-dark);
+  text-align: center;
+  padding: 5px 0;
+  border-radius: 0.25rem;
+  position: absolute;
+  top: 65px;
+  left: 500px;
+  z-index: 1;
+  width: 325px;
 }

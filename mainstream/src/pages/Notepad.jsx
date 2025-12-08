@@ -31,18 +31,21 @@ export default function Notepad({ notes, setNotes, noteText, setNoteText, notePa
               setNoteText={setNoteText}
               notePage={notePage}
               setNotePage={setNotePage} />,
+      tip: "The Standard note editor. Create new notes, view or edit existing notes.",
     },
     "story": {
       label: "Generate A Story",
       elem: <NoteStory
               noteText={noteText}
               setNoteText={setNoteText} />,
+      tip: "Automatically generate a story based on chat activity and populate the notepad with the story.",
     },
     "suggest": {
       label: "Get Suggestions",
       elem: <NoteSuggestions
               noteText={noteText}
               setNoteText={setNoteText} />,
+      tip: "Get suggestions based on chat activity for topics or questions, then choose a suggestion to display.",
     },
   };
 
@@ -52,11 +55,12 @@ export default function Notepad({ notes, setNotes, noteText, setNoteText, notePa
         <h1>Notepad</h1>
       </div>
       <div id="notepad-tabs">
-        {Object.entries(tabs).map(([tabId, {label, elem}]) => (
+        {Object.entries(tabs).map(([tabId, {label, elem, tip}]) => (
           <NotepadTab
             key={tabId}
             tabId={tabId}
             tabLabel={label}
+            tooltip={tip}
             currentTab={currentTab}
             setCurrentTab={setCurrentTab} />
         ))}
@@ -91,10 +95,10 @@ function NoteEditor({ notes, setNotes, noteText, setNoteText, notePage, setNoteP
       <div id="notepad-page-buttons">
         <button
           className="notepad-page-button"
-          onClick={() => changePage(notes, setNotes, notePage, notePage - 1, setNotePage, notes.length, noteText)}>&#x2190;</button>
+          onClick={() => changePage(notes, setNotes, notePage, notePage - 1, setNotePage, notes.length, noteText)}>&#x25C4;</button>
         <button
           className="notepad-page-button"
-          onClick={() => changePage(notes, setNotes, notePage, notePage + 1, setNotePage, notes.length, noteText)}>&#x2192;</button>
+          onClick={() => changePage(notes, setNotes, notePage, notePage + 1, setNotePage, notes.length, noteText)}>&#x25BA;</button>
         <button
           className="notepad-page-button"
           onClick={() => addPage(notes, setNotes, notePage, setNotePage, noteText)}>New Note</button>
@@ -108,10 +112,11 @@ function NoteEditor({ notes, setNotes, noteText, setNoteText, notePage, setNoteP
   );
 }
 
-function NotepadTab({ tabId, tabLabel, currentTab, setCurrentTab }) {
+function NotepadTab({ tabId, tabLabel, tooltip, currentTab, setCurrentTab }) {
   return (
-    <button className={tabId === currentTab ? "notepad-tab active" : "notepad-tab"} onClick={() => setCurrentTab(tabId)}>
+    <button className={`tooltip notepad-tab${tabId === currentTab ? " active" : ""}`} onClick={() => setCurrentTab(tabId)}>
       {tabLabel}
+      <span className="tooltiptext">{tooltip}</span>
     </button>
   );
 }
