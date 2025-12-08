@@ -429,7 +429,6 @@ app.get('/api/twitch/sentiment', async (req, res) => {
   try {
     const emotionData = await getEmotionData();
     const stats = await getSentimentStats();
-
     res.json({
       ok: true,
       emotionData: {
@@ -448,7 +447,7 @@ app.get('/api/twitch/sentiment', async (req, res) => {
     console.error('Error getting sentiment analysis:', err);
     res.status(500).json({
       error: 'Failed to get sentiment analysis',
-      details: err.message || String(err),
+      details: err.message,
     });
   }
 });
