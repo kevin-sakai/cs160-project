@@ -21,7 +21,6 @@ import { getItem, setItem } from "./util/HotkeyLocalStorage";
 import { ObsProvider } from "./api/obsData";
 import OverlayDisplay from "./pages/OverlayDisplay";
 
-
 function App() {
   // Notes state
   const [notes, setNotes] = useState(getNotesState);
@@ -32,6 +31,7 @@ function App() {
   const notePageRef = useRef(notePage);
   const navigate = useNavigate();
 
+  const [currPage, setCurrPage] = useState("home");
   // --- Signal for TriggerEvents to "click Done" ---
   // TriggerEventsPage will register a handler here.
   // App will call requestTriggerEventsDoneClick(triggerType)
@@ -75,17 +75,20 @@ function App() {
       navigate("/TriggerEventsPage");
       // Hotkey should "click Done" if appropriate
       requestTriggerEventsDoneClick(null);
+      setCurrPage("triggereventspage");
     },
 
     // Timed Events Trigger hotkey
     configureTimedEventsTrigger: () => {
       navigate("/TriggerEventsPage", { state: { initialTrigger: "timed" } });
+      setCurrPage("triggereventspage");
       requestTriggerEventsDoneClick("timed");
     },
 
     // Click Trigger hotkey
     configureClickTrigger: () => {
       navigate("/TriggerEventsPage", { state: { initialTrigger: "click" } });
+      setCurrPage("triggereventspage");
       requestTriggerEventsDoneClick("click");
     },
 
@@ -94,12 +97,14 @@ function App() {
       navigate("/TriggerEventsPage", {
         state: { initialTrigger: "followers" },
       });
+      setCurrPage("triggereventspage");
       requestTriggerEventsDoneClick("followers");
     },
 
     // Banning Trigger hotkey
     configureBanningTrigger: () => {
       navigate("/TriggerEventsPage", { state: { initialTrigger: "banning" } });
+      setCurrPage("triggereventspage");
       requestTriggerEventsDoneClick("banning");
     },
 
@@ -108,6 +113,7 @@ function App() {
       navigate("/TriggerEventsPage", {
         state: { initialTrigger: "sentiment" },
       });
+      setCurrPage("triggereventspage");
       requestTriggerEventsDoneClick("sentiment");
     },
   });
@@ -194,8 +200,12 @@ function App() {
   }, [notePage]);
 
   const location = useLocation();
+
+  // routes where navbar should be hidden
   const hiddenNavbarPages = ["/notepad-overlay"];
   const isOverlayRoute = location.pathname === "/overlay";
+  const shouldHideNavbar =
+    hiddenNavbarPages.includes(location.pathname) || isOverlayRoute;
 
   return (
     <div id="app">
@@ -210,7 +220,9 @@ function App() {
           );
         })}
 
-        {hiddenNavbarPages.includes(location.pathname) ? null : <Navbar />}
+        {!shouldHideNavbar && (
+          <Navbar currPage={currPage} setCurrPage={setCurrPage} />
+        )}
 
         <Routes>
           <Route path="/" element={<HomePage />} />
@@ -234,7 +246,6 @@ function App() {
 
           <Route path="/graphs" element={<Graphs />} />
 
-
           {/* new Trigger Events page */}
           <Route
             path="/TriggerEventsPage"
@@ -250,11 +261,10 @@ function App() {
           <Route path="/notepad-overlay" element={<NotepadOverlay />} />
           <Route
             path="/hotkeys"
-            element={<HotkeyPage keyMap={keyMap} setKeyMap={setKeyMap} />}
+            element={<HotkeyPage keyMap={keyMap} setKeyMap={setKeyMap} setCurrPage={setCurrPage} currPage={currPage}/>}
           />
         </Routes>
       </ObsProvider>
-    
     </div>
   );
 }

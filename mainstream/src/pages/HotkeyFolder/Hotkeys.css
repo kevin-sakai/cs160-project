@@ -185,6 +185,9 @@ select {
 .listitem-container {
   display: flex;
   flex-direction: column;
+  :hover{
+    color: white;
+  }
 }
 #hotkey-dispay-list button:hover {
   background-color: inherit;

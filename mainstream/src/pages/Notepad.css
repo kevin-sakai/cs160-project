@@ -20,19 +20,19 @@
   width: 100%;
   flex-direction: column;
   gap: 0.5rem;
-  padding: 1rem;
   border-radius: 0.5rem;
 
   textarea {
-    width: 100%;
+    width: 500px;
     font-family: inherit;
     font-size: 1.25rem;
     box-sizing: border-box;
     background-color: var(--mid-color);
-    
+    color: var(--text-color-dark);
     border-radius: 10px;
     padding: 20px;
     border: none;
+    resize: none;
   }
   textarea::placeholder {
     color: var(--highlight-color);
@@ -50,36 +50,43 @@
   display: flex;
   width: 100%;
   justify-content: space-evenly;
-gap: 20px;
+  gap: 20px;
 }
+
 #notepad-page-buttons {
   display: flex;
   flex-direction: row;
   gap: 0.5rem;
   color: var(--text-color-dark);
 }
+
 #colorinput {
-  width: 100%;
+  width: 30%;
 }
+
 .colorcontainer {
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
   align-items: center;
+  gap: 1rem;
 }
+
 #fontcolorp {
   align-self: flex-start;
 }
+
 .notepad-page-button {
   font-family: inherit;
   background-color: var(--elem-color);
   border-radius: 0.5rem;
+  font-size: 1rem;
   padding: 0.25rem 0.5rem 0.25rem 0.5rem;
   cursor: pointer;
   background-color: var(--mid-color);
   padding: 10px 20px 10px 20px;
   border-radius: 20px;
-  color: var(--text-color-dark);
+  color:var(--text-color-dark);
 }
 
 .notepad-page-button:hover {
@@ -125,4 +132,46 @@ gap: 20px;
   padding: 10px 20px 10px 20px;
   border-radius: 30px;
   margin: 10px 10px 30px 10px;
+}
+
+.tooltip:hover .tooltiptext {
+  visibility: visible;
+}
+
+.tooltiptext {
+  visibility: hidden;
+  width: 130px;
+  background-color: var(--mid-color);
+  color: var(--text-color-dark);
+  text-align: center;
+  padding: 5px 0;
+  border-radius: 0.25rem;
+  position: absolute;
+  top: 65px;
+  left: 490px;
+  z-index: 1;
+  width: 325px;
+}
+
+.textcolorsample {
+  background-color: white;
+  display: flex;
+  align-items: center; 
+  justify-content: center;
+  border-radius: 0.5rem;
+  padding: 0.5rem;
+}
+
+.colordisplay {
+  display: flex;
+  flex-direction: row;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.notepad-main {
+  display: flex;
+  flex-direction: row;
+  padding: 0.5rem;
+  gap: 1rem;
 }

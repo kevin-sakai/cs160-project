@@ -1,28 +1,34 @@
 import { getCurrentNote, retrieveCurrentNoteUpdate } from '../util/NoteOperations';
 import { useState, useEffect } from 'react';
 import "./NotepadOverlay.css";
-
+import { socket } from './Notepad';
 
 export default function NotepadOverlay() {
-  const [text, setText] = useState(() => {
-    const initialValue = getCurrentNote();
-    return initialValue ? initialValue : "";
-  });
+  const [text, setText] = useState("Waiting for server...");
+  const [fontColor, setFontColor] = useState("#373670");
 
   useEffect(() => {
-    const handleStorageUpdate = (e) => {
-      retrieveCurrentNoteUpdate(e, setText);
-    }
+    socket.on('text_update', (data) => {
+        setText(data.text);
+    });
 
-    window.addEventListener("storage", handleStorageUpdate);
+    socket.on('color_update', (data) => {
+        setFontColor(data.color);
+    });
 
-    return () => window.removeEventListener("storage", handleStorageUpdate);
-  });
+    return () => {
+      if (socket.connected) {
+        socket.off('text_update');
+        socket.off('color_update');
+        socket.disconnect();
+      }
+    };
+  }, []);
 
   return (
     <div className="notepad-overlay-bg">
       <div className="notepad-overlay-svg">
-        <div className="notepad-overlay-text">
+        <div className="notepad-overlay-text" style={{ color: fontColor }}>
           {text}
         </div>
       </div>

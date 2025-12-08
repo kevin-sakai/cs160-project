@@ -1,5 +1,6 @@
 const tmi = require('tmi.js');
 const OpenAI = require('openai');
+const {getNotepadWebsocket} = require('./notepadsocket.js');
 
 const openai = new OpenAI({
   apiKey: process.env.CHATGPT_API_KEY,
@@ -48,6 +49,9 @@ function initializeChatClient(botUsername, oauthToken, channel) {
         message: message,
         timestamp: new Date(),
       });
+      
+      const notepadSocket = getNotepadWebsocket();
+      notepadSocket.emit('new_chat_message', {msg: message});
 
       // crashes my computer if i dont do this
       if (chatMessages.length > 100) {
@@ -166,10 +170,16 @@ async function getEmotionData() {
       };
     }
     
-  module.exports = {
-    initializeChatClient,
-    disconnectChatClient,
-    analyzeSentiment,
-    getSentimentStats,
-    getEmotionData,
-  };
+// Notepad stuff
+function getMessageList() {
+  return chatMessages;
+}
+  
+module.exports = {
+  initializeChatClient,
+  disconnectChatClient,
+  analyzeSentiment,
+  getSentimentStats,
+  getEmotionData,
+  getMessageList,
+};
