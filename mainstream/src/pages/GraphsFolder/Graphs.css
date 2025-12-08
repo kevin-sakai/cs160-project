@@ -85,6 +85,7 @@
   background-color: var(--hightlight-text-color);
   padding: 1rem;
   margin-top: 1rem;
+  border-radius: 12px;
 }
 
 .sentiment-stats p {
@@ -105,6 +106,7 @@
   display: flex;
   gap: 1rem;
   color: white;
+  border-radius: 12px;
 }
 
 .emotion-item span:first-child {

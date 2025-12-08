@@ -1,4 +1,4 @@
-// components/trigger-events/ChatBanningConfig.jsx
+// components/ChatBanningConfig.jsx
 import React from "react";
 import help from "../assets/help.png";
 import { useState } from "react";
