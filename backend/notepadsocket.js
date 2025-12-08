@@ -5,11 +5,16 @@ let currentColor = "#373670"
 
 let notepadSocket;
 
+const allowedOrigins = [
+  'http://localhost:5173',
+  'http://127.0.0.1:5173',
+];
+
 const initNotepadWebsocket = (httpServer) => {
   if (!notepadSocket) {
     notepadSocket = new Server(httpServer, {
             cors: {
-                origin: "http://localhost:3000",
+                origin: allowedOrigins,
                 methods: ["GET", "POST"]
             }
     });

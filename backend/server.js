@@ -27,6 +27,7 @@ app.use(express.json());
 const allowedOrigins = [
   'http://localhost:5173',
   'http://172.20.202.66:5173',
+  'http://127.0.0.1:5173',
 ];
 
 // configure CORS (adjust origin for actual frontend dev server)
@@ -470,11 +471,6 @@ app.get('api/twitch/messages', async (req, res) => {
 const httpServer = http.createServer(app);
 
 initNotepadWebsocket(httpServer);
-
-app.get("/api/notepad", (req, res) => {
-    console.log("GET request for text");
-    res.json({ text: getNoteText() });
-});
 
 httpServer.listen(port, () => {
     console.log(`Backend server listening on http://localhost:${port}`);
