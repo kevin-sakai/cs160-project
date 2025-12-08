@@ -128,12 +128,12 @@ function App() {
           hotkey: "a",
           funcname: "action2",
         },
-                {
+        {
           name: "Action 3",
           hotkey: "b",
           funcname: "action2",
         },
-                {
+        {
           name: "Action 4",
           hotkey: "c",
           funcname: "action2",
@@ -195,6 +195,7 @@ function App() {
 
   const location = useLocation();
   const hiddenNavbarPages = ["/notepad-overlay"];
+  const isOverlayRoute = location.pathname === "/overlay";
 
   return (
     <div id="app">
@@ -228,15 +229,11 @@ function App() {
             }
           />
 
-          <Route
-            path="/hotkeys"
-            element={<HotkeyPage keyMap={keyMap} setKeyMap={setKeyMap} />}
-          />
-
           <Route path="/obspage" element={<ObsPage />} />
           <Route path="/overlay" element={<OverlayDisplay />} />
 
           <Route path="/graphs" element={<Graphs />} />
+
 
           {/* new Trigger Events page */}
           <Route
@@ -250,10 +247,14 @@ function App() {
               />
             }
           />
-
           <Route path="/notepad-overlay" element={<NotepadOverlay />} />
+          <Route
+            path="/hotkeys"
+            element={<HotkeyPage keyMap={keyMap} setKeyMap={setKeyMap} />}
+          />
         </Routes>
       </ObsProvider>
+    
     </div>
   );
 }

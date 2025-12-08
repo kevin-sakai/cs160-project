@@ -17,15 +17,17 @@ export default function OverlayDisplay() {
       style={{
         width: "100vw",
         height: "100vh",
+        position: "fixed",
+        inset: 0,
+        margin: 0,
+        padding: 0,
         background: "transparent",
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
-        margin: 0,
-        padding: 0,
+        zIndex: 9999,
       }}
     >
-      {/* Only the overlay preview, nothing else */}
       <OverlayTemplatePreview templateId={templateId} />
     </div>
   );
