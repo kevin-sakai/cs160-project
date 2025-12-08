@@ -164,7 +164,7 @@ function NoteEditor({
             )
           }
         >
-          &#x2190;
+          &#x25C4;
         </button>
         <button
           className="notepad-page-button"
@@ -180,7 +180,7 @@ function NoteEditor({
             )
           }
         >
-          &#x2192;
+          &#x25BA;
         </button>
         <button
           className="notepad-page-button"
@@ -221,6 +221,7 @@ function NoteStory({ noteText, setNoteText }) {
   const [storyHistory, setStoryHistory] = useState([]);
   const [theme, setTheme] = useState("");
   const [msgBuffer, setMsgBuffer] = useState([]);
+  const [generateInterval, setGenerateInterval] = useState(5);
 
   useEffect(() => {
     const eventName = 'new_chat_message';
@@ -267,7 +268,7 @@ function NoteStory({ noteText, setNoteText }) {
   }, [noteText]);
 
   useEffect(() => {
-    if (msgBuffer.length > 4) {
+    if (msgBuffer.length >= generateInterval) {
       sendStoryRequest(msgBuffer);
     }
   }, [msgBuffer]);
@@ -307,6 +308,15 @@ function NoteStory({ noteText, setNoteText }) {
         placeholder="Enter theme..."
         onChange={(e) => setTheme(e.target.value)}
       />
+      <p>
+        Generate every
+        <input
+          className="generate-interval-input"
+          type="text"
+          value={generateInterval}
+          onChange={(e) => setGenerateInterval(e.target.value)} /> 
+        messages.
+      </p>
     </div>
   );
 }
