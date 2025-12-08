@@ -109,7 +109,7 @@ export default function TimedEventsConfig({
             <input
               type="number"
               min="0"
-              value={specificSettings.startingTimeMinutes ?? ""}
+              value={specificSettings.startingTimeMinutes ?? 10}
               onChange={(e) =>
                 updateSpecific("startingTimeMinutes", e.target.value)
               }

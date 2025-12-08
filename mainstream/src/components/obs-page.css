@@ -7,8 +7,7 @@
   align-items: stretch;
   width: 100%;
   font-family: comfortaa, 400;
-    height: 100vh;
-      margin: 30px 0px 0px 30px;
+    margin: 30px 0px 0px 30px;
 }
 
 
@@ -60,3 +59,103 @@ background-color: var(--highlight-color);
 }
 
 
+
+/* Scenes list layout */
+.obs-scenes-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+/* Each row: main tile + switch button */
+.obs-scene-item {
+  display: flex;
+  align-items: stretch;
+}
+
+/* Main scene tile */
+.obs-scene-main {
+  flex: 1;
+  text-align: left;
+  border: none;
+  background: rgba(255, 255, 255, 0.04);
+  padding: 0.6rem 0.9rem;
+  border-radius: 8px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+/* Scene name text */
+.obs-scene-name {
+  font-weight: 600;
+}
+
+/* Little pill on the right when selected */
+.obs-scene-pill {
+  font-size: 0.75rem;
+  padding: 2px 8px;
+  border-radius: 999px;
+  background: var(--highlight-color);
+  color: var(--text-color-dark);
+}
+
+/* Secondary "Switch in OBS" button for the row */
+.obs-scene-switch {
+  margin-left: 0.5rem;
+  min-width: 130px;
+}
+
+/* Active scene glow / indication */
+.obs-scene-item--active .obs-scene-main {
+  box-shadow: 0 0 0 2px var(--highlight-color),
+              0 0 12px rgba(85, 73, 255, 0.5);
+  background: rgba(255, 255, 255, 0.08);
+}
+
+/* Grouped sources layout */
+.obs-sources-groups {
+  margin-top: 0.75rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.obs-sources-group {
+  padding: 0.5rem 0.75rem;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.obs-sources-group-title {
+  font-size: 0.9rem;
+  font-weight: 600;
+  margin-bottom: 0.35rem;
+  opacity: 0.9;
+}
+
+.obs-sources-list {
+  list-style: none;
+  padding-left: 0.75rem;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+}
+
+.obs-source-item {
+  font-size: 0.85rem;
+  opacity: 0.9;
+}
+.obs-source-item--active {
+  font-weight: 600;
+  color: var(--highlight-color);
+}
+
+.credentials-inputs {
+  display: flex;
+  flex-direction: column;
+}
