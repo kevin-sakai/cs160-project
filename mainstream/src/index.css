@@ -13,10 +13,8 @@
   -moz-osx-font-smoothing: grayscale;
 }
 html {
-  background-image: url(./assets/waves.svg);
-  background-repeat: no-repeat;
-  background-position: bottom;
-  background-size: cover;
+
+
 }
 
 #root {
@@ -26,5 +24,9 @@ html {
 body {
   margin: 0;
   display: flex;
+  background-image: url(./assets/waves.svg);
+  background-repeat: no-repeat;
+  background-position: bottom;
+  background-size: cover;
 
 }
