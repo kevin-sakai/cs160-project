@@ -6,6 +6,7 @@
   align-items: flex-start;
   margin: 30px 0px 0px 30px;
   flex: 1;
+  height: 100vh;
 }
 
 
@@ -174,4 +175,10 @@
   flex-direction: row;
   padding: 0.5rem;
   gap: 1rem;
+}
+
+.generate-interval-input {
+  width: 25px;
+  margin: 0 10px;
+  text-align: center;
 }
