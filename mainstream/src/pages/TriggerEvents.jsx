@@ -628,12 +628,12 @@ function TriggerEventsPage({ registerDoneHandler }) {
                 {status !== "connected" && (
                   <p className="trigger-status-hint">
                     OBS status:{" "}
-                    {status === "disconnected" && (
-                      <>
-                        Not connected.<br />
-                        Go to the OBS page and connect first.
-                      </>
-                    )}
+                  {status === "disconnected" && (
+                    <>
+                      Not connected.<br />
+                      Go to the OBS page and connect first.
+                    </>
+                  )}
                     {status === "connecting" && "Connecting to OBS…"}
                     {status === "error" && "Error talking to OBS. Check the OBS page."}
                   </p>
@@ -752,7 +752,7 @@ function OverlayGrid({
         </button>
 
       </div>
-      <div>blank box</div>
+      <div></div>
     </div>
   );
 }
