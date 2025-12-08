@@ -21,7 +21,6 @@ import { getItem, setItem } from "./util/HotkeyLocalStorage";
 import { ObsProvider } from "./api/obsData";
 import OverlayDisplay from "./pages/OverlayDisplay";
 
-
 function App() {
   // Notes state
   const [notes, setNotes] = useState(getNotesState);
@@ -194,8 +193,14 @@ function App() {
   }, [notePage]);
 
   const location = useLocation();
+
+  // routes where navbar should be hidden
   const hiddenNavbarPages = ["/notepad-overlay"];
   const isOverlayRoute = location.pathname === "/overlay";
+  const shouldHideNavbar =
+    hiddenNavbarPages.includes(location.pathname) || isOverlayRoute;
+
+  const [currPage, setCurrPage] = useState("home");
 
   return (
     <div id="app">
@@ -210,7 +215,9 @@ function App() {
           );
         })}
 
-        {hiddenNavbarPages.includes(location.pathname) ? null : <Navbar />}
+        {!shouldHideNavbar && (
+          <Navbar currPage={currPage} setCurrPage={setCurrPage} />
+        )}
 
         <Routes>
           <Route path="/" element={<HomePage />} />
@@ -234,7 +241,6 @@ function App() {
 
           <Route path="/graphs" element={<Graphs />} />
 
-
           {/* new Trigger Events page */}
           <Route
             path="/TriggerEventsPage"
@@ -254,7 +260,6 @@ function App() {
           />
         </Routes>
       </ObsProvider>
-    
     </div>
   );
 }
