@@ -58,7 +58,7 @@ export function useObs({ address = "ws://127.0.0.1:4455", password }) {
     return obsRef.current.call("GetSceneList");
   }
 
-  // 🔹 New: used by ObsPage to fetch the sources for a scene
+  // Fetch the sources (scene items) for a scene
   async function getSceneItems(sceneName) {
     ensureConnected();
     const data = await obsRef.current.call("GetSceneItemList", { sceneName });
@@ -75,19 +75,25 @@ export function useObs({ address = "ws://127.0.0.1:4455", password }) {
     return obsRef.current.call("CreateScene", { sceneName });
   }
 
-  async function createColorSource(sceneName, sourceName, colorValue) {
+  // Generic CreateInput so we can create *any* source type
+  async function createInput(sceneName, inputName, inputKind, inputSettings = {}, enabled = true) {
     ensureConnected();
 
     return obsRef.current.call("CreateInput", {
       sceneName,
-      inputName: sourceName,
-      inputKind: "color_source_v3",
-      inputSettings: {
-        color: colorValue ?? 0xffffffff,
-        width: 1920,
-        height: 1080,
-      },
-      sceneItemEnabled: true,
+      inputName,
+      inputKind,
+      inputSettings,
+      sceneItemEnabled: enabled,
+    });
+  }
+
+  // Kept for convenience where you specifically want a color source
+  async function createColorSource(sceneName, sourceName, colorValue) {
+    return createInput(sceneName, sourceName, "color_source_v3", {
+      color: colorValue ?? 0xffffffff,
+      width: 1920,
+      height: 1080,
     });
   }
 
@@ -113,7 +119,7 @@ export function useObs({ address = "ws://127.0.0.1:4455", password }) {
     });
   }
 
-  // Optional: still useful if you want to toggle overlay visibility elsewhere
+  // Toggle visibility of a scene item by name
   async function setSceneItemVisibility(sceneName, sourceName, enabled) {
     ensureConnected();
 
@@ -129,16 +135,34 @@ export function useObs({ address = "ws://127.0.0.1:4455", password }) {
     });
   }
 
+  // Remove an entire scene
+  async function removeScene(sceneName) {
+    ensureConnected();
+    return obsRef.current.call("RemoveScene", { sceneName });
+  }
+
+  // Remove a specific scene item (source instance) from a scene
+  async function removeSceneItem(sceneName, sceneItemId) {
+    ensureConnected();
+    return obsRef.current.call("RemoveSceneItem", {
+      sceneName,
+      sceneItemId,
+    });
+  }
+
   return {
     status,
     error,
     getScenes,
-    getSceneItems,          
+    getSceneItems,
     switchScene,
     createScene,
+    createInput,
     createColorSource,
     createBrowserOverlay,
-    setSceneItemVisibility, 
+    setSceneItemVisibility,
+    removeScene,
+    removeSceneItem,
   };
 }
 
