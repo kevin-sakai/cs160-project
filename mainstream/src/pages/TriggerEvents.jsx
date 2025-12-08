@@ -128,7 +128,7 @@ function evaluateTimedTrigger({ base, specific, runtime, now }) {
 // All trigger types available in the dropdown
 const TRIGGER_TYPES = [
   { id: "timed", label: "Timed Events" },
-  { id: "click", label: "When I Am Clicked" },
+  //{ id: "click", label: "When I Am Clicked" },
   { id: "followers", label: "Chat Followers" },
   { id: "banning", label: "Chat Banning" },
   { id: "sentiment", label: "Chat Sentiment" },
