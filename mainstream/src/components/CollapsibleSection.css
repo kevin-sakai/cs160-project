@@ -21,6 +21,7 @@
 
   color: var(--text-color-dark);
   opacity: 0.85;
+  
 }
 
 /* Hover should be subtle */
@@ -37,7 +38,7 @@
 
 /* Chevron */
 .collapsible-section-chevron {
-  font-size: 1.05rem;
+  font-size: 2rem;
   font-weight: 600;
   transition: transform 0.2s ease;
   opacity: 0.7;
@@ -59,5 +60,10 @@
   padding: 0.6rem 0.8rem;
   background: rgba(255, 255, 255, 0.04);
   border-radius: 6px;
-  border-left: 3px solid var(--highlight-color); /* left indicator */
+
+  padding-left: 3rem; /* indent content */
+  .inner {
+    border-left: 3px solid var(--highlight-color); /* left indicator */
+    padding-left: 1rem;
+  }
 }

@@ -13,21 +13,8 @@ export default function OverlayDisplay() {
   const templateId = query.get("template") || "glass-card";
 
   return (
-    <div
-      style={{
-        width: "100vw",
-        height: "100vh",
-        position: "fixed",
-        inset: 0,
-        margin: 0,
-        padding: 0,
-        background: "transparent",
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-        zIndex: 9999,
-      }}
-    >
+    <div className="overlay-display-root">
+      {/* Only the overlay preview, nothing else */}
       <OverlayTemplatePreview templateId={templateId} />
     </div>
   );

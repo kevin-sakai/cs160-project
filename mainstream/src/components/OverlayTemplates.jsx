@@ -4,7 +4,7 @@ import "./OverlayTemplates.css";
 
 export const OVERLAY_TEMPLATES = [
   { id: "follower-glow", name: "Follower Alert – Glow", triggerType: "followers" },
-  { id: "timed-pomodoro", name: "Timed Event – Pomodoro Block", triggerType: "timed" },
+  { id: "timed-pomodoro", name: "Timed Event – Pomodoro", triggerType: "timed" },
   { id: "click-burst", name: "Click Trigger – Burst", triggerType: "click" },
   { id: "sentiment-meter", name: "Sentiment – Vibe Meter", triggerType: "sentiment" },
   { id: "banning-shield", name: "Moderation – Shield Alert", triggerType: "banning" },

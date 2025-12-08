@@ -31,7 +31,7 @@ export function CollapsibleSection({ title, children, defaultOpen = false }) {
         </span>
       </button>
 
-      {open && <div className="collapsible-section-body">{children}</div>}
+      {open && <div className="collapsible-section-body"> <div className='inner'>{children}</div></div>}
     </div>
   );
 }

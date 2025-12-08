@@ -3,6 +3,7 @@ import { useEffect, useRef, useState } from "react";
 import OBSWebSocket from "obs-websocket-js";
 import "./obs-page.css";
 import { useObsConnection } from "../api/obsData";
+import help from "../assets/help.png";
 
 // Map OBS input kinds to friendly category names
 function getSourceCategoryLabel(kind) {
@@ -13,9 +14,9 @@ function getSourceCategoryLabel(kind) {
       return "Browser Sources";
     case "color_source_v3":
       return "Color Sources";
-    // Add more mappings here 
-     case "game_capture":
-       return "Game Capture";
+    // Add more mappings here
+    case "game_capture":
+      return "Game Capture";
     default:
       // Fallback: prettify the raw kind string
       return kind
@@ -24,10 +25,87 @@ function getSourceCategoryLabel(kind) {
   }
 }
 
+/**
+ * Parse a stored ws:// URL into { ip, port }.
+ * Handles:
+ *   ws://127.0.0.1:4455
+ *   ws://[fd33:d0cd:...:bee2]:4455
+ *   wss://... as well
+ */
+function parseAddressToIpPort(addressString) {
+  const fallback = { ip: "127.0.0.1", port: "4455" };
+  if (!addressString) return fallback;
+
+  try {
+    let s = addressString.trim();
+    // Remove ws:// or wss:// prefix
+    s = s.replace(/^wss?:\/\//i, "");
+    if (!s) return fallback;
+
+    let host = "";
+    let port = "";
+
+    if (s.startsWith("[")) {
+      // IPv6 with brackets: [ip]:port
+      const closing = s.indexOf("]");
+      if (closing === -1) return fallback;
+
+      host = s.slice(1, closing);
+      const rest = s.slice(closing + 1); // e.g., ":4455"
+      if (rest.startsWith(":")) {
+        port = rest.slice(1);
+      }
+    } else {
+      // IPv4 or hostname: host:port
+      const lastColon = s.lastIndexOf(":");
+      if (lastColon === -1) {
+        host = s;
+      } else {
+        host = s.slice(0, lastColon);
+        port = s.slice(lastColon + 1);
+      }
+    }
+
+    return {
+      ip: host || fallback.ip,
+      port: port || fallback.port,
+    };
+  } catch {
+    return fallback;
+  }
+}
+
+/**
+ * Build ws:// URL from ip + port.
+ * If ip looks like IPv6 (contains ":" and is not already bracketed),
+ * we wrap it in [ ]:  ws://[ipv6]:port
+ */
+function buildWebSocketAddress(ip, port) {
+  const defaultIp = "127.0.0.1";
+  const defaultPort = "4455";
+
+  const rawIp = (ip || "").trim() || defaultIp;
+  const rawPort = (port || "").trim() || defaultPort;
+
+  const needsBrackets =
+    rawIp.includes(":") && !rawIp.startsWith("[") && !rawIp.endsWith("]");
+
+  const host = needsBrackets ? `[${rawIp}]` : rawIp;
+
+  return `ws://${host}:${rawPort}`;
+}
+
 function ObsPage() {
-  const [address, setAddress] = useState(
-    () => window.localStorage.getItem("obsAddress") || "ws://127.0.0.1:4455"
-  );
+  // Initialize IP + Port from stored obsAddress (for backward compatibility)
+  const [ip, setIp] = useState(() => {
+    const saved = window.localStorage.getItem("obsAddress") || "ws://127.0.0.1:4455";
+    return parseAddressToIpPort(saved).ip;
+  });
+  const [port, setPort] = useState(() => {
+    const saved = window.localStorage.getItem("obsAddress") || "ws://127.0.0.1:4455";
+    return parseAddressToIpPort(saved).port;
+  });
+
   const [password, setPassword] = useState(
     () => window.localStorage.getItem("obsPassword") || ""
   );
@@ -48,6 +126,9 @@ function ObsPage() {
     setPassword: setSharedObsPassword,
     setAddress: setSharedObsAddress,
   } = useObsConnection();
+
+  // helper preview of full ws address
+  const previewAddress = buildWebSocketAddress(ip, port);
 
   // Create / cleanup OBS client (local instance used by this page)
   useEffect(() => {
@@ -72,6 +153,8 @@ function ObsPage() {
     e.preventDefault();
     if (!obsRef.current) return;
 
+    const fullAddress = buildWebSocketAddress(ip, port);
+
     try {
       setLoading(true);
       setErrorMsg("");
@@ -79,21 +162,17 @@ function ObsPage() {
       setStatus("connecting");
 
       // Local connection (for this page’s UI)
-      await obsRef.current.connect(address, password || undefined);
+      await obsRef.current.connect(fullAddress, password || undefined);
       setStatus("connected");
       setHealth("Successfully connected to OBS!");
 
       // ✅ Update shared provider so TriggerEvents uses the same address + password
       setSharedObsPassword(password || "");
-      setSharedObsAddress(address || "ws://127.0.0.1:4455");
+      setSharedObsAddress(fullAddress);
 
-      // Also persist locally so the connect form remembers it
-      window.localStorage.setItem("obsAddress", address);
+      // Persist the full ws:// URL + password
+      window.localStorage.setItem("obsAddress", fullAddress);
       window.localStorage.setItem("obsPassword", password || "");
-
-      // version details again, can restore:
-      // const versionInfo = await obsRef.current.call("GetVersion");
-      // setHealth(`Connected: OBS ${versionInfo.obsVersion}`);
 
       await loadScenes();
     } catch (err) {
@@ -235,6 +314,8 @@ function ObsPage() {
     }
   }
 
+  const [addhelp, setAddHelp] = useState(false);
+
   // Helper: text inside the status box
   function renderStatusText() {
     if (status === "connecting") return "Connecting to OBS...";
@@ -259,17 +340,45 @@ function ObsPage() {
 
         {/* Connection section */}
         <section className="obs-connection">
-          <h2>Connect to OBS</h2>
+          <div className="header">
+            <h2>Connect to OBS</h2>
+            <img
+              className="t-helpicon"
+              src={help}
+              alt="Help"
+              onClick={() => setAddHelp(!addhelp)}
+            />
+          </div>
+          {addhelp && (
+            <p className="trigger-description">
+              In OBS look for Tools &gt; WebSocket Server Settings &gt; Show Connect Info.
+              Input the <strong>Server IP</strong> into <strong>IP Address</strong>, the{" "}
+              <strong>Server Port</strong> into <strong>Port</strong>, and the{" "}
+              <strong>Server Password</strong> into <strong>Password</strong>.
+            </p>
+          )}
           <form onSubmit={handleConnect} className="obs-connect-form">
             <div className="credentials-inputs">
+              <div className="serverIP">
+                <label>
+                  Server IP
+                  <input
+                    id="obs-ip"
+                    type="text"
+                    value={ip}
+                    onChange={(e) => setIp(e.target.value)}
+                    placeholder="127.0.0.1 or 2001:db8:85a3::8a2e:370:7334 format "
+                  />
+                </label>
+              </div>
               <label>
-                Address
+                Port
                 <input
-                  id="obsaddress"
-                  type="text"
-                  value={address}
-                  onChange={(e) => setAddress(e.target.value)}
-                  placeholder="ws://127.0.0.1:4455"
+                  id="obs-port"
+                  type="number"
+                  value={port}
+                  onChange={(e) => setPort(e.target.value)}
+                  placeholder="4455"
                 />
               </label>
               <label>
@@ -282,6 +391,9 @@ function ObsPage() {
                 />
               </label>
             </div>
+            <small style={{ display: "block", margin: "0.25rem 0 0.75rem" }}>
+              Will connect to: <code>{previewAddress}</code>
+            </small>
             <button type="submit" disabled={loading}>
               {status === "connected" ? "Reconnect" : "Connect"}
             </button>
@@ -304,7 +416,10 @@ function ObsPage() {
         {/* Connection status box (health + any error messages) */}
         <section>
           <h2>OBS Connection Status</h2>
-          <pre className="connectionStatus" style={{ background: "#ffffffff", padding: "1rem" }}>
+          <pre
+            className="connectionStatus"
+            style={{ background: "#ffffffff", padding: "1rem" }}
+          >
             {renderStatusText()}
           </pre>
         </section>
