@@ -155,3 +155,7 @@ background-color: var(--highlight-color);
   color: var(--highlight-color);
 }
 
+.credentials-inputs {
+  display: flex;
+  flex-direction: column;
+}

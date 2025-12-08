@@ -261,25 +261,27 @@ function ObsPage() {
         <section className="obs-connection">
           <h2>Connect to OBS</h2>
           <form onSubmit={handleConnect} className="obs-connect-form">
-            <label>
-              Address
-              <input
-                id="obsaddress"
-                type="text"
-                value={address}
-                onChange={(e) => setAddress(e.target.value)}
-                placeholder="ws://127.0.0.1:4455"
-              />
-            </label>
-            <label>
-              Password
-              <input
-                type="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                placeholder="OBS WebSocket password"
-              />
-            </label>
+            <div className="credentials-inputs">
+              <label>
+                Address
+                <input
+                  id="obsaddress"
+                  type="text"
+                  value={address}
+                  onChange={(e) => setAddress(e.target.value)}
+                  placeholder="ws://127.0.0.1:4455"
+                />
+              </label>
+              <label>
+                Password
+                <input
+                  type="password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  placeholder="OBS WebSocket password"
+                />
+              </label>
+            </div>
             <button type="submit" disabled={loading}>
               {status === "connected" ? "Reconnect" : "Connect"}
             </button>
