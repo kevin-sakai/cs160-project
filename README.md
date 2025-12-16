@@ -2,11 +2,10 @@
 
 1. Install the latest versions of `npm` and `node`.
 2. Open two terminals from the repository directory.
-3. In both terminals, run `npm install`.
 4. In one terminal, go to the frontend folder `mainstream` with `cd mainstream`.
-5. From this terminal, run `npm run dev` to start the React frontend.
+5. From this terminal, run `npm install` to install dependencies and `npm run dev` to start the React frontend.
 6. In the other terminal, go to the backend server folder `backend` with `cd backend`.
-7. In this terminal, run `npm start` to start the backend server.
+7. In this terminal, run `npm install` to install dependencies and `npm start` to start the backend server.
 8. Navigate to `http://localhost:5173/` in your browser to open the app.
 
 ## Graphs Page
@@ -43,5 +42,6 @@ For TWITCH_CHANNEL, put in the username of your channel.
 
 Running npm start in the backend folder will start the server, which collects twitch messages to analyze and source and scene data. 
 Any messages subsequently sent in the twitch chat will populate the sentiment graphs each time you press Refresh Sentiment.
+
 
 
