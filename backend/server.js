@@ -14,8 +14,7 @@ const http = require('http');
 const {
   initNotepadWebsocket,
   getNoteText,
-} = require("./notepadsocket.js");
-
+} = require('./notepadsocket.js');
 
 const app = express();
 const port = process.env.PORT || 3000;
@@ -44,6 +43,8 @@ app.use(
     methods: ['GET', 'POST', 'DELETE', 'OPTIONS'],
   })
 );
+
+let notepadSocket;
 
 // OBS client and connection state
 const obs = new OBSWebSocket();
@@ -400,7 +401,7 @@ app.post('/api/twitch/connect', async (req, res) => {
       });
     }
 
-    await initializeChatClient(botUsername, oauthToken, channel);
+    await initializeChatClient(botUsername, oauthToken, channel, notepadSocket);
     res.json({
       ok: true,
       message: `Connected to ${channel}'s Twitch chat`,
@@ -469,7 +470,7 @@ app.get('api/twitch/messages', async (req, res) => {
 
 const httpServer = http.createServer(app);
 
-initNotepadWebsocket(httpServer);
+notepadSocket = initNotepadWebsocket(httpServer);
 
 httpServer.listen(port, () => {
     console.log(`Backend server listening on http://localhost:${port}`);

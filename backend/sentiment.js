@@ -1,6 +1,5 @@
 const tmi = require('tmi.js');
 const OpenAI = require('openai');
-const {getNotepadWebsocket} = require('./notepadsocket.js');
 
 const openai = new OpenAI({
   apiKey: process.env.CHATGPT_API_KEY,
@@ -10,7 +9,7 @@ let chatClient = null;
 let chatMessages = [];
 let isConnected = false;
 
-function initializeChatClient(botUsername, oauthToken, channel) {
+function initializeChatClient(botUsername, oauthToken, channel, notepadSocket) {
   return new Promise((resolve, reject) => {
     if (chatClient && isConnected) {
       resolve(chatClient);
@@ -50,8 +49,9 @@ function initializeChatClient(botUsername, oauthToken, channel) {
         timestamp: new Date(),
       });
       
-      const notepadSocket = getNotepadWebsocket();
-      notepadSocket.emit('new_chat_message', {msg: message});
+      if (notepadSocket) {
+        notepadSocket.emit('new_chat_message', {msg: message});
+      }
 
       // crashes my computer if i dont do this
       if (chatMessages.length > 100) {
