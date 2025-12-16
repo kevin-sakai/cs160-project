@@ -1,13 +1,16 @@
 import { getCurrentNote, retrieveCurrentNoteUpdate } from '../util/NoteOperations';
 import { useState, useEffect } from 'react';
 import "./NotepadOverlay.css";
-import { socket } from './Notepad';
+import { io } from 'socket.io-client';
+
+const WEBSOCKET_SERVER = 'http://localhost:3000';
 
 export default function NotepadOverlay() {
   const [text, setText] = useState("Waiting for server...");
   const [fontColor, setFontColor] = useState("#373670");
 
   useEffect(() => {
+    const socket = io(WEBSOCKET_SERVER);
     socket.on('text_update', (data) => {
         setText(data.text);
     });

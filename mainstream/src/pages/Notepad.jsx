@@ -16,7 +16,7 @@ import { io } from 'socket.io-client';
 import { connectTwitchChat, disconnectTwitchChat } from '../api/obs';
 
 const WEBSOCKET_SERVER = 'http://localhost:3000';
-export const socket = io(WEBSOCKET_SERVER);
+let socket;
 
 const NUM_TEXT_ROWS = 15;
 const HISTORY_MAX = 5;
@@ -35,17 +35,10 @@ export default function Notepad({
   const [currentTab, setCurrentTab] = useState("edit");
   const [fontColor, setFontColor] = useState("#373670");
 
-
-  useEffect(() => {
-    socket.emit('text_input', { text: noteText });
-  }, [noteText])
-
-  useEffect(() => {
-    socket.emit('color_change', { color: fontColor });
-  }, [fontColor])
-
   useEffect(() => {
     connectTwitchChat();
+    socket = io(WEBSOCKET_SERVER);
+    socket.emit('text_input', { text: noteText });
     return () => {
       if (socket.connected) {
         socket.disconnect();
@@ -53,6 +46,18 @@ export default function Notepad({
       disconnectTwitchChat();
     };
   }, []);
+
+  useEffect(() => {
+    if (socket) {
+      socket.emit('text_input', { text: noteText });
+    }
+  }, [noteText])
+
+  useEffect(() => {
+    if (socket) {
+      socket.emit('color_change', { color: fontColor });
+    }
+  }, [fontColor])
 
   const tabs = {
     edit: {
