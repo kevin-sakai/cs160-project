@@ -164,7 +164,7 @@ function NoteEditor({
             )
           }
         >
-          &#x25C4;
+          &#x2190;
         </button>
         <button
           className="notepad-page-button"
@@ -180,7 +180,7 @@ function NoteEditor({
             )
           }
         >
-          &#x25BA;
+          &#x2192;
         </button>
         <button
           className="notepad-page-button"

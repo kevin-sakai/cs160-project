@@ -39,16 +39,6 @@ export const Navbar = ({ currPage, setCurrPage }) => {
             Obs Page
           </li>
         </Link>
-        <Link to="graphs">
-          <li
-            className={currPage == "graphs" ? "onPage" : ""}
-            onClick={() => {
-              setCurrPage("graphs");
-            }}
-          >
-            Graphs
-          </li>
-        </Link>
         <Link to="TriggerEventsPage">
           <li
             className={currPage == "triggereventspage" ? "onPage" : ""}
@@ -57,6 +47,16 @@ export const Navbar = ({ currPage, setCurrPage }) => {
             }}
           >
             Trigger Events
+          </li>
+        </Link>
+        <Link to="graphs">
+          <li
+            className={currPage == "graphs" ? "onPage" : ""}
+            onClick={() => {
+              setCurrPage("graphs");
+            }}
+          >
+            Graphs
           </li>
         </Link>
         <Link to="Hotkeys">

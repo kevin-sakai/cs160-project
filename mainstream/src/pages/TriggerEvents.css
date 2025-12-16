@@ -77,7 +77,7 @@ button {
   
 }
 .trigger-next-button {
-  margin-bottom: 50px;
+  margin-bottom: 150px;
 }
 button:hover {
   background-color: var(--highlight-color);
