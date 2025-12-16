@@ -54,7 +54,7 @@ Supported trigger types include:
 
 Once configured, users select an overlay template and an OBS scene. The application automatically creates the necessary browser source in OBS and manages visibility at runtime.
 
-> No additional configuration or downloads are required to use this page beyond running the project and connecting OBS.
+> No additional configuration or downloads are required to use this page beyond running the project and connecting OBS. However, you MUST have OBS open and running locally. 
 
 ## OBS Page
 
@@ -68,6 +68,7 @@ From this page, users can:
 
 Connection details are saved locally in the browser and shared across the app, allowing other pages (such as Trigger Events) to interact with OBS seamlessly.
 
-> As long as OBS is running with WebSocket enabled, no additional setup is needed to use this page.
+> As long as OBS is running with WebSocket enabled and you've entered your credentials, no additional setup is needed to use this page.
+
 
 
