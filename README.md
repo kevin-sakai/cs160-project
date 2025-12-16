@@ -8,6 +8,14 @@
 7. In this terminal, run `npm install` to install dependencies and `npm start` to start the backend server.
 8. Navigate to `http://localhost:5173/` in your browser to open the app.
 
+## Notepad Page
+
+In an `.env` file in the `mainstream` folder, set up `VITE_REAGENT_STORY_KEY` and `VITE_REAGENT_SUGGEST_KEY`. (Course staff: These are the "CS160 Project Story Mode" and "CS160 Project Suggestion Mode" Noggins)
+
+Set up Twitch integration as described under the Graphs Page section.
+
+Start using the notepad!
+
 ## Graphs Page
 
 In the .env file within the backend folder, youll need to set up a few things:
@@ -69,6 +77,7 @@ From this page, users can:
 Connection details are saved locally in the browser and shared across the app, allowing other pages (such as Trigger Events) to interact with OBS seamlessly.
 
 > As long as OBS is running with WebSocket enabled and you've entered your credentials, no additional setup is needed to use this page.
+
 
 
 
