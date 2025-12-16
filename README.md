@@ -42,6 +42,32 @@ For TWITCH_CHANNEL, put in the username of your channel.
 
 Running npm start in the backend folder will start the server, which collects twitch messages to analyze and source and scene data. 
 Any messages subsequently sent in the twitch chat will populate the sentiment graphs each time you press Refresh Sentiment.
+## Trigger Events Page
 
+The **Trigger Events** page allows users to configure automated actions that control on-screen overlays during a stream. Users can define *when* an overlay should appear and *how* it behaves, without writing code.
+
+Supported trigger types include:
+- **Timed Events** (e.g., show an overlay every N minutes)
+- **Chat Sentiment & Themes** (trigger based on chat mood or phrases)
+- **Chat Followers** (trigger on new or milestone followers)
+- **Chat Banning & Filtering** (moderation-based triggers)
+
+Once configured, users select an overlay template and an OBS scene. The application automatically creates the necessary browser source in OBS and manages visibility at runtime.
+
+> No additional configuration or downloads are required to use this page beyond running the project and connecting OBS.
+
+## OBS Page
+
+The **OBS Page** provides a lightweight control panel for connecting the app to OBS via OBS WebSocket and managing basic scene/source interactions.
+
+From this page, users can:
+- Connect to OBS using their local WebSocket credentials
+- View and switch between OBS scenes
+- Create new scenes
+- Inspect sources grouped by type (e.g., Browser Sources, Color Sources)
+
+Connection details are saved locally in the browser and shared across the app, allowing other pages (such as Trigger Events) to interact with OBS seamlessly.
+
+> As long as OBS is running with WebSocket enabled, no additional setup is needed to use this page.
 
 
