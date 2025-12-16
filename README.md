@@ -21,7 +21,7 @@ In the .env file within the backend folder, youll need to set up a few things:
 
 What youll need: Twitch account, ChatGPT API key, OBS
 
-To populate OBS_ADDRESS, OBS_PASSWORD, and PORT:
+To populate OBS_ADDRESS and OBS_PASSWORD:
 
 Open OBS Studio.
 Go to Tools → WebSocket Server Settings.
@@ -31,6 +31,12 @@ Server IP (e.g., 127.0.0.1 or an IPv6 address)
 Server Port (default: 4455)
 Password (if enabled)
 Enter those variables in the .env file.
+
+Start streaming to begin collecting usage percentage data for scenes. 
+Sources will be counted irrespective of usage.
+
+To populate CHATGPT_API_KEY, go to this website: https://platform.openai.com/settings/organization/api-keys
+and create an api key. Otherwise, if you're Tim, I've sent you an email with my api key.
 
 To populate TWITCH_BOT_USERNAME, TWITCH_OAUTH_TOKEN, and TWITCH_CHANNEL:
 
@@ -43,3 +49,4 @@ For TWITCH_CHANNEL, put in the username of your channel.
 
 Running npm start in the backend folder will start the server, which collects twitch messages to analyze and source and scene data. 
 Any messages subsequently sent in the twitch chat will populate the sentiment graphs each time you press Refresh Sentiment.
+
