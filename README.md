@@ -14,6 +14,9 @@ In an `.env` file in the `mainstream` folder, set up `VITE_REAGENT_STORY_KEY` an
 
 Set up Twitch integration as described under the Graphs Page section.
 
+To display the notepad on OBS as an overlay, either navigate to the OBS page of the app and add a new browser source, or add a new browser source directly in OBS.
+Open the "Open Overlay" button at the bottom of the notepad page in a new tab, and use this URL for the browser source. Optionally, add a chroma key filter to make the background transparent.
+
 Start using the notepad!
 
 ## Graphs Page
@@ -77,6 +80,7 @@ From this page, users can:
 Connection details are saved locally in the browser and shared across the app, allowing other pages (such as Trigger Events) to interact with OBS seamlessly.
 
 > As long as OBS is running with WebSocket enabled and you've entered your credentials, no additional setup is needed to use this page.
+
 
 
 
